@@ -7,7 +7,7 @@ import {
 
 import { CodeRibbonHelloWorldCommand } from './CodeRibbon-Theia-commands';
 
-export const MenuPath CodeRibbonTopMenuPath = [...MAIN_MENU_BAR, "7_coderibbon"];
+export const CodeRibbonTopMenuPath = [...MAIN_MENU_BAR, "7_coderibbon"];
 
 @injectable()
 // Add contribution interface to be implemented, e.g. "CodeRibbonTheiaContribution implements CommandContribution"

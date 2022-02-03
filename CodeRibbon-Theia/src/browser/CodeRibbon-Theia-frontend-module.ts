@@ -7,7 +7,7 @@ import {
   MenuContribution, MenuModelRegistry, MessageService
 } from '@theia/core/lib/common';
 
-// import { CodeRibbonTheiaContribution } from './CodeRibbon-Theia-contribution';
+// import { CodeRibbonTheiaRibbonViewContribution } from './CodeRibbon-Theia-ribbon';
 import { CodeRibbonTheiaCommandContribution } from './CodeRibbon-Theia-commands';
 import { CodeRibbonTheiaMenuContribution } from './CodeRibbon-Theia-menus';
 

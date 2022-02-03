@@ -5,9 +5,16 @@ import {
   MessageService,
 } from '@theia/core/lib/common';
 
+import {crdebug} from './CodeRibbon-logger';
+
 export const CodeRibbonHelloWorldCommand = {
   id: 'CodeRibbon.HelloWorld',
   label: "Hello, CodeRibbon.",
+}
+
+export const CodeRibbonDevGetPanelCommand = {
+  id: 'CodeRibbon.dev.getDockPanel',
+  label: "dev: getDockPanel",
 }
 
 @injectable()
@@ -20,7 +27,15 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
 
   registerCommands(registry: CommandRegistry): void {
     registry.registerCommand(CodeRibbonHelloWorldCommand, {
-      execute: () => this.messageService.info("CodeRibbon says hello!")
+      execute: () => {
+        this.messageService.info("CodeRibbon says hello!");
+        crdebug("Hello console! CommandContribution:", this);
+      }
+    });
+    registry.registerCommand(CodeRibbonDevGetPanelCommand, {
+      execute: () => {
+        crdebug();
+      }
     });
   }
 
