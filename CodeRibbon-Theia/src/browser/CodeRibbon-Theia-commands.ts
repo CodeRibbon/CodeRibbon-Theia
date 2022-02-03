@@ -2,7 +2,7 @@ import { injectable, inject } from '@theia/core/shared/inversify';
 
 import {
   Command, CommandContribution, CommandRegistry,
-  MessageService,
+  MessageService, PreferenceService,
 } from '@theia/core/lib/common';
 
 import {crdebug} from './CodeRibbon-logger';
@@ -23,6 +23,7 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
 
   constructor(
     @inject(MessageService) private readonly messageService: MessageService,
+    // @inject(PreferenceService) protected readonly prefService: PreferenceService,
   ) {}
 
   registerCommands(registry: CommandRegistry): void {
