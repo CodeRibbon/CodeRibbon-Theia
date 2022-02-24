@@ -7,14 +7,18 @@ import {
   MenuContribution, CommandContribution,
   MenuModelRegistry, MessageService,
 } from '@theia/core/lib/common';
-import { PreferenceContribution } from '@theia/core/lib/browser/preferences'
+import {
+  FrontendApplicationContribution,
+  bindViewContribution, WidgetFactory,
+} from '@theia/core/lib/browser';
+import { PreferenceContribution } from '@theia/core/lib/browser/preferences';
 
 // import { CodeRibbonTheiaRibbonViewContribution } from './CodeRibbon-Theia-ribbon';
 import { CodeRibbonTheiaCommandContribution } from './CodeRibbon-Theia-commands';
 import { CodeRibbonTheiaMenuContribution } from './CodeRibbon-Theia-menus';
-import {
-  CodeRibbonTheiaPreferenceSchema,
-} from './CodeRibbon-Theia-preferences';
+import { CodeRibbonTheiaPreferenceSchema } from './CodeRibbon-Theia-preferences';
+import { CodeRibbonTheiaManager } from './CodeRibbon-Theia-manager';
+import { CodeRibbonTheiaRibbonView } from './CodeRibbon-Theia-ribbon';
 
 export default new ContainerModule(bind => {
 
@@ -23,4 +27,13 @@ export default new ContainerModule(bind => {
     bind(MenuContribution).to(CodeRibbonTheiaMenuContribution);
     bind(PreferenceContribution).toConstantValue({
       schema: CodeRibbonTheiaPreferenceSchema});
+
+    // bindViewContribution(bind, CodeRibbonTheiaManagerContribution);
+    bind(CodeRibbonTheiaManager).toSelf().inSingletonScope();
+    bind(FrontendApplicationContribution).toService(CodeRibbonTheiaManager);
+    // bind(CodeRibbonTheiaRibbonView).toSelf();
+    // bind(WidgetFactory).toDynamicValue(ctx => ({
+    //     id: CodeRibbonTheiaRibbonView.ID,
+    //     createWidget: () => ctx.container.get<CodeRibbonTheiaRibbonView>(CodeRibbonTheiaRibbonView)
+    // })).inSingletonScope();
 });
