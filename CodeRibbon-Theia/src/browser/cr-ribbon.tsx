@@ -30,28 +30,22 @@ import { crdebug } from './CodeRibbon-logger';
 @injectable()
 export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
 
-  /**
-   * Emitted when a widget is added to the panel.
-   */
-  readonly widgetAdded = new Signal<this, Widget>(this);
-  /**
-   * Emitted when a widget is activated by calling `activateWidget`.
-   */
-  readonly widgetActivated = new Signal<this, Widget>(this);
-  /**
-   * Emitted when a widget is removed from the panel.
-   */
-  readonly widgetRemoved = new Signal<this, Widget>(this);
+  static readonly ID = 'cr-theia-ribbon';
 
-  constructor(options?: BoxPanel.IOptions,
-    @inject(CorePreferences) protected readonly preferences?: CorePreferences,
-  ) {
+  constructor(options?: BoxPanel.IOptions) {
     super(options);
-    if (preferences) {
-      preferences.onPreferenceChanged(preference => {
-        crdebug("preference change:", preference);
-      });
-    }
+    // if (preferences) {
+    //   preferences.onPreferenceChanged(preference => {
+    //     crdebug("ribbon: preference change:", preference);
+    //   });
+    // }
+  }
+
+  @postConstruct()
+  protected async init(): Promise<void> {
+    this.id = CodeRibbonTheiaRibbonPanel.ID;
+    this.title.label = "CRTRP Label";
+    this.update();
   }
 
 }

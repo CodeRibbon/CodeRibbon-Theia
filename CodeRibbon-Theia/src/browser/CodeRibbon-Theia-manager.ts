@@ -1,10 +1,13 @@
 import { injectable, inject } from '@theia/core/shared/inversify';
 
 import {
+  Widget,
+} from '@phosphor/widgets';
+import {
   MessageService,
 } from '@theia/core/lib/common';
 import {
-  AbstractViewContribution,
+  AbstractViewContribution, ViewContributionOptions,
   FrontendApplicationContribution,
 } from '@theia/core/lib/browser';
 import {
@@ -24,21 +27,36 @@ import {
 
 import {crdebug} from './CodeRibbon-logger';
 
-// import { CodeRibbonTheiaRibbonViewContribution } from './CodeRibbon-Theia-ribbon';
+import { CodeRibbonTheiaRibbonPanel } from './cr-ribbon';
+
+const CR_MAIN_AREA_ID = "cr-theia-ribbon";
 
 @injectable()
-export class CodeRibbonTheiaManager implements FrontendApplicationContribution {
+export class CodeRibbonTheiaManager
+    extends AbstractViewContribution<CodeRibbonTheiaRibbonPanel>
+    implements FrontendApplicationContribution {
 
   protected frontendApplication: FrontendApplication;
+  protected ribbonPanel: CodeRibbonTheiaRibbonPanel;
 
-  constructor(
-    @inject(FrontendApplicationStateService) protected readonly stateService: FrontendApplicationStateService,
-    @inject(MessageService) private readonly messageService: MessageService,
-    @inject(ApplicationShell) protected readonly _original_shell: ApplicationShell,
-    // @inject(CodeRibbonApplicationShell) protected readonly _cr_shell: CodeRibbonApplicationShell,
-  ) {
-    // @ts-ignore
-    window.cr_manager = this;
+  @inject(ApplicationShell)
+  protected readonly _original_shell: ApplicationShell;
+  @inject(MessageService) private readonly messageService: MessageService;
+  @inject(FrontendApplicationStateService)
+  protected readonly stateService: FrontendApplicationStateService;
+  @inject(CorePreferences) protected readonly corePreferences: CorePreferences;
+
+  constructor() {
+    super({
+      widgetId: CodeRibbonTheiaRibbonPanel.ID,
+      widgetName: "CodeRibbon Ribbon",
+      defaultWidgetOptions: {
+        alignment: 'start',
+        direction: 'left-to-right',
+        spacing: 5,
+      },
+      toggleCommandId: 'CodeRibbon.ManagerConstructorToggleCommand',
+    })
   }
 
   // registerCommands(registry: CommandRegistry): void {
@@ -50,6 +68,17 @@ export class CodeRibbonTheiaManager implements FrontendApplicationContribution {
 
   initialize(): void {
     crdebug("manager initialize");
+    // @ts-ignore
+    window.cr_manager = this;
+
+    this.ribbonPanel = new CodeRibbonTheiaRibbonPanel({
+      alignment: 'start',
+      direction: 'left-to-right',
+      spacing: 0,
+    });
+    // , this.corePreferences
+
+    this.ribbonPanel.id = CR_MAIN_AREA_ID;
   }
 
   /**
@@ -58,7 +87,8 @@ export class CodeRibbonTheiaManager implements FrontendApplicationContribution {
    * e.g. a brand new workspace is opened
    */
   async initializeLayout(app: FrontendApplication): Promise<void> {
-    crdebug("manager initializeLayout: app:", app);
+    crdebug("manager initializeLayout");
+
     return;
   }
 
@@ -66,10 +96,16 @@ export class CodeRibbonTheiaManager implements FrontendApplicationContribution {
    * invoked every launch
    */
   async onStart(app: FrontendApplication): Promise<void> {
-    crdebug("ribbon onStart: app:", app);
-    // this.frontendApplication = app;
-    // this.old_mainPanel = this._original_shell.mainPanel;
-    // this._original_shell.mainPanel = this._cr_shell.mainPanel;
+    crdebug("manager onStart");
+
+    this.stateService.reachedState('ready').then(
+      () => {
+        this.openView({reveal: true});
+        // app.shell.mainPanel.mode = 'single-document';
+        app.shell.mainPanel.setFlag(Widget.Flag.DisallowLayout);
+      }
+    )
+
     return;
   }
 
@@ -77,7 +113,7 @@ export class CodeRibbonTheiaManager implements FrontendApplicationContribution {
    * invoked every launch, this is called before onStart, but after `initialize`
    */
   async configure(app: FrontendApplication): Promise<void> {
-    crdebug("ribbon configure: app:", app);
+    crdebug("manager configure");
 
     return;
   }

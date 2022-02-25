@@ -1,7 +1,5 @@
-/**
- * Generated using theia-extension-generator
- */
 import { ContainerModule } from '@theia/core/shared/inversify';
+
 import {
   Command, CommandRegistry,
   MenuContribution, CommandContribution,
@@ -18,7 +16,7 @@ import { CodeRibbonTheiaCommandContribution } from './CodeRibbon-Theia-commands'
 import { CodeRibbonTheiaMenuContribution } from './CodeRibbon-Theia-menus';
 import { CodeRibbonTheiaPreferenceSchema } from './CodeRibbon-Theia-preferences';
 import { CodeRibbonTheiaManager } from './CodeRibbon-Theia-manager';
-// import { CodeRibbonTheiaRibbonView } from './cr-ribbon';
+import { CodeRibbonTheiaRibbonPanel } from './cr-ribbon';
 // import { CodeRibbonApplicationShell } from './cr-application-shell';
 
 export default new ContainerModule(bind => {
@@ -31,12 +29,11 @@ export default new ContainerModule(bind => {
 
     // bind(CodeRibbonApplicationShell).toSelf().inSingletonScope();
 
-    // bindViewContribution(bind, CodeRibbonTheiaManagerContribution);
-    bind(CodeRibbonTheiaManager).toSelf().inSingletonScope();
+    bindViewContribution(bind, CodeRibbonTheiaManager);
     bind(FrontendApplicationContribution).toService(CodeRibbonTheiaManager);
-    // bind(CodeRibbonTheiaRibbonView).toSelf();
-    // bind(WidgetFactory).toDynamicValue(ctx => ({
-    //     id: CodeRibbonTheiaRibbonView.ID,
-    //     createWidget: () => ctx.container.get<CodeRibbonTheiaRibbonView>(CodeRibbonTheiaRibbonView)
-    // })).inSingletonScope();
+    bind(CodeRibbonTheiaRibbonPanel).toSelf();
+    bind(WidgetFactory).toDynamicValue(ctx => ({
+        id: CodeRibbonTheiaRibbonPanel.ID,
+        createWidget: () => ctx.container.get<CodeRibbonTheiaRibbonPanel>(CodeRibbonTheiaRibbonPanel)
+    })).inSingletonScope();
 });
