@@ -17,6 +17,8 @@ import {
   CorePreferences,
 } from '@theia/core/lib/browser/core-preferences';
 
+import { CodeRibbonApplicationShell } from './cr-application-shell';
+
 import {crdebug} from './CodeRibbon-logger';
 
 // import { CodeRibbonTheiaRibbonViewContribution } from './CodeRibbon-Theia-ribbon';
@@ -24,17 +26,26 @@ import {crdebug} from './CodeRibbon-logger';
 @injectable()
 export class CodeRibbonTheiaManager implements FrontendApplicationContribution {
 
+  protected frontendApplication: FrontendApplication;
+
   constructor(
     @inject(FrontendApplicationStateService) protected readonly stateService: FrontendApplicationStateService,
     @inject(MessageService) private readonly messageService: MessageService,
-    // @inject(ApplicationShell) protected readonly _shell: ApplicationShell,
-  ) {}
+    @inject(ApplicationShell) protected readonly _original_shell: ApplicationShell,
+    // @inject(CodeRibbonApplicationShell) protected readonly _cr_shell: CodeRibbonApplicationShell,
+  ) {
+    window.cr_manager = this;
+  }
 
   registerCommands(registry: CommandRegistry): void {
     // registry.registerCommand(CodeRibbonHelloWorldCommand, {
     //   execute: () => this.messageService.info("CodeRibbon says hello!")
     // });
     crdebug("manager registerCommands: registry:", registry);
+  }
+
+  initialize(): void {
+    crdebug("manager initialize");
   }
 
   /**
@@ -52,14 +63,26 @@ export class CodeRibbonTheiaManager implements FrontendApplicationContribution {
    */
   async onStart(app: FrontendApplication): Promise<void> {
     crdebug("ribbon onStart: app:", app);
+    // this.frontendApplication = app;
+    // this.old_mainPanel = this._original_shell.mainPanel;
+    // this._original_shell.mainPanel = this._cr_shell.mainPanel;
     return;
   }
 
   /**
-   * invoked every launch
+   * invoked every launch, this is called before onStart, but after `initialize`
    */
   async configure(app: FrontendApplication): Promise<void> {
     crdebug("ribbon configure: app:", app);
+
+    return;
+  }
+
+  /**
+   * fired on unload / when app exits
+   */
+  onStop(app: FrontendApplication): void {
+    crdebug("manager onStop: goodbye!");
     return;
   }
 
