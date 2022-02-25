@@ -10,6 +10,9 @@ import {
   bindViewContribution, WidgetFactory,
 } from '@theia/core/lib/browser';
 import { PreferenceContribution } from '@theia/core/lib/browser/preferences';
+import {
+  ApplicationShell,
+} from '@theia/core/lib/browser/shell/application-shell';
 
 // import { CodeRibbonTheiaRibbonViewContribution } from './CodeRibbon-Theia-ribbon';
 import { CodeRibbonTheiaCommandContribution } from './CodeRibbon-Theia-commands';
@@ -17,23 +20,18 @@ import { CodeRibbonTheiaMenuContribution } from './CodeRibbon-Theia-menus';
 import { CodeRibbonTheiaPreferenceSchema } from './CodeRibbon-Theia-preferences';
 import { CodeRibbonTheiaManager } from './CodeRibbon-Theia-manager';
 import { CodeRibbonTheiaRibbonPanel } from './cr-ribbon';
-// import { CodeRibbonApplicationShell } from './cr-application-shell';
+import { CodeRibbonApplicationShell } from './cr-application-shell';
 
-export default new ContainerModule(bind => {
+export default new ContainerModule((bind, unbind, isBound, rebind) => {
 
-    // Replace this line with the desired binding, e.g. "bind(CommandContribution).to(CodeRibbonTheiaContribution)
-    bind(CommandContribution).to(CodeRibbonTheiaCommandContribution);
-    bind(MenuContribution).to(CodeRibbonTheiaMenuContribution);
-    bind(PreferenceContribution).toConstantValue({
-      schema: CodeRibbonTheiaPreferenceSchema});
+  bind(CodeRibbonApplicationShell).toSelf().inSingletonScope();
+  // get rid of original ApplicationShell:
+  rebind(ApplicationShell).to(CodeRibbonApplicationShell).inSingletonScope();
 
-    // bind(CodeRibbonApplicationShell).toSelf().inSingletonScope();
+  bind(CommandContribution).to(CodeRibbonTheiaCommandContribution);
+  bind(MenuContribution).to(CodeRibbonTheiaMenuContribution);
 
-    bindViewContribution(bind, CodeRibbonTheiaManager);
-    bind(FrontendApplicationContribution).toService(CodeRibbonTheiaManager);
-    bind(CodeRibbonTheiaRibbonPanel).toSelf();
-    bind(WidgetFactory).toDynamicValue(ctx => ({
-        id: CodeRibbonTheiaRibbonPanel.ID,
-        createWidget: () => ctx.container.get<CodeRibbonTheiaRibbonPanel>(CodeRibbonTheiaRibbonPanel)
-    })).inSingletonScope();
+  // TODO fix prefs
+  // bind(PreferenceContribution).toConstantValue({
+  //   schema: CodeRibbonTheiaPreferenceSchema});
 });

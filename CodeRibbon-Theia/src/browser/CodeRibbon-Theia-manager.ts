@@ -32,9 +32,7 @@ import { CodeRibbonTheiaRibbonPanel } from './cr-ribbon';
 const CR_MAIN_AREA_ID = "cr-theia-ribbon";
 
 @injectable()
-export class CodeRibbonTheiaManager
-    extends AbstractViewContribution<CodeRibbonTheiaRibbonPanel>
-    implements FrontendApplicationContribution {
+export class CodeRibbonTheiaManager implements FrontendApplicationContribution {
 
   protected frontendApplication: FrontendApplication;
   protected ribbonPanel: CodeRibbonTheiaRibbonPanel;
@@ -47,16 +45,16 @@ export class CodeRibbonTheiaManager
   @inject(CorePreferences) protected readonly corePreferences: CorePreferences;
 
   constructor() {
-    super({
-      widgetId: CodeRibbonTheiaRibbonPanel.ID,
-      widgetName: "CodeRibbon Ribbon",
-      defaultWidgetOptions: {
-        alignment: 'start',
-        direction: 'left-to-right',
-        spacing: 5,
-      },
-      toggleCommandId: 'CodeRibbon.ManagerConstructorToggleCommand',
-    })
+    // super({
+    //   widgetId: CodeRibbonTheiaRibbonPanel.ID,
+    //   widgetName: "CodeRibbon Ribbon",
+    //   defaultWidgetOptions: {
+    //     alignment: 'start',
+    //     direction: 'left-to-right',
+    //     spacing: 5,
+    //   },
+    //   toggleCommandId: 'CodeRibbon.ManagerConstructorToggleCommand',
+    // })
   }
 
   // registerCommands(registry: CommandRegistry): void {
@@ -71,14 +69,14 @@ export class CodeRibbonTheiaManager
     // @ts-ignore
     window.cr_manager = this;
 
-    this.ribbonPanel = new CodeRibbonTheiaRibbonPanel({
-      alignment: 'start',
-      direction: 'left-to-right',
-      spacing: 0,
-    });
-    // , this.corePreferences
-
-    this.ribbonPanel.id = CR_MAIN_AREA_ID;
+    // this.ribbonPanel = new CodeRibbonTheiaRibbonPanel({
+    //   alignment: 'start',
+    //   direction: 'left-to-right',
+    //   spacing: 0,
+    // });
+    // // , this.corePreferences
+    //
+    // this.ribbonPanel.id = CR_MAIN_AREA_ID;
   }
 
   /**
@@ -98,13 +96,13 @@ export class CodeRibbonTheiaManager
   async onStart(app: FrontendApplication): Promise<void> {
     crdebug("manager onStart");
 
-    this.stateService.reachedState('ready').then(
-      () => {
-        this.openView({reveal: true});
-        // app.shell.mainPanel.mode = 'single-document';
-        app.shell.mainPanel.setFlag(Widget.Flag.DisallowLayout);
-      }
-    )
+    // this.stateService.reachedState('ready').then(
+    //   () => {
+    //     this.openView({reveal: true});
+    //     // app.shell.mainPanel.mode = 'single-document';
+    //     app.shell.mainPanel.setFlag(Widget.Flag.DisallowLayout);
+    //   }
+    // )
 
     return;
   }
