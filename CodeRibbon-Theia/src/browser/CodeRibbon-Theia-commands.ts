@@ -2,7 +2,7 @@ import { injectable, inject } from '@theia/core/shared/inversify';
 
 import {
   Command, CommandContribution, CommandRegistry,
-  MessageService, PreferenceService,
+  MessageService,
 } from '@theia/core/lib/common';
 
 import {crdebug} from './CodeRibbon-logger';

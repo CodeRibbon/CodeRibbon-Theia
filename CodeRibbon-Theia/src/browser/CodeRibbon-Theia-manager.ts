@@ -8,6 +8,9 @@ import {
   FrontendApplicationContribution,
 } from '@theia/core/lib/browser';
 import {
+  FrontendApplication,
+} from '@theia/core/lib/browser/frontend-application';
+import {
   FrontendApplicationStateService,
 } from '@theia/core/lib/browser/frontend-application-state';
 import {
@@ -17,7 +20,7 @@ import {
   CorePreferences,
 } from '@theia/core/lib/browser/core-preferences';
 
-import { CodeRibbonApplicationShell } from './cr-application-shell';
+// import { CodeRibbonApplicationShell } from './cr-application-shell';
 
 import {crdebug} from './CodeRibbon-logger';
 
@@ -34,15 +37,16 @@ export class CodeRibbonTheiaManager implements FrontendApplicationContribution {
     @inject(ApplicationShell) protected readonly _original_shell: ApplicationShell,
     // @inject(CodeRibbonApplicationShell) protected readonly _cr_shell: CodeRibbonApplicationShell,
   ) {
+    // @ts-ignore
     window.cr_manager = this;
   }
 
-  registerCommands(registry: CommandRegistry): void {
-    // registry.registerCommand(CodeRibbonHelloWorldCommand, {
-    //   execute: () => this.messageService.info("CodeRibbon says hello!")
-    // });
-    crdebug("manager registerCommands: registry:", registry);
-  }
+  // registerCommands(registry: CommandRegistry): void {
+  //   // registry.registerCommand(CodeRibbonHelloWorldCommand, {
+  //   //   execute: () => this.messageService.info("CodeRibbon says hello!")
+  //   // });
+  //   crdebug("manager registerCommands: registry:", registry);
+  // }
 
   initialize(): void {
     crdebug("manager initialize");
