@@ -12,7 +12,12 @@ Install npm and node.
 Install yarn.
 
     npm install -g yarn
+    
+## Gather dependencies / Initialize
 
+    cd CodeRibbon-Theia
+    yarn
+    
 ## Running the browser example
 
     yarn start:browser
