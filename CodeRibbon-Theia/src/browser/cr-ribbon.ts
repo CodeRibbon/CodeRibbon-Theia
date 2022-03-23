@@ -32,19 +32,64 @@ const VISIBLE_MENU_MAXIMIZED_CLASS = 'theia-visible-menu-maximized';
 // as such, license here falls to
 // SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
 @injectable()
-export class CodeRibbonTheiaRibbonPanel extends TheiaDockPanel {
+export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
 
-  // static readonly ID = 'cr-theia-ribbon'; // there should only ever be one
+  /**
+   * Emitted when a widget is added to the panel.
+   */
+  readonly widgetAdded = new Signal<this, Widget>(this);
+  /**
+   * Emitted when a widget is activated by calling `activateWidget`.
+   */
+  readonly widgetActivated = new Signal<this, Widget>(this);
+  /**
+   * Emitted when a widget is removed from the panel.
+   */
+  readonly widgetRemoved = new Signal<this, Widget>(this);
 
-  // constructor(options?: BoxPanel.IOptions,
-  //   // @inject(CorePreferences) protected readonly preferences?: CorePreferences,
-  // ) {
-  //   super(options);
-  //   // if (preferences) {
-  //   //   preferences.onPreferenceChanged(preference => {
-  //   //     crdebug("ribbon: preference change:", preference);
-  //   //   });
-  //   // }
-  // }
+  protected readonly onDidToggleMaximizedEmitter = new Emitter<Widget>();
+  readonly onDidToggleMaximized = this.onDidToggleMaximizedEmitter.event;
+
+  constructor(options?: BoxPanel.IOptions,
+    // @inject(CorePreferences) protected readonly preferences?: CorePreferences,
+  ) {
+    super(options);
+    // if (preferences) {
+    //   preferences.onPreferenceChanged(preference => {
+    //     crdebug("ribbon: preference change:", preference);
+    //   });
+    // }
+  }
+
+  // NOTE === phosphor DockPanel API compatility section === NOTE //
+
+  /**
+   * Here to mimick phosphor restoration
+   * https://github.com/phosphorjs/phosphor/blob/8fee9108/packages/widgets/src/docklayout.ts#L265
+   *
+   * @param  config The layout configuration to restore
+   */
+  restoreLayout(config: BoxLayout.ILayoutConfig): void {
+    // TODO
+  }
+
+  widgets(): IIterator<Widget> {
+    return (this.layout as BoxLayout).widgets();
+  }
+
+  // NOTE === theia DockPanel API compatility section === NOTE //
+
+  protected readonly toDisposeOnMarkAsCurrent = new DisposableCollection();
+  markAsCurrent(title: Title<Widget> | undefined): void {
+    this.toDisposeOnMarkAsCurrent.dispose();
+    this._currentTitle = title;
+    if (title) {
+      const resetCurrent = () => this.markAsCurrent(undefined);
+      title.owner.disposed.connect(resetCurrent);
+      this.toDisposeOnMarkAsCurrent.push(Disposable.create(() =>
+        title.owner.disposed.disconnect(resetCurrent)
+      ));
+    }
+  }
 
 }

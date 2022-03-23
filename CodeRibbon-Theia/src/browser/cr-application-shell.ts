@@ -65,19 +65,19 @@ export class CodeRibbonApplicationShell extends ApplicationShell {
     //   spacing: 0
     // }, this.corePreferences);
 
-    // TODO what I want, based on BoxPanel
-    // const ribbonPanel = new CodeRibbonTheiaRibbonPanel({
-    //   alignment: 'start',
-    //   direction: 'left-to-right',
-    //   spacing: 0,
-    // });
+    // what I want, based on BoxPanel
+    const ribbonPanel = new CodeRibbonTheiaRibbonPanel({
+      alignment: 'start',
+      direction: 'left-to-right',
+      spacing: 0,
+    });
 
     // working, only while CRTRP extends TheiaDockPanel
-    const ribbonPanel = new CodeRibbonTheiaRibbonPanel({
-      mode: 'multiple-document',
-      renderer,
-      spacing: 0
-    }, this.corePreferences);
+    // const ribbonPanel = new CodeRibbonTheiaRibbonPanel({
+    //   mode: 'multiple-document',
+    //   renderer,
+    //   spacing: 0
+    // }, this.corePreferences);
 
     ribbonPanel.id = MAIN_AREA_ID;
     ribbonPanel.widgetAdded.connect((_, widget) => this.fireDidAddWidget(widget));
