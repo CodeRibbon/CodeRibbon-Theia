@@ -55,7 +55,8 @@ namespace RibbonPanel {
   export
   interface IAddOptions {
     /**
-     * Options for inserting a Widget onto the Ribbon
+     * Options for inserting a Widget onto the Ribbon, when undefined the user's
+     * preference will be used
      */
     mode?: InsertMode;
     /**
