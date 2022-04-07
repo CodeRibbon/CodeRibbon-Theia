@@ -7,6 +7,9 @@ import {
   DockLayout, BoxLayout,
 } from '@phosphor/widgets';
 import {
+  empty,
+} from '@phosphor/algorithm';
+import {
   MessageService,
   Emitter, environment,
   Disposable, DisposableCollection,
@@ -99,11 +102,19 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     @inject(CorePreferences) protected readonly preferences?: CorePreferences,
   ) {
     super(options);
+    crdebug("Ribbon constructor:", this, options);
     // if (preferences) {
     //   preferences.onPreferenceChanged(preference => {
     //     crdebug("ribbon: preference change:", preference);
     //   });
     // }
+    // TODO debugging only
+    if (!window.cr_ribbon) {
+      window.cr_ribbon = this;
+    }
+    else {
+      crdebug("WARNING: multiple ribbon constructions?");
+    }
   }
 
   override addWidget(widget: Widget, options?: RibbonPanel.IAddOptions): void {
@@ -121,6 +132,9 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
   }
 
   // NOTE === phosphor DockPanel API compatility section === NOTE //
+  // we might want to split this into a `ImprovedBoxPanel` class instead?
+  // this section is because phosphor's BoxPanel has only a tiny fraction of the
+  // features that DockPanel has, and they're expected by Theia
 
   /**
    * Here to mimick phosphor restoration
@@ -134,12 +148,18 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
 
   widgets(): IIterator<Widget> {
     // TODO iterate widgets in order of ribbon layout
-    return (this.layout as BoxLayout).widgets();
+    return (this.layout as BoxLayout).widgets;
   }
 
   tabBars(): IIterator<TabBar<Widget>> {
     // TODO removal of tabBars
     return this._root ? this._root.iterTabBars() : empty<TabBar<Widget>>();
+  }
+
+  // TODO signal connections from columns
+  readonly _layoutModified = new Signal<this>(this);
+  get layoutModified() {
+    return this._layoutModified;
   }
 
   // NOTE === theia DockPanel API compatility section === NOTE //
