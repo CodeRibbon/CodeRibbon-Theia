@@ -96,7 +96,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
   readonly onDidToggleMaximized = this.onDidToggleMaximizedEmitter.event;
 
   constructor(options?: BoxPanel.IOptions,
-    // @inject(CorePreferences) protected readonly preferences?: CorePreferences,
+    @inject(CorePreferences) protected readonly preferences?: CorePreferences,
   ) {
     super(options);
     // if (preferences) {
@@ -199,6 +199,116 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
       this.tabBars(), // original of DockPanel, replacement made for BoxPanel
       bar => ArrayExt.firstIndexOf(bar.titles, title) > -1
     );
+  }
+
+  protected override onChildRemoved(msg: Widget.ChildMessage): void {
+    super.onChildRemoved(msg);
+    this.widgetRemoved.emit(msg.child);
+  }
+
+  // TODO tab bar removal
+  /**
+   * IDEA: swap TabBar for a column or strip method API?
+   * @param  widget               [description]
+   * @return        [description]
+   */
+  nextTabBarWidget(widget: Widget): Widget | undefined {
+    const current = this.findTabBar(widget.title);
+    const next = current && this.nextTabBarInPanel(current);
+    return next && next.currentTitle && next.currentTitle.owner || undefined;
+  }
+
+  // TODO tab bar removal
+  nextTabBarInPanel(tabBar: TabBar<Widget>): TabBar<Widget> | undefined {
+    const tabBars = toArray(this.tabBars()):
+    const index = tabBars.indexOf(tabBar);
+    if (index !== -1) {
+      return tabBars[index + 1];
+    }
+    return undefined;
+  }
+
+  previousTabBarWidget(widget: Widget): Widget | undefined {
+    const current = this.findTabBar(widget.title);
+    const previous = current && this.previousTabBarInPanel(current);
+    return previous && previous.currentTitle && previous.currentTitle.owner || undefined;
+  }
+
+  previousTabBarInPanel(tabBar: TabBar<Widget>): TabBar<Widget> | undefined {
+    const tabBars = toArray(this.tabBars());
+    const index = tabBars.indexOf(tabBar);
+    if (index !== -1) {
+      return tabBars[index - 1];
+    }
+    return undefined;
+  }
+
+  protected readonly toDisposeOnToggleMaximized = new DisposableCollection();
+  toggleMaximized(): void {
+    // TODO ribbon elements stacking order:
+    const areaContainer = this.node.parentElement;
+    if (!areaContainer) {
+      return;
+    }
+    const maximizedElement = this.getMaximizedElement();
+    if (areaContainer === maximizedElement) {
+      this.toDisposeOnToggleMaximized.dispose();
+      return;
+    }
+    if (this.isAttached) {
+      // TODO what is this really doing???
+      UnsafeWidgetUtilities.detach(this);
+    }
+    maximizedElement.style.display = 'block';
+    this.addClass(MAXIMIZED_CLASS);
+    const preference = this.preferences?.get('window.menuBarVisibility');
+    if (!this.isElectron() && preference === 'visible') {
+      this.addClass(VISIBLE_MENU_MAXIMIZED_CLASS);
+    }
+    UnsafeWidgetUtilities.attach(this, maximizedElement);
+    this.fit();
+    this.onDidToggleMaximizedEmitter.fire(this);
+    this.toDisposeOnToggleMaximized.push(Disposable.create(() => {
+      maximizedElement.style.display = 'none';
+      this.removeClass(MAXIMIZED_CLASS);
+      this.onDidToggleMaximizedEmitter.fire(this);
+      if (!this.isElectron()) {
+        this.removeClass(VISIBLE_MENU_MAXIMIZED_CLASS);
+      }
+      if (this.isAttached) {
+        UnsafeWidgetUtilities.detach(this);
+      }
+      UnsafeWidgetUtilities.attach(this, areaContainer);
+      this.fit();
+    }));
+
+    // TODO NOTE mod to BoxLayout?
+    const layout = this.layout;
+    if (layout instanceof DockLayout || layout instanceof BoxLayout) {
+      crdebug("in toggleMaximized, layout is", layout);
+
+      const onResize = layout['onResize'];
+      layout['onResize'] = () => onResize.bind(layout)(Widget.ResizeMessage.UnknownSize);
+      this.toDisposeOnToggleMaximized.push(Disposable.create(() => layout['onResize'] = onResize));
+    }
+
+    const removedListener = () => {
+      if (!this.widgets().next()) {
+        this.toDisposeOnToggleMaximized.dispose();
+      }
+    };
+    this.widgetRemoved.connect(removedListener);
+    this.toDisposeOnToggleMaximized.push(Disposable.create(() => this.widgetRemoved.disconnect(removedListener)));
+  }
+
+  protected maximizedElement: HTMLElement | undefined;
+  protected getMaximizedElement(): HTMLElement {
+    if (!this.maximizedElement) {
+      this.maximizedElement = document.createElement('div');
+      this.maximizedElement.style.display = 'none';
+      document.body.appendChild(this.maximizedElement);
+    }
+    return this.maximizedElement;
   }
 
 }
