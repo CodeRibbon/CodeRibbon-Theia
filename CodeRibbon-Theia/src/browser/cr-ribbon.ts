@@ -124,10 +124,11 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
   }
 
   // TODO is this actually an override?
-  override activateWidget(widget: Widget): void {
-    // TODO does BoxPanel need an activateWidget?
-    crdebug("RibbonPanel activateWidget");
-    super.activate();
+  activateWidget(widget: Widget): void {
+    // TODO focus the widget, scrolling, etc...
+    crdebug("RibbonPanel activateWidget", widget);
+    // super.activate();
+    widget.activate();
     this.widgetActivated.emit(widget);
   }
 
