@@ -22,6 +22,9 @@ import { CodeRibbonTheiaManager } from './CodeRibbon-Theia-manager';
 import { CodeRibbonTheiaRibbonPanel } from './cr-ribbon';
 import { CodeRibbonApplicationShell } from './cr-application-shell';
 
+// CSS
+import '../../src/browser/style/debug.css';
+
 export default new ContainerModule((bind, unbind, isBound, rebind) => {
 
   bind(CodeRibbonApplicationShell).toSelf().inSingletonScope();
