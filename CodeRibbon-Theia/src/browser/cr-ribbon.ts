@@ -25,6 +25,7 @@ import {
 } from '@theia/core/lib/browser/core-preferences';
 
 import { crdebug } from './CodeRibbon-logger';
+import { CodeRibbonTheiaRibbonStrip } from './cr-ribbon-strip';
 
 // was not exported from TheiaDockPanel for some reason?
 const VISIBLE_MENU_MAXIMIZED_CLASS = 'theia-visible-menu-maximized';
@@ -115,12 +116,25 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     else {
       crdebug("WARNING: multiple ribbon constructions?");
     }
+
+    // TODO restore this
+    this._stripquota = 4;
   }
 
   override addWidget(widget: Widget, options?: RibbonPanel.IAddOptions): void {
+
+    this.autoAdjustRibbonTailLength();
+
     // TODO logic based on where to put the widget
-    super.addWidget(widget);
+    let strip = this._rightmost_contentful_strip;
+    if (!strip.has_empty_patch()) {
+      strip = this.get_sibling(strip, 'right');
+    }
+    strip.addWidget(widget);
+
+    // super.addWidget(widget);
     this.widgetAdded.emit(widget);
+    crdebug("RibbonPanel Added widget", widget);
   }
 
   // TODO is this actually an override?
@@ -128,8 +142,82 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     // TODO focus the widget, scrolling, etc...
     crdebug("RibbonPanel activateWidget", widget);
     // super.activate();
+    // TODO column's activate first
     widget.activate();
     this.widgetActivated.emit(widget);
+  }
+
+  protected createNewRibbonStrip(
+    index?: int | undefined, options?: RibbonStrip.IOptions
+  ) {
+    if (index === undefined) {
+      // append to ribbon
+      let new_strip = new CodeRibbonTheiaRibbonStrip();
+      super.addWidget(new_strip);
+      return new_strip;
+    }
+    else {
+      console.error("not yet, TODO");
+    }
+  }
+
+  protected autoAdjustRibbonTailLength() {
+    crdebug("doin some work...");
+
+    let strips = this._strips;
+    if (strips.length < 1) {
+      // create first RibbonStrip
+      crdebug("Creating first Strip in Ribbon...");
+      let new_strip = this.createNewRibbonStrip();
+    }
+
+    let rightmost_strip = this._strips[this._strips.length-1];
+    if (rightmost_strip.contentful_size) {
+      let new_strip = this.createNewRibbonStrip();
+    }
+  }
+
+  protected get _rightmost_contentful_strip() {
+    if (this._strips.length == 0) return undefined;
+
+    let strip = undefined;
+    for (let i=this._strips.length-1; i >= 0; i--) {
+      strip = this._strips[i];
+      if (strip.contentful_size) {
+        break;
+      }
+    }
+
+    return strip;
+  }
+
+  get_sibling(ref: CodeRibbonTheiaRibbonStrip, side) {
+    const ref_idx = this._strips.indexOf(ref);
+    if (ref_idx == -1) {
+      crdebug("get_sibling: ref passed not in strips?", ref);
+      return undefined;
+    }
+
+    switch (side) {
+      case 'before':
+      case 'left':
+        if (ref_idx <= 0) {
+          return undefined;
+        }
+        return this._strips[ref_idx - 1];
+      case 'after':
+      case 'right':
+        if ((ref_idx + 1) >= this._strips.length) {
+          return undefined;
+        }
+        return this._strips[ref_idx + 1];
+      default:
+        throw new Error("get_sibling invalid side:", side);
+    }
+  }
+
+  protected get _strips() {
+    return (this.layout as BoxLayout).widgets;
   }
 
   // NOTE === phosphor DockPanel API compatility section === NOTE //
@@ -148,7 +236,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
   }
 
   widgets(): IIterator<Widget> {
-    // TODO iterate widgets in order of ribbon layout
+    // TODO iterate widgets in order of ribbon layout from within strips
     return (this.layout as BoxLayout).widgets;
   }
 
@@ -161,6 +249,14 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
   readonly _layoutModified = new Signal<this>(this);
   get layoutModified() {
     return this._layoutModified;
+  }
+
+  // overriding BoxPanel's p-BoxPanel-child
+  override onChildAdded(msg) {
+    msg.child.addClass('p-RibbonPanel-child');
+  }
+  override onChildRemoved(msg) {
+    msg.child.removeClass('p-RibbonPanel-child');
   }
 
   // NOTE === theia DockPanel API compatility section === NOTE //
