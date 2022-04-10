@@ -3,7 +3,7 @@ import { injectable, inject, postConstruct } from '@theia/core/shared/inversify'
 import { Signal } from '@phosphor/signaling';
 import {
   TabBar, Widget, Title,
-  DockPanel, BoxPanel,
+  DockPanel, BoxPanel, Panel,
   DockLayout, BoxLayout,
 } from '@phosphor/widgets';
 import {
@@ -26,9 +26,12 @@ import {
 
 import { crdebug } from './CodeRibbon-logger';
 import { CodeRibbonTheiaRibbonStrip } from './cr-ribbon-strip';
+import { CodeRibbonTheiaRibbonLayout } from './cr-ribbon-layout';
 
 // was not exported from TheiaDockPanel for some reason?
 const VISIBLE_MENU_MAXIMIZED_CLASS = 'theia-visible-menu-maximized';
+
+const RibbonLayout = CodeRibbonTheiaRibbonLayout;
 
 
 export
@@ -74,6 +77,13 @@ namespace RibbonPanel {
      */
     useEmpty?: boolean;
   }
+  export
+  interface IOptions {
+    direction?: Direction; // only horizontal
+    alignment?: Alignment; // only ...
+    spacing?: number;
+    layout?: RibbonLayout;
+  }
 }
 
 // Main Ribbon View replacement
@@ -99,10 +109,16 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
   protected readonly onDidToggleMaximizedEmitter = new Emitter<Widget>();
   readonly onDidToggleMaximized = this.onDidToggleMaximizedEmitter.event;
 
-  constructor(options?: BoxPanel.IOptions,
+  constructor(options?: RibbonPanel.IOptions,
     @inject(CorePreferences) protected readonly preferences?: CorePreferences,
   ) {
-    super(options);
+    super({ layout: Private.createLayout(options) });
+    // Replaced super call with super.super,
+    // Panel.prototype.constructor.call(
+    //   this, {layout: Private.createLayout(options)}
+    // );
+    this.addClass('p-RibbonPanel');
+
     crdebug("Ribbon constructor:", this, options);
     // if (preferences) {
     //   preferences.onPreferenceChanged(preference => {
@@ -135,6 +151,8 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     // super.addWidget(widget);
     this.widgetAdded.emit(widget);
     crdebug("RibbonPanel Added widget", widget);
+
+    this.autoAdjustRibbonTailLength();
   }
 
   // TODO is this actually an override?
@@ -158,6 +176,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     }
     else {
       console.error("not yet, TODO");
+      throw Error("NotYetImplemented");
     }
   }
 
@@ -217,7 +236,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
   }
 
   protected get _strips() {
-    return (this.layout as BoxLayout).widgets;
+    return (this.layout as RibbonLayout).widgets;
   }
 
   // NOTE === phosphor DockPanel API compatility section === NOTE //
@@ -231,13 +250,13 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
    *
    * @param  config The layout configuration to restore
    */
-  restoreLayout(config: BoxLayout.ILayoutConfig): void {
+  restoreLayout(config: RibbonLayout.ILayoutConfig): void {
     // TODO
   }
 
-  widgets(): IIterator<Widget> {
+  override widgets(): IIterator<Widget> {
     // TODO iterate widgets in order of ribbon layout from within strips
-    return (this.layout as BoxLayout).widgets;
+    return (this.layout as RibbonLayout).widgets;
   }
 
   tabBars(): IIterator<TabBar<Widget>> {
@@ -337,7 +356,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
 
   // TODO tab bar removal
   nextTabBarInPanel(tabBar: TabBar<Widget>): TabBar<Widget> | undefined {
-    const tabBars = toArray(this.tabBars()):
+    const tabBars = toArray(this.tabBars());
     const index = tabBars.indexOf(tabBar);
     if (index !== -1) {
       return tabBars[index + 1];
@@ -401,7 +420,10 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
 
     // TODO NOTE mod to BoxLayout?
     const layout = this.layout;
-    if (layout instanceof DockLayout || layout instanceof BoxLayout) {
+    if (
+      layout instanceof DockLayout || layout instanceof BoxLayout ||
+      layout instanceof RibbonLayout
+    ) {
       crdebug("in toggleMaximized, layout is", layout);
 
       const onResize = layout['onResize'];
@@ -418,14 +440,11 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     this.toDisposeOnToggleMaximized.push(Disposable.create(() => this.widgetRemoved.disconnect(removedListener)));
   }
 
-  protected maximizedElement: HTMLElement | undefined;
-  protected getMaximizedElement(): HTMLElement {
-    if (!this.maximizedElement) {
-      this.maximizedElement = document.createElement('div');
-      this.maximizedElement.style.display = 'none';
-      document.body.appendChild(this.maximizedElement);
-    }
-    return this.maximizedElement;
-  }
+}
 
+namespace Private {
+  export
+  function createLayout(options: RibbonPanel.IOptions): RibbonLayout {
+    return options.layout || new RibbonLayout(options);
+  }
 }

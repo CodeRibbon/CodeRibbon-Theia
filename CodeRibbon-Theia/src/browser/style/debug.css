@@ -1,4 +1,38 @@
-
 .p-RibbonStrip-child {
   border: 2px solid rebeccapurple;
+}
+
+.p-RibbonStrip {
+  border: 2px solid darkred;
+}
+
+.p-RibbonStrip:after {
+  content: "RibbonStrip";
+  bottom: 0px;
+  position: absolute;
+  right: 0em;
+  background: darkred;
+  border: 4px solid darkred;
+  border-radius: 8px 0px 0px 0px;
+  font-weight: 700;
+}
+
+.p-RibbonStrip-child:after {
+  content: "Patch";
+  top: 0px;
+  position: absolute;
+  right: 0em;
+  background: rebeccapurple;
+  border: 4px solid rebeccapurple;
+  border-radius: 0px 0px 0px 8px;
+  font-weight: 700;
+}
+
+#theia-top-panel:after {
+  content: "Early Development Debugging Build";
+  position: absolute;
+  right: 2em;
+  top: 20%;
+  text-transform: uppercase;
+  border: 2px red dashed;
 }
