@@ -76,17 +76,19 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
       sizer.stretch = BoxLayout.getStretch(item.widget);
 
       // Update the sizer limits and computed min size.
-      if (horz) {
-        sizer.minSize = item.minWidth;
-        sizer.maxSize = item.maxWidth;
-        minW += item.minWidth;
-        minH = Math.max(minH, item.minHeight);
-      } else {
-        sizer.minSize = item.minHeight;
-        sizer.maxSize = item.maxHeight;
-        minH += item.minHeight;
-        minW = Math.max(minW, item.minWidth);
-      }
+      sizer.minSize = 400;
+      sizer.maxSize = 500;
+      // if (horz) {
+      //   sizer.minSize = item.minWidth;
+      //   sizer.maxSize = item.maxWidth;
+      //   minW += item.minWidth;
+      //   minH = Math.max(minH, item.minHeight);
+      // } else {
+      //   sizer.minSize = item.minHeight;
+      //   sizer.maxSize = item.maxHeight;
+      //   minH += item.minHeight;
+      //   minW = Math.max(minW, item.minWidth);
+      // }
     }
 
     // Update the box sizing and add it to the computed min size.
