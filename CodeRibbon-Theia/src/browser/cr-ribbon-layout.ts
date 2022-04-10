@@ -37,8 +37,34 @@ import { crdebug } from './CodeRibbon-logger';
 @injectable()
 export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
 
+  // Horizontal Patches Per Screen
+  private _hpps: int = 2;
+  set hpps(value: int): void {
+    crdebug("set hpps to", value);
+    this._hpps = value;
+
+    // refit
+  }
+
+  get hpps(): int {
+    return this._hpps;
+  }
+
+  get patchWidth(): number {
+    return (this.parent.node?.clientWidth / this.hpps);
+  }
+
+  // NOTE === changing functionality of BoxLayout
+
+  protected onResize(msg: Widget.ResizeMessage): void {
+    if (this.parent!.isVisible) {
+      this.parent!.fit();
+      // this._update(msg.width, msg.height);
+    }
+  }
+
   private override _fit(): void {
-    crdebug("RibbonLayout _fit", this);
+    crdebug("RibbonLayout _fit");
 
     // Compute the visible item count.
     let nVisible = 0;
@@ -76,8 +102,9 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
       sizer.stretch = BoxLayout.getStretch(item.widget);
 
       // Update the sizer limits and computed min size.
-      sizer.minSize = 400;
-      sizer.maxSize = 500;
+      sizer.minSize = sizer.maxSize = this.patchWidth;
+      minW += item.minWidth;
+      minH = Math.max(minH, item.minHeight);
       // if (horz) {
       //   sizer.minSize = item.minWidth;
       //   sizer.maxSize = item.maxWidth;
@@ -118,7 +145,7 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
   }
 
   private override _update(offsetWidth: number, offsetHeight: number): void {
-    crdebug("RibbonLayout _update", this);
+    crdebug("RibbonLayout _update");
 
     // Clear the dirty flag to indicate the update occurred.
     this._dirty = false;

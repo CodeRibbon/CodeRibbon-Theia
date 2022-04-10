@@ -136,6 +136,11 @@ export class CodeRibbonTheiaRibbonStrip extends BoxPanel {
     }
   }
 
+  // get ribbonOffsetLeft(): number {
+  //   let rect = this.node?.getBoundingClientRect();
+  //   let parent_rect = this.node?.offsetParent.getBoundingClientRect();
+  // }
+
   // NOTE === phosphor DockPanel API compatility section === NOTE //
   // we might want to split this into a `ImprovedBoxPanel` class instead?
   // this section is because phosphor's BoxPanel has only a tiny fraction of the

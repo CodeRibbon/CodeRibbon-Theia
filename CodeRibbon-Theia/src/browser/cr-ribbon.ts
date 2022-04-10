@@ -210,6 +210,13 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     return strip;
   }
 
+  set scrollLeft(value: number): number {
+    // TODO
+  }
+  get scrollLeft(): number {
+    return this.node?.scrollLeft;
+  }
+
   get_sibling(ref: CodeRibbonTheiaRibbonStrip, side) {
     const ref_idx = this._strips.indexOf(ref);
     if (ref_idx == -1) {
@@ -231,12 +238,94 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
         }
         return this._strips[ref_idx + 1];
       default:
-        throw new Error("get_sibling invalid side:", side);
+        throw new Error("get_sibling invalid side:" + side);
     }
   }
 
   protected get _strips() {
     return (this.layout as RibbonLayout).widgets;
+  }
+
+  scrollStripIntoView(
+    strip: CodeRibbonTheiaRibbonStrip,
+    {
+      skip_visible_check = false,
+      scroll_behavior = 'smooth',
+    }: {
+      skip_visible_check?: boolean;
+      scroll_behavior?: string;
+    }={}
+  ): Promise<boolean> {
+    const scrollFinish = new Promise<boolean>((resolve, reject) => {
+
+      if (!skip_visible_check) {
+        // TODO check if a strip is already on-screen
+      }
+
+      var timeoutHandle = undefined;
+      let cur_scroll = this.scrollLeft;
+      let scrollDiff = 0;
+
+      let container_bounds = this.node.getBoundingClientRect();
+      let strip_bounds = strip.node.getBoundingClientRect();
+
+      if (strip_bounds.right > container_bounds.right) {
+        scrollDiff = strip_bounds.right - container_bounds.right;
+      }
+      else if (strip_bounds.left < container_bounds.left) {
+        scrollDiff = strip_bounds.left - container_bounds.left;
+      }
+
+      const target_scroll = cur_scroll + scrollDiff;
+      const fixed_scroll = Number(target_scroll.toFixed());
+
+      crdebug("Scrolling", scrollDiff, "to get", strip, "into view...");
+      this.node.classList.add("cr-managed-scroll-active");
+
+      const stopScrollCallback = () => {
+        cur_scroll = this.scrollLeft;
+        cur_scroll = Number(cur_scroll.toFixed());
+        let did_achieve = true;
+        if (cur_scroll != fixed_scroll && cur_scroll+1 != fixed_scroll) {
+          did_achieve = false;
+        }
+        this.node.classList.remove("cr-managed-scroll-active");
+
+        if (did_achieve) {
+          resolve(did_achieve);
+        }
+        else {
+          // TODO check if strip is on screen, if not, reject
+          reject("failed to achieve target scroll");
+        }
+      };
+
+      const checkScroll = () => {
+        if (this.scrollLeft.toFixed() == fixed_scroll) {
+          this.node.removeEventListener('scroll', checkScroll);
+          stopScrollCallback();
+        }
+        else {
+          window.clearTimeout(timeoutHandle);
+          timeoutHandle = setTimeout(() => {
+            this.node.removeEventListener('scroll', checkScroll);
+            stopScrollCallback();
+          }, 210); // ms timeout
+        }
+      };
+
+      this.node.addEventListener('scroll', checkScroll);
+      checkScroll();
+      setTimeout(() => {
+        this.node.scrollTo({
+          left: target_scroll,
+          behavior: scroll_behavior,
+        });
+      });
+
+    });
+
+    return scrollFinish;
   }
 
   // NOTE === phosphor DockPanel API compatility section === NOTE //
