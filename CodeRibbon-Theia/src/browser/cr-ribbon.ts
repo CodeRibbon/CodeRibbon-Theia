@@ -135,6 +135,8 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
 
     // TODO restore this
     this._stripquota = 4;
+
+    this.autoAdjustRibbonTailLength();
   }
 
   override addWidget(widget: Widget, options?: RibbonPanel.IAddOptions): void {
@@ -143,6 +145,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
 
     // TODO logic based on where to put the widget
     let strip = this._rightmost_contentful_strip;
+    if (!strip) strip = this._strips[0];
     if (!strip.has_empty_patch()) {
       strip = this.get_sibling(strip, 'right');
     }
@@ -172,6 +175,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
       // append to ribbon
       let new_strip = new CodeRibbonTheiaRibbonStrip();
       super.addWidget(new_strip);
+      new_strip.init();
       return new_strip;
     }
     else {
@@ -193,6 +197,14 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     let rightmost_strip = this._strips[this._strips.length-1];
     if (rightmost_strip.contentful_size) {
       let new_strip = this.createNewRibbonStrip();
+    }
+
+    if (strips.length < this.layout.hpps) {
+      // ensure at least one screen of initial patches
+      let toAdd = this.layout.hpps - strips.length;
+      let new_strips = Array(toAdd).fill().map((_n) => {
+        this.createNewRibbonStrip();
+      });
     }
   }
 

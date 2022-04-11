@@ -25,6 +25,7 @@ import {
 } from '@theia/core/lib/browser/core-preferences';
 
 import { crdebug } from './CodeRibbon-logger';
+import { CodeRibbonTheiaPatch } from './cr-patch';
 
 
 export
@@ -105,9 +106,45 @@ export class CodeRibbonTheiaRibbonStrip extends BoxPanel {
     crdebug("RibbonStrip constructor:", this, options);
   }
 
+  init() {
+    crdebug("Strip init", this);
+
+    // while (this.widgets.length < this.vpps) {
+    for (let i = 0; i < 2; ++i) {
+      crdebug("adding patch to meet vpps ...");
+      let new_patch = this.createPatch();
+    }
+  }
+
+  get vpps(): int {
+    return 2; // TODO
+  }
+
+  protected get _patches(): Iterable<CodeRibbonTheiaPatch> {
+    // TODO filter to Patches?
+    return (this.layout as BoxLayout).widgets;
+  }
+
+  // TODO options
+  createPatch(options?: any = {}) {
+    let new_patch = new CodeRibbonTheiaPatch();
+    super.addWidget(new_patch);
+    new_patch.init();
+    return new_patch;
+  }
+
   override addWidget(widget: Widget, options?: RibbonPanel.IAddOptions): void {
     // TODO logic based on where to put the widget
-    super.addWidget(widget);
+    // super.addWidget(widget);
+
+    let target_patch = this._patches.find(patch => {
+      return patch.contentful_size == 0;
+    });
+    if (!target_patch) {
+      target_patch = this.createPatch(options);
+    }
+    target_patch.addWidget(widget);
+
     this.widgetAdded.emit(widget);
   }
 
@@ -123,7 +160,14 @@ export class CodeRibbonTheiaRibbonStrip extends BoxPanel {
 
   get contentful_size() {
     // TODO don't count cr-placeholder widgets
-    return (this.layout as BoxLayout).widgets.length;
+    // return (this.layout as BoxLayout).widgets.length;
+
+    let contentful_patches = 0;
+    this.widgets().forEach((patch) => {
+      contentful_patches += patch.contentful_size;
+    });
+
+    return contentful_patches;
   }
 
   has_empty_patch() {
