@@ -27,64 +27,13 @@ import {
 import { crdebug } from './CodeRibbon-logger';
 import { CodeRibbonTheiaRibbonStrip } from './cr-ribbon-strip';
 import { CodeRibbonTheiaRibbonLayout } from './cr-ribbon-layout';
+import { RibbonPanel } from './cr-interfaces';
 
 // was not exported from TheiaDockPanel for some reason?
 const VISIBLE_MENU_MAXIMIZED_CLASS = 'theia-visible-menu-maximized';
 
 const RibbonLayout = CodeRibbonTheiaRibbonLayout;
 
-
-export
-namespace RibbonPanel {
-  export
-  type InsertMode = (
-    // At the tail of the ribbon:
-    // the empty patch directly following the last/rightmost contentful patch
-    'ribbon-tail' |
-
-    // Place a new patch above or below the current one in this column
-    'split-down' |
-    'split-up' |
-
-    // Place a new patch at the top or bottom of this column
-    'split-top' |
-    'split-bottom' |
-
-    // Create a new column on the right or left of the current, put widget there
-    'split-right' |
-    'split-left' |
-
-    // Place the widget such that it ends up in either the right or left
-    // on-screen column, creating a new one if no empty patches are available
-    'screen-right' |
-    'screen-left'
-  )
-  export
-  interface IAddOptions {
-    /**
-     * Options for inserting a Widget onto the Ribbon, when undefined the user's
-     * preference will be used
-     */
-    mode?: InsertMode;
-    /**
-     * If a widget reference is specified here, perform the insert relative
-     * to that widget instead of the active one.
-     */
-    ref?: Widget | null;
-    /**
-     * If true, the insertion will overwrite an empty Patch if there is already
-     * one in the target insertion location
-     */
-    useEmpty?: boolean;
-  }
-  export
-  interface IOptions {
-    direction?: Direction; // only horizontal
-    alignment?: Alignment; // only ...
-    spacing?: number;
-    layout?: RibbonLayout;
-  }
-}
 
 // Main Ribbon View replacement
 // based primarily on TheiaDockPanel implementation, since that's what it replaces
@@ -258,6 +207,12 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     return (this.layout as RibbonLayout).widgets;
   }
 
+  get contentful_widgets(): Iterable<Widget> {
+    return this._strips.map(strip => {
+      return strip.contentful_widgets;
+    }).flat().filter(Boolean);
+  }
+
   scrollStripIntoView(
     strip: CodeRibbonTheiaRibbonStrip,
     {
@@ -357,7 +312,8 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
 
   override widgets(): IIterator<Widget> {
     // TODO iterate widgets in order of ribbon layout from within strips
-    return (this.layout as RibbonLayout).widgets;
+    // return (this.layout as RibbonLayout).widgets;
+    return this.contentful_widgets;
   }
 
   tabBars(): IIterator<TabBar<Widget>> {

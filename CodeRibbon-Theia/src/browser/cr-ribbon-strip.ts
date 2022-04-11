@@ -26,50 +26,8 @@ import {
 
 import { crdebug } from './CodeRibbon-logger';
 import { CodeRibbonTheiaPatch } from './cr-patch';
+import { RibbonPanel, RibbonStrip } from './cr-interfaces';
 
-
-export
-namespace RibbonStrip {
-  export
-  type InsertMode = (
-    // Place a new patch above or below the current one in this column
-    'split-down' |
-    'split-up' |
-
-    // Place a new patch at the top or bottom of this column
-    'split-top' |
-    'split-bottom' |
-
-    // Create a new column on the right or left of the current, put widget there
-    'split-right' |
-    'split-left' |
-
-    // Remove active item, replace
-    'replace-current'
-  )
-  export
-  interface IAddOptions {
-    /**
-     * Options for inserting a Widget onto the RibbonStrip
-     */
-    mode?: InsertMode;
-    /**
-     * If a widget reference is specified here, perform the insert relative
-     * to that widget instead of the active one.
-     */
-    ref?: Widget | null;
-    /**
-     * If true, the insertion will overwrite an empty Patch if there is already
-     * one in the target insertion location
-     */
-    useEmpty?: boolean;
-  }
-  export
-  interface IOptions {
-    // how many empty patches to init
-    size?: int;
-  }
-}
 
 // Main Ribbon View replacement
 // based primarily on TheiaDockPanel implementation, since that's what it replaces
@@ -168,6 +126,12 @@ export class CodeRibbonTheiaRibbonStrip extends BoxPanel {
     });
 
     return contentful_patches;
+  }
+
+  get contentful_widgets(): Iterable<Widget> {
+    return this._patches.map(patch => {
+      return patch.contentful_widget;
+    }).filter(Boolean);
   }
 
   has_empty_patch() {

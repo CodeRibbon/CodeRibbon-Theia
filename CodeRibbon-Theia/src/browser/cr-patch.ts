@@ -19,4 +19,13 @@ export class CodeRibbonTheiaPatch extends TabPanel {
   get contentful_size(): int {
     return this.widgets.length;
   }
+
+  get contentful_widget(): Widget {
+    if (this.widgets.length) {
+      return this.widgets[0];
+    }
+    else {
+      return undefined;
+    }
+  }
 }
