@@ -121,11 +121,13 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
       }
       this.scrollStripIntoView(strip).then(() => {
         widget.activate();
+        this.widgetActivated.emit(widget);
       });
     }
     else if (widget instanceof CodeRibbonTheiaRibbonStrip) {
       this.scrollStripIntoView(strip).then(() => {
         widget.activate();
+        this.widgetActivated.emit(widget);
       });
     }
     else {
@@ -138,6 +140,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
           }
           this.scrollStripIntoView(strip).then(() => {
             widget.activate();
+            this.widgetActivated.emit(widget);
           });
           break;
         }
@@ -145,11 +148,11 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
       }
       if (! w_parent.parent) {
         widget.activate();
+        this.widgetActivated.emit(widget);
         throw Error("not sure how to activate widget outside known Ribbon component", widget);
       }
     }
 
-    this.widgetActivated.emit(widget);
   }
 
   protected createNewRibbonStrip(
