@@ -30,6 +30,7 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
 
   bind(CodeRibbonApplicationShell).toSelf().inSingletonScope();
   // get rid of original ApplicationShell:
+  // @ts-ignore
   rebind(ApplicationShell).to(CodeRibbonApplicationShell).inSingletonScope();
 
   bind(CommandContribution).to(CodeRibbonTheiaCommandContribution);

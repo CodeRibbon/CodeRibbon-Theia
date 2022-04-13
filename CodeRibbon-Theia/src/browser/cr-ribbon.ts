@@ -7,13 +7,16 @@ import {
   DockLayout, BoxLayout,
 } from '@phosphor/widgets';
 import {
-  empty,
+  empty, toArray,
 } from '@phosphor/algorithm';
 import {
   MessageService,
   Emitter, environment,
   Disposable, DisposableCollection,
 } from '@theia/core/lib/common';
+import {
+  UnsafeWidgetUtilities,
+} from '@theia/core/lib/browser/widgets';
 import {
   TheiaDockPanel, BOTTOM_AREA_ID, MAIN_AREA_ID, MAXIMIZED_CLASS,
 } from '@theia/core/lib/browser/shell/theia-dock-panel';
@@ -122,12 +125,16 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
       this.scrollStripIntoView(strip).then(() => {
         widget.activate();
         this.widgetActivated.emit(widget);
+      }).catch((e) => {
+        throw Error("Failed to scrollStripIntoView", e);
       });
     }
     else if (widget instanceof CodeRibbonTheiaRibbonStrip) {
       this.scrollStripIntoView(strip).then(() => {
         widget.activate();
         this.widgetActivated.emit(widget);
+      }).catch((e) => {
+        throw Error("Failed to scrollStripIntoView", e);
       });
     }
     else {
@@ -141,6 +148,8 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
           this.scrollStripIntoView(strip).then(() => {
             widget.activate();
             this.widgetActivated.emit(widget);
+          }).catch((e) => {
+            throw Error("Failed to scrollStripIntoView", e);
           });
           break;
         }
