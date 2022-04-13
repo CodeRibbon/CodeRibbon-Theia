@@ -1,5 +1,13 @@
 {
   "private": true,
+  "name": "@coderibbon/coderibbon-theia",
+  "version": "0.0.1",
+  "license": "EPL-2.0",
+  "author": "Ben Klein <robobenklein@gmail.com>",
+  "homepage": "https://github.com/CodeRibbon/CodeRibbon-Theia",
+  "bugs": {
+    "url": "https://github.com/CodeRibbon/CodeRibbon-Theia/issues"
+  },
   "scripts": {
     "prepare": "lerna run prepare",
     "rebuild:browser": "theia rebuild:browser",
