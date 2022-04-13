@@ -25,6 +25,7 @@ import {
 } from '@theia/core/lib/browser/core-preferences';
 
 import { crdebug } from './CodeRibbon-logger';
+import { CodeRibbonTheiaPatch } from './cr-patch';
 import { CodeRibbonTheiaRibbonStrip } from './cr-ribbon-strip';
 import { CodeRibbonTheiaRibbonLayout } from './cr-ribbon-layout';
 import { RibbonPanel } from './cr-interfaces';
@@ -113,7 +114,41 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     crdebug("RibbonPanel activateWidget", widget);
     // super.activate();
     // TODO column's activate first
-    widget.activate();
+    if (widget instanceof CodeRibbonTheiaPatch) {
+      let strip = widget.parent;
+      if (!strip instanceof CodeRibbonTheiaRibbonStrip) {
+        throw Error("Patch not parented by Strip", widget);
+      }
+      this.scrollStripIntoView(strip).then(() => {
+        widget.activate();
+      });
+    }
+    else if (widget instanceof CodeRibbonTheiaRibbonStrip) {
+      this.scrollStripIntoView(strip).then(() => {
+        widget.activate();
+      });
+    }
+    else {
+      let w_parent = widget.parent;
+      while (w_parent.parent) {
+        if (w_parent instanceof CodeRibbonTheiaPatch) {
+          let strip = w_parent.parent;
+          if (!strip instanceof CodeRibbonTheiaRibbonStrip) {
+            throw Error("Patch not parented by Strip", w_parent);
+          }
+          this.scrollStripIntoView(strip).then(() => {
+            widget.activate();
+          });
+          break;
+        }
+        w_parent = w_parent.parent;
+      }
+      if (! w_parent.parent) {
+        widget.activate();
+        throw Error("not sure how to activate widget outside known Ribbon component", widget);
+      }
+    }
+
     this.widgetActivated.emit(widget);
   }
 

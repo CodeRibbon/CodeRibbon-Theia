@@ -12,11 +12,17 @@ import { crdebug } from './CodeRibbon-logger';
 
 export class CodeRibbonTheiaPatch extends TabPanel {
 
+  constructor(options? = {}) {
+    super();
+    this.addClass('p-RibbonPatch');
+    crdebug("Patch constructor", this);
+  }
+
   init() {
     crdebug("Patch init", this);
   }
 
-  get contentful_size(): int {
+  get contentful_size(): integer {
     return this.widgets.length;
   }
 
