@@ -1,6 +1,5 @@
 {
   "private": true,
-  "name": "@coderibbon/coderibbon-theia",
   "version": "0.0.1",
   "license": "EPL-2.0",
   "author": "Ben Klein <robobenklein@gmail.com>",
