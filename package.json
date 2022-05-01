@@ -22,6 +22,7 @@
   "workspaces": [
     "CodeRibbon-Theia",
     "browser-app",
+    "browser-ext-app",
     "electron-app"
   ]
 }
