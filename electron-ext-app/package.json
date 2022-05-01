@@ -1,0 +1,36 @@
+{
+  "private": true,
+  "name": "electron-ext-app",
+  "version": "0.0.1-0",
+  "dependencies": {
+    "@theia/core": "latest",
+    "@theia/editor": "latest",
+    "@theia/electron": "latest",
+    "@theia/filesystem": "latest",
+    "@theia/markers": "latest",
+    "@theia/messages": "latest",
+    "@theia/monaco": "latest",
+    "@theia/navigator": "latest",
+    "@theia/preferences": "latest",
+    "@theia/process": "latest",
+    "@theia/terminal": "latest",
+    "@theia/workspace": "latest",
+    "@theia/vsx-registry": "latest",
+    "@theia/plugin-ext": "latest",
+    "@theia/plugin-ext-vscode": "latest",
+    "@theia/plugin-dev": "latest",
+    "coderibbon-theia": "^0.0.1-0"
+  },
+  "devDependencies": {
+    "@theia/cli": "latest",
+    "electron": "^15.3.5"
+  },
+  "scripts": {
+    "prepare": "theia build --mode development",
+    "start": "theia start",
+    "watch": "theia build --watch --mode development"
+  },
+  "theia": {
+    "target": "electron"
+  }
+}

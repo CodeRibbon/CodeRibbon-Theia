@@ -14,6 +14,7 @@
     "start:browser": "yarn rebuild:browser && yarn --cwd browser-app start",
     "start:browser-ext": "yarn rebuild:browser && yarn --cwd browser-ext-app start",
     "start:electron": "yarn rebuild:electron && yarn --cwd electron-app start",
+    "start:electron-ext": "yarn rebuild:electron && yarn --cwd electron-ext-app start",
     "watch": "lerna run --parallel watch"
   },
   "devDependencies": {
@@ -23,6 +24,7 @@
     "CodeRibbon-Theia",
     "browser-app",
     "browser-ext-app",
-    "electron-app"
+    "electron-app",
+    "electron-ext-app"
   ]
 }
