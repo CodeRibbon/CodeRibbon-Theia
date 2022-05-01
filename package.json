@@ -12,6 +12,7 @@
     "rebuild:browser": "theia rebuild:browser",
     "rebuild:electron": "theia rebuild:electron",
     "start:browser": "yarn rebuild:browser && yarn --cwd browser-app start",
+    "start:browser-ext": "yarn rebuild:browser && yarn --cwd browser-ext-app start",
     "start:electron": "yarn rebuild:electron && yarn --cwd electron-app start",
     "watch": "lerna run --parallel watch"
   },

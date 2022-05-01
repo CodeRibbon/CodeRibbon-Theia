@@ -14,7 +14,7 @@
     "@theia/process": "latest",
     "@theia/terminal": "latest",
     "@theia/workspace": "latest",
-    "CodeRibbon-Theia": "^0.0.1-0"
+    "coderibbon-theia": "^0.0.1-0"
   },
   "devDependencies": {
     "@theia/cli": "latest"

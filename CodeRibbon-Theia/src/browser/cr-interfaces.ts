@@ -1,4 +1,11 @@
 
+import {
+  Widget,
+  BoxLayout,
+} from '@phosphor/widgets';
+
+import { CodeRibbonTheiaRibbonLayout } from './cr-ribbon-layout';
+
 export namespace RibbonPanel {
   export type InsertMode = (
     // At the tail of the ribbon:
@@ -44,10 +51,15 @@ export namespace RibbonPanel {
     preventFocus?: boolean
   }
   export interface IOptions {
-    direction?: Direction; // only horizontal
-    alignment?: Alignment; // only ...
+    direction?: BoxLayout.Direction; // only horizontal
+    alignment?: BoxLayout.Alignment; // only ...
     spacing?: number;
-    layout?: RibbonLayout;
+    layout?: CodeRibbonTheiaRibbonLayout;
+  }
+  export interface ILayoutConfig {
+    // TODO actual definition of serializable layout config
+    // NOTE probably a sequence of RibbonStrip.ILayoutConfig ???
+    main: any | null;
   }
 }
 
@@ -86,6 +98,10 @@ export namespace RibbonStrip {
   }
   export interface IOptions {
     // how many empty patches to init
-    size?: int;
+    size?: number;
+  }
+  export interface ILayoutConfig {
+    // main: ITabAreaConfig | ISplitAreaConfig | null;
+    main: any;
   }
 }

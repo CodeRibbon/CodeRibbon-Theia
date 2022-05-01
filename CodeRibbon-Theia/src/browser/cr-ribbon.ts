@@ -7,8 +7,11 @@ import {
   DockLayout, BoxLayout,
 } from '@phosphor/widgets';
 import {
-  empty, toArray,
+  empty, toArray, ArrayExt, IIterator, find, iter,
 } from '@phosphor/algorithm';
+import {
+  MessageLoop,
+} from '@phosphor/messaging';
 import {
   MessageService,
   Emitter, environment,
@@ -31,12 +34,10 @@ import { crdebug } from './CodeRibbon-logger';
 import { CodeRibbonTheiaPatch } from './cr-patch';
 import { CodeRibbonTheiaRibbonStrip } from './cr-ribbon-strip';
 import { CodeRibbonTheiaRibbonLayout } from './cr-ribbon-layout';
-import { RibbonPanel } from './cr-interfaces';
+import { RibbonPanel, RibbonStrip } from './cr-interfaces';
 
 // was not exported from TheiaDockPanel for some reason?
 const VISIBLE_MENU_MAXIMIZED_CLASS = 'theia-visible-menu-maximized';
-
-const RibbonLayout = CodeRibbonTheiaRibbonLayout;
 
 
 // Main Ribbon View replacement
@@ -62,9 +63,12 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
   protected readonly onDidToggleMaximizedEmitter = new Emitter<Widget>();
   readonly onDidToggleMaximized = this.onDidToggleMaximizedEmitter.event;
 
+  protected _stripquota: number;
+
   constructor(options?: RibbonPanel.IOptions,
     @inject(CorePreferences) protected readonly preferences?: CorePreferences,
   ) {
+    // @ts-expect-error TS2322: Type 'CodeRibbonTheiaRibbonLayout' is not assignable to type 'BoxLayout'.
     super({ layout: Private.createLayout(options) });
     // Replaced super call with super.super,
     // Panel.prototype.constructor.call(
@@ -79,7 +83,9 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     //   });
     // }
     // TODO debugging only
+    // @ts-expect-error TS2339: Property does not exist on type
     if (!window.cr_ribbon) {
+      // @ts-expect-error TS2339: Property does not exist on type
       window.cr_ribbon = this;
     }
     else {
@@ -100,9 +106,9 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     let strip = this._rightmost_contentful_strip;
     if (!strip) strip = this._strips[0];
     if (!strip.has_empty_patch()) {
-      strip = this.get_sibling(strip, 'right');
+      strip = this.get_sibling(strip!, 'right');
     }
-    strip.addWidget(widget);
+    strip!.addWidget(widget);
 
     // super.addWidget(widget);
     this.widgetAdded.emit(widget);
@@ -119,53 +125,59 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     // TODO column's activate first
     if (widget instanceof CodeRibbonTheiaPatch) {
       let strip = widget.parent;
-      if (!strip instanceof CodeRibbonTheiaRibbonStrip) {
-        throw Error("Patch not parented by Strip", widget);
+      if (!(strip instanceof CodeRibbonTheiaRibbonStrip)) {
+        crdebug("patch not parented by strip:", widget);
+        throw Error("Patch not parented by Strip");
       }
-      this.scrollStripIntoView(strip).then(() => {
+      this.scrollStripIntoView((strip as CodeRibbonTheiaRibbonStrip)).then(() => {
         widget.activate();
         this.widgetActivated.emit(widget);
       }).catch((e) => {
-        throw Error("Failed to scrollStripIntoView", e);
+        crdebug("scrollStripIntoView fail reason:", e);
+        throw Error("Failed to scrollStripIntoView");
       });
     }
     else if (widget instanceof CodeRibbonTheiaRibbonStrip) {
-      this.scrollStripIntoView(strip).then(() => {
+      this.scrollStripIntoView(widget).then(() => {
         widget.activate();
         this.widgetActivated.emit(widget);
       }).catch((e) => {
-        throw Error("Failed to scrollStripIntoView", e);
+        crdebug("scrollStripIntoView fail reason:", e);
+        throw Error("Failed to scrollStripIntoView");
       });
     }
     else {
       let w_parent = widget.parent;
-      while (w_parent.parent) {
+      while (w_parent!.parent!) {
         if (w_parent instanceof CodeRibbonTheiaPatch) {
           let strip = w_parent.parent;
-          if (!strip instanceof CodeRibbonTheiaRibbonStrip) {
-            throw Error("Patch not parented by Strip", w_parent);
+          if (!(strip instanceof CodeRibbonTheiaRibbonStrip)) {
+            crdebug("patch without strip as parent:", w_parent);
+            throw Error("Patch not parented by Strip");
           }
-          this.scrollStripIntoView(strip).then(() => {
+          this.scrollStripIntoView((strip as CodeRibbonTheiaRibbonStrip)).then(() => {
             widget.activate();
             this.widgetActivated.emit(widget);
           }).catch((e) => {
-            throw Error("Failed to scrollStripIntoView", e);
+            crdebug("scrollStripIntoView failure:", e);
+            throw Error("Failed to scrollStripIntoView");
           });
           break;
         }
-        w_parent = w_parent.parent;
+        w_parent = w_parent!.parent;
       }
-      if (! w_parent.parent) {
+      if (! w_parent!.parent) {
         widget.activate();
         this.widgetActivated.emit(widget);
-        throw Error("not sure how to activate widget outside known Ribbon component", widget);
+        crdebug("error on widget:", widget);
+        throw Error("not sure how to activate widget outside known Ribbon component");
       }
     }
 
   }
 
   protected createNewRibbonStrip(
-    index?: int | undefined, options?: RibbonStrip.IOptions
+    index?: number | undefined, options?: RibbonStrip.IOptions
   ) {
     if (index === undefined) {
       // append to ribbon
@@ -195,16 +207,16 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
       let new_strip = this.createNewRibbonStrip();
     }
 
-    if (strips.length < this.layout.hpps) {
+    if (strips.length < (this.layout as CodeRibbonTheiaRibbonLayout).hpps) {
       // ensure at least one screen of initial patches
-      let toAdd = this.layout.hpps - strips.length;
-      let new_strips = Array(toAdd).fill().map((_n) => {
+      let toAdd = (this.layout as CodeRibbonTheiaRibbonLayout).hpps - strips.length;
+      let new_strips = Array(toAdd).fill(0).map((_n) => {
         this.createNewRibbonStrip();
       });
     }
   }
 
-  protected get _rightmost_contentful_strip() {
+  protected get _rightmost_contentful_strip(): CodeRibbonTheiaRibbonStrip | undefined {
     if (this._strips.length == 0) return undefined;
 
     let strip = undefined;
@@ -218,14 +230,14 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     return strip;
   }
 
-  set scrollLeft(value: number): number {
+  set scrollLeft(value: number) {
     // TODO
   }
   get scrollLeft(): number {
     return this.node?.scrollLeft;
   }
 
-  get_sibling(ref: CodeRibbonTheiaRibbonStrip, side) {
+  get_sibling(ref: CodeRibbonTheiaRibbonStrip, side: string) {
     const ref_idx = this._strips.indexOf(ref);
     if (ref_idx == -1) {
       crdebug("get_sibling: ref passed not in strips?", ref);
@@ -250,14 +262,17 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     }
   }
 
-  protected get _strips() {
-    return (this.layout as RibbonLayout).widgets;
+  protected get _strips(): readonly CodeRibbonTheiaRibbonStrip[] {
+    return (
+      (this.layout as CodeRibbonTheiaRibbonLayout).widgets as readonly CodeRibbonTheiaRibbonStrip[]
+    );
   }
 
-  get contentful_widgets(): Iterable<Widget> {
-    return this._strips.map(strip => {
+  get contentful_widgets(): readonly Widget[] {
+    // TODO TypeScript can't understand flat() operation???
+    return (this._strips.map((strip: CodeRibbonTheiaRibbonStrip) => {
       return strip.contentful_widgets;
-    }).flat().filter(Boolean);
+    }).flat().filter(Boolean) as readonly Widget[]);
   }
 
   scrollStripIntoView(
@@ -267,7 +282,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
       scroll_behavior = 'smooth',
     }: {
       skip_visible_check?: boolean;
-      scroll_behavior?: string;
+      scroll_behavior?: ScrollBehavior;
     }={}
   ): Promise<boolean> {
     const scrollFinish = new Promise<boolean>((resolve, reject) => {
@@ -276,7 +291,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
         // TODO check if a strip is already on-screen
       }
 
-      var timeoutHandle = undefined;
+      var timeoutHandle: number | undefined = undefined;
       let cur_scroll = this.scrollLeft;
       let scrollDiff = 0;
 
@@ -315,13 +330,13 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
       };
 
       const checkScroll = () => {
-        if (this.scrollLeft.toFixed() == fixed_scroll) {
+        if (Number(this.scrollLeft.toFixed()) == fixed_scroll) {
           this.node.removeEventListener('scroll', checkScroll);
           stopScrollCallback();
         }
         else {
           window.clearTimeout(timeoutHandle);
-          timeoutHandle = setTimeout(() => {
+          timeoutHandle = window.setTimeout(() => {
             this.node.removeEventListener('scroll', checkScroll);
             stopScrollCallback();
           }, 210); // ms timeout
@@ -342,10 +357,10 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     return scrollFinish;
   }
 
-  // NOTE === phosphor DockPanel API compatility section === NOTE //
-  // we might want to split this into a `ImprovedBoxPanel` class instead?
-  // this section is because phosphor's BoxPanel has only a tiny fraction of the
-  // features that DockPanel has, and they're expected by Theia
+  saveLayout(): RibbonPanel.ILayoutConfig {
+    crdebug("RibbonPanel saves layout");
+    return (this.layout as CodeRibbonTheiaRibbonLayout).saveLayout();
+  }
 
   /**
    * Here to mimick phosphor restoration
@@ -353,34 +368,45 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
    *
    * @param  config The layout configuration to restore
    */
-  restoreLayout(config: RibbonLayout.ILayoutConfig): void {
+  restoreLayout(config: RibbonPanel.ILayoutConfig): void {
     // TODO
+    crdebug("RibbonPanel restores layout with config", config);
+
+    // MessageLoop.postMessage(this, Private.LayoutModified);
   }
 
+  // NOTE === phosphor DockPanel API compatility section === NOTE //
+  // we might want to split this into a `ImprovedBoxPanel` class instead?
+  // this section is because phosphor's BoxPanel has only a tiny fraction of the
+  // features that DockPanel has, and they're expected by Theia
+
+  // @ts-expect-error TS2425: Class defines instance member property 'widgets', but extended class defines it as instance member function.
   override widgets(): IIterator<Widget> {
     // TODO iterate widgets in order of ribbon layout from within strips
-    // return (this.layout as RibbonLayout).widgets;
-    return this.contentful_widgets;
+    // return (this.layout as CodeRibbonTheiaRibbonLayout).widgets;
+    return iter(this.contentful_widgets);
   }
 
   tabBars(): IIterator<TabBar<Widget>> {
     // TODO removal of tabBars
-    return this._root ? this._root.iterTabBars() : empty<TabBar<Widget>>();
+    // return this._root ? this._root.iterTabBars() : empty<TabBar<Widget>>();
+    return empty<TabBar<Widget>>();
   }
 
   // TODO signal connections from columns
-  readonly _layoutModified = new Signal<this>(this);
+  private _layoutModified = new Signal<this, void>(this);
   get layoutModified() {
     return this._layoutModified;
   }
 
   // overriding BoxPanel's p-BoxPanel-child
-  override onChildAdded(msg) {
+  override onChildAdded(msg: Widget.ChildMessage) {
     msg.child.addClass('p-RibbonPanel-child');
   }
-  override onChildRemoved(msg) {
-    msg.child.removeClass('p-RibbonPanel-child');
-  }
+  // NOTE redefined later
+  // override onChildRemoved(msg) {
+  //   msg.child.removeClass('p-RibbonPanel-child');
+  // }
 
   // NOTE === theia DockPanel API compatility section === NOTE //
 
@@ -443,6 +469,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
 
   protected override onChildRemoved(msg: Widget.ChildMessage): void {
     super.onChildRemoved(msg);
+    msg.child.removeClass('p-RibbonPanel-child');
     this.widgetRemoved.emit(msg.child);
   }
 
@@ -526,12 +553,16 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     const layout = this.layout;
     if (
       layout instanceof DockLayout || layout instanceof BoxLayout ||
-      layout instanceof RibbonLayout
+      layout instanceof CodeRibbonTheiaRibbonLayout
     ) {
       crdebug("in toggleMaximized, layout is", layout);
 
-      const onResize = layout['onResize'];
+      // NOTE temporary store
+      // @ts-expect-error TS7053: Element implicitly has an 'any' type
+      const onResize: any = layout['onResize'];
+      // @ts-expect-error TS7053: Element implicitly has an 'any' type
       layout['onResize'] = () => onResize.bind(layout)(Widget.ResizeMessage.UnknownSize);
+      // @ts-expect-error TS7053: Element implicitly has an 'any' type
       this.toDisposeOnToggleMaximized.push(Disposable.create(() => layout['onResize'] = onResize));
     }
 
@@ -548,7 +579,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
 
 namespace Private {
   export
-  function createLayout(options: RibbonPanel.IOptions): RibbonLayout {
-    return options.layout || new RibbonLayout(options);
+  function createLayout(options: RibbonPanel.IOptions): CodeRibbonTheiaRibbonLayout {
+    return options.layout || new CodeRibbonTheiaRibbonLayout(options);
   }
 }

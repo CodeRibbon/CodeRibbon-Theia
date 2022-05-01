@@ -12,7 +12,7 @@ import { crdebug } from './CodeRibbon-logger';
 
 export class CodeRibbonTheiaPatch extends TabPanel {
 
-  constructor(options? = {}) {
+  constructor(options = {}) {
     super();
     this.addClass('p-RibbonPatch');
     crdebug("Patch constructor", this);
@@ -22,11 +22,11 @@ export class CodeRibbonTheiaPatch extends TabPanel {
     crdebug("Patch init", this);
   }
 
-  get contentful_size(): integer {
+  get contentful_size(): number {
     return this.widgets.length;
   }
 
-  get contentful_widget(): Widget {
+  get contentful_widget(): Widget | undefined {
     if (this.widgets.length) {
       return this.widgets[0];
     }

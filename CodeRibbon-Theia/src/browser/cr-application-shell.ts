@@ -44,6 +44,7 @@ const BOTTOM_AREA_CLASS = 'theia-app-bottom';
 @injectable()
 export class CodeRibbonApplicationShell extends ApplicationShell {
 
+  // @ts-expect-error TS2416: Property in type is not assignable to the same property in base type
   override mainPanel: CodeRibbonTheiaRibbonPanel;
 
   /**
@@ -51,6 +52,7 @@ export class CodeRibbonApplicationShell extends ApplicationShell {
    *
    * Override the default from using TheiaDockPanel to CodeRibbonTheiaRibbonPanel
    */
+  // @ts-expect-error TS2416: Property in type is not assignable to the same property in base type
   override createMainPanel(): CodeRibbonTheiaRibbonPanel {
     crdebug("CRAS: overridden createMainPanel start");
     const renderer = this.dockPanelRendererFactory();

@@ -7,7 +7,7 @@ import {
   DockLayout, BoxLayout,
 } from '@phosphor/widgets';
 import {
-  empty,
+  empty, IIterator,
 } from '@phosphor/algorithm';
 import {
   MessageService,
@@ -74,17 +74,19 @@ export class CodeRibbonTheiaRibbonStrip extends BoxPanel {
     }
   }
 
-  get vpps(): int {
+  get vpps(): number {
     return 2; // TODO
   }
 
-  protected get _patches(): Iterable<CodeRibbonTheiaPatch> {
+  protected get _patches(): readonly CodeRibbonTheiaPatch[] {
     // TODO filter to Patches?
-    return (this.layout as BoxLayout).widgets;
+    // TODO error below avoidable?
+    // ts-expect-error TS2322: Type 'readonly Widget[]' is not assignable to type 'Iterable<CodeRibbonTheiaPatch>'.
+    return ((this.layout as BoxLayout).widgets as readonly CodeRibbonTheiaPatch[]);
   }
 
   // TODO options
-  createPatch(options?: any = {}) {
+  createPatch(options: any = {}) {
     let new_patch = new CodeRibbonTheiaPatch();
     super.addWidget(new_patch);
     new_patch.init();
@@ -121,17 +123,17 @@ export class CodeRibbonTheiaRibbonStrip extends BoxPanel {
     // return (this.layout as BoxLayout).widgets.length;
 
     let contentful_patches = 0;
-    this.widgets().forEach((patch) => {
+    this._patches.forEach((patch: CodeRibbonTheiaPatch) => {
       contentful_patches += patch.contentful_size;
     });
 
     return contentful_patches;
   }
 
-  get contentful_widgets(): Iterable<Widget> {
-    return this._patches.map(patch => {
+  get contentful_widgets(): readonly Widget[] {
+    return (this._patches.map(patch => {
       return patch.contentful_widget;
-    }).filter(Boolean);
+    }).filter(Boolean) as Widget[]);
   }
 
   has_empty_patch() {
@@ -160,28 +162,32 @@ export class CodeRibbonTheiaRibbonStrip extends BoxPanel {
    *
    * @param  config The layout configuration to restore
    */
-  restoreLayout(config: BoxLayout.ILayoutConfig): void {
+  restoreLayout(config: RibbonStrip.ILayoutConfig): void {
     // TODO
+    crdebug("RibbonStrip restoreLayout:", config);
   }
 
-  widgets(): IIterator<Widget> {
+  // @ts-expect-error TS2425: Class defines instance member property 'widgets', but extended class defines it as instance member function.
+  widgets(): readonly Widget[] {
+  // widgets(): IIterator<Widget> {
     // TODO iterate widgets in order of ribbon layout
     return (this.layout as BoxLayout).widgets;
   }
 
   // TODO signal connections from columns
-  readonly _layoutModified = new Signal<this>(this);
+  readonly _layoutModified = new Signal<this, void>(this);
   get layoutModified() {
     return this._layoutModified;
   }
 
   // overriding BoxPanel's p-BoxPanel-child
-  override onChildAdded(msg) {
+  override onChildAdded(msg: Widget.ChildMessage) {
     msg.child.addClass('p-RibbonStrip-child');
   }
-  override onChildRemoved(msg) {
-    msg.child.removeClass('p-RibbonStrip-child');
-  }
+  // NOTE defined later
+  // override onChildRemoved(msg) {
+  //   msg.child.removeClass('p-RibbonStrip-child');
+  // }
 
   // NOTE === theia DockPanel API compatility section === NOTE //
 
@@ -209,6 +215,7 @@ export class CodeRibbonTheiaRibbonStrip extends BoxPanel {
 
   protected override onChildRemoved(msg: Widget.ChildMessage): void {
     super.onChildRemoved(msg);
+    msg.child.removeClass('p-RibbonStrip-child');
     this.widgetRemoved.emit(msg.child);
   }
 

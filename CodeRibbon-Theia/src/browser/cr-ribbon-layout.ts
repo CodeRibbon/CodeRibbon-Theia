@@ -33,25 +33,35 @@ import {
 
 import { crdebug } from './CodeRibbon-logger';
 
+import { RibbonPanel } from './cr-interfaces';
+
 
 @injectable()
+// @ts-expect-error TS2415: Class incorrectly extends base class
 export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
 
   // Horizontal Patches Per Screen
-  private _hpps: int = 2;
-  set hpps(value: int): void {
+  private _hpps: number = 2;
+  set hpps(value: number) {
     crdebug("set hpps to", value);
     this._hpps = value;
 
     // refit
   }
 
-  get hpps(): int {
+  get hpps(): number {
     return this._hpps;
   }
 
   get patchWidth(): number {
-    return (this.parent.node?.clientWidth / this.hpps);
+    return (this.parent!.node!.clientWidth / this.hpps);
+  }
+
+  saveLayout(): RibbonPanel.ILayoutConfig {
+    // TODO
+    return {
+      main: undefined,
+    };
   }
 
   // NOTE === changing functionality of BoxLayout
@@ -68,23 +78,31 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
 
     // Compute the visible item count.
     let nVisible = 0;
+    // @ts-expect-error TS2341: Property is private
     for (let i = 0, n = this._items.length; i < n; ++i) {
+      // @ts-expect-error TS2341: Property is private
       nVisible += +!this._items[i].isHidden;
     }
 
     // Update the fixed space for the visible items.
+    // @ts-expect-error TS2341: Property is private
     this._fixed = this._spacing * Math.max(0, nVisible - 1);
 
     // Setup the computed minimum size.
     // let horz = Private.isHorizontal(this._direction);
     let horz = true;
+    // @ts-expect-error TS2341: Property is private
     let minW = horz ? this._fixed : 0;
+    // @ts-expect-error TS2341: Property is private
     let minH = horz ? 0 : this._fixed;
 
     // Update the sizers and computed minimum size.
+    // @ts-expect-error TS2341: Property is private
     for (let i = 0, n = this._items.length; i < n; ++i) {
       // Fetch the item and corresponding box sizer.
+      // @ts-expect-error TS2341: Property is private
       let item = this._items[i];
+      // @ts-expect-error TS2341: Property is private
       let sizer = this._sizers[i];
 
       // If the item is hidden, it should consume zero size.
@@ -119,6 +137,7 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
     }
 
     // Update the box sizing and add it to the computed min size.
+    // @ts-expect-error TS2341: Property is private
     let box = this._box = ElementExt.boxSizing(this.parent!.node);
     minW += box.horizontalSum;
     minH += box.verticalSum;
@@ -129,6 +148,7 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
     style.minHeight = `${minH}px`;
 
     // Set the dirty flag to ensure only a single update occurs.
+    // @ts-expect-error TS2341: Property is private
     this._dirty = true;
 
     // Notify the ancestor that it should fit immediately. This may
@@ -139,6 +159,7 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
 
     // If the dirty flag is still set, the parent was not resized.
     // Trigger the required update on the parent widget immediately.
+    // @ts-expect-error TS2341: Property is private
     if (this._dirty) {
       MessageLoop.sendMessage(this.parent!, Widget.Msg.UpdateRequest);
     }
@@ -148,11 +169,14 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
     crdebug("RibbonLayout _update");
 
     // Clear the dirty flag to indicate the update occurred.
+    // @ts-expect-error TS2341: Property is private
     this._dirty = false;
 
     // Compute the visible item count.
     let nVisible = 0;
+    // @ts-expect-error TS2341: Property is private
     for (let i = 0, n = this._items.length; i < n; ++i) {
+      // @ts-expect-error TS2341: Property is private
       nVisible += +!this._items[i].isHidden;
     }
 
@@ -170,30 +194,41 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
     }
 
     // Ensure the parent box sizing data is computed.
+    // @ts-expect-error TS2341: Property is private
     if (!this._box) {
+      // @ts-expect-error TS2341: Property is private
       this._box = ElementExt.boxSizing(this.parent!.node);
     }
 
     // Compute the layout area adjusted for border and padding.
+    // @ts-expect-error TS2341: Property is private
     let top = this._box.paddingTop;
+    // @ts-expect-error TS2341: Property is private
     let left = this._box.paddingLeft;
+    // @ts-expect-error TS2341: Property is private
     let width = offsetWidth - this._box.horizontalSum;
+    // @ts-expect-error TS2341: Property is private
     let height = offsetHeight - this._box.verticalSum;
 
     // Distribute the layout space and adjust the start position.
     let delta: number;
+    // @ts-expect-error TS2341: Property is private
     switch (this._direction) {
     case 'left-to-right':
+      // @ts-expect-error TS2341: Property is private
       delta = BoxEngine.calc(this._sizers, Math.max(0, width - this._fixed));
       break;
     case 'top-to-bottom':
+      // @ts-expect-error TS2341: Property is private
       delta = BoxEngine.calc(this._sizers, Math.max(0, height - this._fixed));
       break;
     case 'right-to-left':
+      // @ts-expect-error TS2341: Property is private
       delta = BoxEngine.calc(this._sizers, Math.max(0, width - this._fixed));
       left += width;
       break;
     case 'bottom-to-top':
+      // @ts-expect-error TS2341: Property is private
       delta = BoxEngine.calc(this._sizers, Math.max(0, height - this._fixed));
       top += height;
       break;
@@ -207,6 +242,7 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
 
     // Account for alignment if there is extra layout space.
     if (delta > 0) {
+      // @ts-expect-error TS2341: Property is private
       switch (this._alignment) {
       case 'start':
         break;
@@ -228,8 +264,10 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
     }
 
     // Layout the items using the computed box sizes.
+    // @ts-expect-error TS2341: Property is private
     for (let i = 0, n = this._items.length; i < n; ++i) {
       // Fetch the item.
+      // @ts-expect-error TS2341: Property is private
       let item = this._items[i];
 
       // Ignore hidden items.
@@ -238,24 +276,30 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
       }
 
       // Fetch the computed size for the widget.
+      // @ts-expect-error TS2341: Property is private
       let size = this._sizers[i].size;
 
       // Update the widget geometry and advance the relevant edge.
+      // @ts-expect-error TS2341: Property is private
       switch (this._direction) {
       case 'left-to-right':
         item.update(left + offset, top, size + extra, height);
+        // @ts-expect-error TS2341: Property is private
         left += size + extra + this._spacing;
         break;
       case 'top-to-bottom':
         item.update(left, top + offset, width, size + extra);
+        // @ts-expect-error TS2341: Property is private
         top += size + extra + this._spacing;
         break;
       case 'right-to-left':
         item.update(left - offset - size - extra, top, size + extra, height);
+        // @ts-expect-error TS2341: Property is private
         left -= size + extra + this._spacing;
         break;
       case 'bottom-to-top':
         item.update(left, top - offset - size - extra, width, size + extra);
+        // @ts-expect-error TS2341: Property is private
         top -= size + extra + this._spacing;
         break;
       default:
