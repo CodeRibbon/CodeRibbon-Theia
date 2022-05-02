@@ -2,6 +2,7 @@
   "private": true,
   "name": "electron-ext-app",
   "version": "0.0.1-0",
+  "main": "scripts/theia-electron-main.js",
   "dependencies": {
     "@theia/core": "latest",
     "@theia/editor": "latest",
@@ -23,7 +24,9 @@
   },
   "devDependencies": {
     "@theia/cli": "latest",
-    "electron": "^15.3.5"
+    "electron": "^15.3.5",
+    "electron-builder": "22.10.5",
+    "electron-chromedriver": "9.0.0"
   },
   "scripts": {
     "prepare": "theia build --mode development",
@@ -32,5 +35,13 @@
   },
   "theia": {
     "target": "electron"
-  }
+  },
+  "theiaPluginsDir": "plugins",
+  "theiaPlugins": {
+    "vscode.git": "https://open-vsx.org/api/vscode/git/1.52.1/file/vscode.git-1.52.1.vsix"
+  },
+  "theiaPluginsExcludeIds": [
+    "vscode.extension-editing",
+    "vscode.microsoft-authentication"
+  ]
 }

@@ -1,0 +1,5 @@
+./*
+!.gitignore
+!package.json
+!electron-builder.yml
+!scripts/
