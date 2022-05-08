@@ -27,6 +27,7 @@ import {
 import { crdebug } from './CodeRibbon-logger';
 import { CodeRibbonTheiaPatch } from './cr-patch';
 import { RibbonPanel, RibbonStrip } from './cr-interfaces';
+import { ImprovedBoxPanel } from './improvedboxpanel';
 
 
 // Main Ribbon View replacement
@@ -34,7 +35,7 @@ import { RibbonPanel, RibbonStrip } from './cr-interfaces';
 // as such, license here falls to
 // SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
 @injectable()
-export class CodeRibbonTheiaRibbonStrip extends BoxPanel {
+export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
 
   /**
    * Emitted when a widget is added to the panel.
@@ -151,6 +152,19 @@ export class CodeRibbonTheiaRibbonStrip extends BoxPanel {
   //   let parent_rect = this.node?.offsetParent.getBoundingClientRect();
   // }
 
+  // overriding BoxPanel's p-BoxPanel-child
+  protected override onChildAdded(msg: Widget.ChildMessage) {
+    super.onChildAdded(msg);
+    msg.child.addClass('p-RibbonStrip-child');
+    this.widgetAdded.emit(msg.child);
+  }
+
+  protected override onChildRemoved(msg: Widget.ChildMessage): void {
+    super.onChildRemoved(msg);
+    msg.child.removeClass('p-RibbonStrip-child');
+    this.widgetRemoved.emit(msg.child);
+  }
+
   // NOTE === phosphor DockPanel API compatility section === NOTE //
   // we might want to split this into a `ImprovedBoxPanel` class instead?
   // this section is because phosphor's BoxPanel has only a tiny fraction of the
@@ -180,15 +194,6 @@ export class CodeRibbonTheiaRibbonStrip extends BoxPanel {
     return this._layoutModified;
   }
 
-  // overriding BoxPanel's p-BoxPanel-child
-  override onChildAdded(msg: Widget.ChildMessage) {
-    msg.child.addClass('p-RibbonStrip-child');
-  }
-  // NOTE defined later
-  // override onChildRemoved(msg) {
-  //   msg.child.removeClass('p-RibbonStrip-child');
-  // }
-
   // NOTE === theia DockPanel API compatility section === NOTE //
 
   isElectron(): boolean {
@@ -211,12 +216,6 @@ export class CodeRibbonTheiaRibbonStrip extends BoxPanel {
   protected _currentTitle: Title<Widget> | undefined;
   get currentTitle(): Title<Widget> | undefined {
     return this._currentTitle;
-  }
-
-  protected override onChildRemoved(msg: Widget.ChildMessage): void {
-    super.onChildRemoved(msg);
-    msg.child.removeClass('p-RibbonStrip-child');
-    this.widgetRemoved.emit(msg.child);
   }
 
 }

@@ -183,6 +183,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
       // append to ribbon
       let new_strip = new CodeRibbonTheiaRibbonStrip();
       super.addWidget(new_strip);
+      // crdebug("New strip created, init...");
       new_strip.init();
       return new_strip;
     }
