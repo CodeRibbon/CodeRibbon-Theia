@@ -83,7 +83,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     // TODO filter to Patches?
     // TODO error below avoidable?
     // ts-expect-error TS2322: Type 'readonly Widget[]' is not assignable to type 'Iterable<CodeRibbonTheiaPatch>'.
-    return ((this.layout as BoxLayout).widgets as readonly CodeRibbonTheiaPatch[]);
+    return ((this.layout as ImprovedBoxLayout).widgets as readonly CodeRibbonTheiaPatch[]);
   }
 
   // TODO options
@@ -181,12 +181,12 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     crdebug("RibbonStrip restoreLayout:", config);
   }
 
-  // @ts-expect-error TS2425: Class defines instance member property 'widgets', but extended class defines it as instance member function.
-  widgets(): readonly Widget[] {
-  // widgets(): IIterator<Widget> {
-    // TODO iterate widgets in order of ribbon layout
-    return (this.layout as BoxLayout).widgets;
-  }
+  // // @ts-expect-error TS2425: Class defines instance member property 'widgets', but extended class defines it as instance member function.
+  // widgets(): readonly Widget[] {
+  // // widgets(): IIterator<Widget> {
+  //   // TODO iterate widgets in order of ribbon layout
+  //   return (this.layout as BoxLayout).widgets;
+  // }
 
   // TODO signal connections from columns
   readonly _layoutModified = new Signal<this, void>(this);

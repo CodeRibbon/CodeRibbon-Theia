@@ -15,7 +15,7 @@ import {
   Message, MessageLoop,
 } from '@phosphor/messaging';
 import {
-  empty, IIterator, each, chain, ArrayExt,
+  empty, IIterator, each, chain, ArrayExt, reduce,
 } from '@phosphor/algorithm';
 import {
   MessageService,
@@ -40,6 +40,7 @@ export class ImprovedBoxLayout extends BoxLayout {
 
   readonly handles: HTMLDivElement[] = [];
   readonly renderer: ImprovedBoxLayout.IRenderer;
+  normalized: boolean = false;
 
   constructor(options: ImprovedBoxLayout.IOptions) {
     super((options as BoxLayout.IOptions));
@@ -59,23 +60,34 @@ export class ImprovedBoxLayout extends BoxLayout {
     this.parent!.fit();
   }
 
+  // get widgets(): Widget[] {
+  //   return super.widgets;
+  // }
+
   addWidget(widget: Widget, options: ImprovedBoxLayout.IAddOptions = {}): void {
     crdebug("IBL addWidget()", this, widget, options);
 
     let index = (typeof options.index === 'undefined') ? this.widgets.length : options.index;
 
-    widget.parent = this.parent;
+    // fix override to PanelLayout addWidget:
+    this.insertWidget(index, widget);
 
+    // NOTE _insertSplit emulation START
+    // _insertSplit(widget, ref, refNode, 'horiz/vert', after: bool)
     // logic to add the split
+    this.normalizeSizes();
     // ArrayExt.insert(this._items, index, new LayoutItem(widget));
     // ArrayExt.insert(this._sizers, index, new BoxSizer());
     ArrayExt.insert(this.handles, index, this._createHandle());
 
     this.syncHandles();
 
+    // NOTE _insertSplit emulation END
+
     if (!this.parent) return;
 
-    this.attachWidget(index, widget);
+    // NOTE called by PanelLayout.insertWidget
+    // this.attachWidget(index, widget);
 
     this.parent.fit();
   }
@@ -120,10 +132,10 @@ export class ImprovedBoxLayout extends BoxLayout {
     let space = Math.max(0, (horizontal ? width : height) - fixed);
 
     // De-normalize the sizes if needed.
-    // if (this.normalized) {
-    //   each(this.sizers, sizer => { sizer.sizeHint *= space; });
-    //   this.normalized = false;
-    // }
+    if (this.normalized) {
+      each(this._sizers, sizer => { sizer.sizeHint *= space; });
+      this.normalized = false;
+    }
 
     // Distribute the layout space to the sizers.
     // @ts-expect-error TS2341: _sizers is private
@@ -252,6 +264,36 @@ export class ImprovedBoxLayout extends BoxLayout {
     }
 
     return handle;
+  }
+
+  holdSizes(): void {
+    each(this._sizers, sizer => {
+      sizer.sizeHint = sizer.size;
+    });
+  }
+
+  normalizeSizes(): void {
+    let n = this._sizers.length;
+    if (n === 0) {
+      return;
+    }
+
+    this.holdSizes();
+
+    let sum = reduce(this._sizers, (v, sizer) => v + sizer.sizeHint, 0);
+
+    // normalize based on sum
+    if (sum === 0) {
+      each(this._sizers, sizer => {
+        sizer.size = sizer.sizeHint = 1 / n;
+      });
+    } else {
+      each(this._sizers, sizer => {
+        sizer.size = sizer.sizeHint /= sum;
+      });
+    }
+
+    this.normalized = true;
   }
 
   // NOTE === changing functionality of BoxLayout
