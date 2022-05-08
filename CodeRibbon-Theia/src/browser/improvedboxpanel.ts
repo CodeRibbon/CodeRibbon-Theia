@@ -36,6 +36,18 @@ export class ImprovedBoxPanel extends BoxPanel {
     this._renderer = options.renderer || DockPanel.defaultRenderer;
   }
 
+  dispose(): void {
+    this._releaseMouse();
+
+    // this.overlay.hide(0);
+    //
+    // if (this._drag) {
+    //   this._drag.dispose();
+    // }
+
+    super.dispose();
+  }
+
   // activateWidget(widget: Widget): void {
   //   // TODO
   //   throw Error("NotYetImplemented");
@@ -144,7 +156,18 @@ export class ImprovedBoxPanel extends BoxPanel {
   }
 
   private _releaseMouse(): void {
+    if (!this._pressData) {
+      return;
+    }
 
+    this._pressData.override.dispose();
+    this._pressData = null;
+
+    // Remove the extra document listeners.
+    document.removeEventListener('keydown', this, true);
+    document.removeEventListener('mouseup', this, true);
+    document.removeEventListener('mousemove', this, true);
+    document.removeEventListener('contextmenu', this, true);
   }
 
   protected onBeforeAttach(msg: Message): void {

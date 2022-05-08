@@ -65,7 +65,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     crdebug("RibbonStrip constructor:", this, options);
   }
 
-  init() {
+  cr_init() {
     crdebug("Strip init", this);
 
     // while (this.widgets.length < this.vpps) {
