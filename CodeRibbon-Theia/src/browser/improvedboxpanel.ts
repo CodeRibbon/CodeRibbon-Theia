@@ -30,6 +30,7 @@ export class ImprovedBoxPanel extends BoxPanel {
   protected _pressData: Private.IPressData | null = null;
 
   constructor(options: ImprovedBoxPanel.IOptions = {}) {
+    // @ts-expect-error TODO
     super({ layout: Private.createLayout(options) });
     this.addClass('p-ImprovedBoxPanel');
     // steal the renderer from OG dockpanel, we won't use createTabBar anyways

@@ -133,6 +133,7 @@ export class ImprovedBoxLayout extends BoxLayout {
 
     // De-normalize the sizes if needed.
     if (this.normalized) {
+      // @ts-expect-error TS2341: _sizers is private
       each(this._sizers, sizer => { sizer.sizeHint *= space; });
       this.normalized = false;
     }
@@ -175,7 +176,9 @@ export class ImprovedBoxLayout extends BoxLayout {
     if (offsetWidth < 0) offsetWidth = this.parent!.node.offsetWidth;
     if (offsetHeight < 0) offsetHeight = this.parent!.node.offsetHeight;
 
+    // @ts-expect-error TS2341: _box is private
     if (!this._box) {
+      // @ts-expect-error TS2341: _box is private
       this._box = ElementExt.boxSizing(this.parent!.node);
     }
     // @ts-expect-error TS2341: _box is private
@@ -267,12 +270,14 @@ export class ImprovedBoxLayout extends BoxLayout {
   }
 
   holdSizes(): void {
-    each(this._sizers, sizer => {
+    // @ts-expect-error TS2341: is private
+    each(this._sizers, (sizer: BoxSizer) => {
       sizer.sizeHint = sizer.size;
     });
   }
 
   normalizeSizes(): void {
+    // @ts-expect-error TS2341: is private
     let n = this._sizers.length;
     if (n === 0) {
       return;
@@ -280,15 +285,18 @@ export class ImprovedBoxLayout extends BoxLayout {
 
     this.holdSizes();
 
+    // @ts-expect-error TS2341: is private
     let sum = reduce(this._sizers, (v, sizer) => v + sizer.sizeHint, 0);
 
     // normalize based on sum
     if (sum === 0) {
-      each(this._sizers, sizer => {
+      // @ts-expect-error TS2341: is private
+      each(this._sizers, (sizer: BoxSizer) => {
         sizer.size = sizer.sizeHint = 1 / n;
       });
     } else {
-      each(this._sizers, sizer => {
+      // @ts-expect-error TS2341: is private
+      each(this._sizers, (sizer: BoxSizer) => {
         sizer.size = sizer.sizeHint /= sum;
       });
     }

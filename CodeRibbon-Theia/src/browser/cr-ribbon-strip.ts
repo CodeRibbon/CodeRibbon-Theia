@@ -28,6 +28,7 @@ import { crdebug } from './CodeRibbon-logger';
 import { CodeRibbonTheiaPatch } from './cr-patch';
 import { RibbonPanel, RibbonStrip } from './cr-interfaces';
 import { ImprovedBoxPanel } from './improvedboxpanel';
+import { ImprovedBoxLayout } from './improvedboxlayout';
 
 
 // Main Ribbon View replacement
@@ -94,7 +95,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     return new_patch;
   }
 
-  override addWidget(widget: Widget, options?: RibbonPanel.IAddOptions): void {
+  addWidget(widget: Widget, options?: RibbonPanel.IAddOptions): void {
     // TODO logic based on where to put the widget
     // super.addWidget(widget);
 
@@ -153,13 +154,13 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
   // }
 
   // overriding BoxPanel's p-BoxPanel-child
-  protected override onChildAdded(msg: Widget.ChildMessage) {
+  protected onChildAdded(msg: Widget.ChildMessage) {
     super.onChildAdded(msg);
     msg.child.addClass('p-RibbonStrip-child');
     this.widgetAdded.emit(msg.child);
   }
 
-  protected override onChildRemoved(msg: Widget.ChildMessage): void {
+  protected onChildRemoved(msg: Widget.ChildMessage): void {
     super.onChildRemoved(msg);
     msg.child.removeClass('p-RibbonStrip-child');
     this.widgetRemoved.emit(msg.child);
