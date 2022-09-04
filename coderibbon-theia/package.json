@@ -23,7 +23,7 @@
   },
   "theiaExtensions": [
     {
-      "frontend": "lib/browser/CodeRibbon-Theia-frontend-module"
+      "frontend": "lib/browser/coderibbon-theia-frontend-module"
     }
   ]
 }
