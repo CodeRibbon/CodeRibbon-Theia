@@ -26,7 +26,7 @@ import {
 
 import { CodeRibbonTheiaRibbonPanel } from './cr-ribbon';
 
-import {crdebug} from './coderibbon-logger';
+import {crdebug} from './cr-logger';
 
 // https://github.com/eclipse-theia/theia/blob/f0cdf69e65cd048dfeb06c45ff4189a6d5cf14a6/packages/core/src/browser/shell/application-shell.ts#L42
 /** The class name added to ApplicationShell instances. */

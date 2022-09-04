@@ -30,7 +30,7 @@ import {
   CorePreferences,
 } from '@theia/core/lib/browser/core-preferences';
 
-import { crdebug } from './coderibbon-logger';
+import { crdebug } from './cr-logger';
 import { CodeRibbonTheiaPatch } from './cr-patch';
 import { CodeRibbonTheiaRibbonStrip } from './cr-ribbon-strip';
 import { CodeRibbonTheiaRibbonLayout } from './cr-ribbon-layout';

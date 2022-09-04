@@ -14,11 +14,11 @@ import {
   ApplicationShell,
 } from '@theia/core/lib/browser/shell/application-shell';
 
-// import { CodeRibbonTheiaRibbonViewContribution } from './CodeRibbon-Theia-ribbon';
-import { CodeRibbonTheiaCommandContribution } from './CodeRibbon-Theia-commands';
-import { CodeRibbonTheiaMenuContribution } from './CodeRibbon-Theia-menus';
-import { CodeRibbonTheiaPreferenceSchema } from './CodeRibbon-Theia-preferences';
-import { CodeRibbonTheiaManager } from './CodeRibbon-Theia-manager';
+// import { CodeRibbonTheiaRibbonViewContribution } from './coderibbon-theia-ribbon';
+import { CodeRibbonTheiaCommandContribution } from './coderibbon-theia-commands';
+import { CodeRibbonTheiaMenuContribution } from './coderibbon-theia-menus';
+import { CodeRibbonTheiaPreferenceSchema } from './coderibbon-theia-preferences';
+import { CodeRibbonTheiaManager } from './coderibbon-theia-manager';
 import { CodeRibbonTheiaRibbonPanel } from './cr-ribbon';
 import { CodeRibbonApplicationShell } from './cr-application-shell';
 

@@ -5,7 +5,7 @@ import {
   MessageService,
 } from '@theia/core/lib/common';
 
-import {crdebug} from './coderibbon-logger';
+import {crdebug} from './cr-logger';
 
 export const CodeRibbonHelloWorldCommand = {
   id: 'CodeRibbon.HelloWorld',

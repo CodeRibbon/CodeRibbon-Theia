@@ -5,7 +5,7 @@ import {
   MenuContribution, MenuModelRegistry, MessageService, MenuPath, MAIN_MENU_BAR,
 } from '@theia/core/lib/common';
 
-import { CodeRibbonHelloWorldCommand } from './CodeRibbon-Theia-commands';
+import { CodeRibbonHelloWorldCommand } from './coderibbon-theia-commands';
 
 export const CodeRibbonTopMenuPath = [...MAIN_MENU_BAR, "7_coderibbon"];
 

@@ -31,7 +31,7 @@ import {
   CorePreferences,
 } from '@theia/core/lib/browser/core-preferences';
 
-import { crdebug } from './coderibbon-logger';
+import { crdebug } from './cr-logger';
 
 import { RibbonPanel } from './cr-interfaces';
 
