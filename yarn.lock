@@ -3710,10 +3710,7 @@ code-point-at@^1.0.0:
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
   integrity sha512-RpAVKQA5T63xEj6/giIbUEtZwJ4UFIc3ZtvEkiaUERylqe8xb5IvqcgOurZLahv93CLKfxcw5YI+DZcUBRyLXA==
 
-coderibbon-theia@../CodeRibbon-Theia:
-  version "0.0.2"
-
-"coderibbon-theia@file:CodeRibbon-Theia":
+"coderibbon-theia@file:coderibbon-theia":
   version "0.0.3-0"
   dependencies:
     "@theia/core" "1.25.0"

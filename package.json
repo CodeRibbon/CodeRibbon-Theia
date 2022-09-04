@@ -21,7 +21,7 @@
     "lerna": "2.4.0"
   },
   "workspaces": [
-    "CodeRibbon-Theia",
+    "coderibbon-theia",
     "browser-app",
     "browser-ext-app",
     "electron-app",
