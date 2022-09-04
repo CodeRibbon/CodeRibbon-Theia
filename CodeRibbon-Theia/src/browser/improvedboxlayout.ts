@@ -213,13 +213,14 @@ export class ImprovedBoxLayout extends BoxLayout {
 
   /**
    * move handle to a given offset position
-   * @param handle   [description]
-   * @param offsetX  [description]
-   * @param offsetY  [description]
+   * @param handle   handle to move
+   * @param offsetX  desired offset X of handle
+   * @param offsetY  desired offset Y of handle
    *
    * mostly the same impl as DockLayout
    */
   moveHandle(handle: HTMLDivElement, offsetX: number, offsetY: number): void {
+    crdebug("IBL: moveHandle", handle, offsetX, offsetY);
     if (handle.classList.contains('p-mod-hidden')) {
       crdebug("Trying to move a hidden handle???");
       return;
@@ -239,6 +240,7 @@ export class ImprovedBoxLayout extends BoxLayout {
     }
 
     // data.node.holdSizes()
+    this.holdSizes();
 
     BoxEngine.adjust(
       // @ts-expect-error TS2341: _sizers is private
@@ -269,7 +271,11 @@ export class ImprovedBoxLayout extends BoxLayout {
     return handle;
   }
 
+  /**
+   * used by moveHandle to hold resize adjustments made by user
+   */
   holdSizes(): void {
+    crdebug("IBL: holdSizes()");
     // @ts-expect-error TS2341: is private
     each(this._sizers, (sizer: BoxSizer) => {
       sizer.sizeHint = sizer.size;
