@@ -878,7 +878,7 @@
     "@babel/types" "^7.4.4"
     esutils "^2.0.2"
 
-"@babel/runtime@^7.10.0", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7":
+"@babel/runtime@^7.10.0", "@babel/runtime@^7.8.4":
   version "7.18.9"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.18.9.tgz#b4fcfce55db3d2e5e080d2490f608a3b9f407f4a"
   integrity sha512-lkqXDcvlFT5rvEjiu6+QYO+1GXrEHRo2LOtS7E4GtX5ESIZOgepqsZBVIj6Pv+a6zqsya9VCgiK1KAK4BvJDAw==
@@ -1218,13 +1218,6 @@
     "@phosphor/signaling" "^1.3.1"
     "@phosphor/virtualdom" "^1.2.0"
 
-"@primer/octicons-react@^9.0.0":
-  version "9.6.0"
-  resolved "https://registry.yarnpkg.com/@primer/octicons-react/-/octicons-react-9.6.0.tgz#996f621cb063757a4985cd6b45e59ed00e3444bf"
-  integrity sha512-FR0fiU1UY1ds5ZMCUY+iVkkm1Eh4yDHf2ui+cxB3VvYX23DAdUAohPGit+qaMFy2caDd7uWYGRZduKS7dW1FZQ==
-  dependencies:
-    prop-types "^15.6.1"
-
 "@sindresorhus/df@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@sindresorhus/df/-/df-1.0.1.tgz#c69b66f52f6fcdd287c807df210305dbaf78500d"
@@ -1308,23 +1301,6 @@
     worker-loader "^3.0.8"
     yargs "^15.3.1"
 
-"@theia/application-package@1.25.0":
-  version "1.25.0"
-  resolved "https://registry.yarnpkg.com/@theia/application-package/-/application-package-1.25.0.tgz#b04c91f58cd9e3ab059a0356c76f2cd67f8a4b9f"
-  integrity sha512-O640J9R81B7RHzeZRitb3qYvW8wlb1o+w743PMPnwca5Kin/AE3JKVMn1DXdGuK1e7U1vWL8JhUKMPXbps/pmQ==
-  dependencies:
-    "@types/fs-extra" "^4.0.2"
-    "@types/request" "^2.0.3"
-    "@types/semver" "^5.4.0"
-    "@types/write-json-file" "^2.2.1"
-    deepmerge "^4.2.2"
-    fs-extra "^4.0.2"
-    is-electron "^2.1.0"
-    nano "^9.0.5"
-    request "^2.82.0"
-    semver "^5.4.1"
-    write-json-file "^2.2.0"
-
 "@theia/application-package@1.29.0":
   version "1.29.0"
   resolved "https://registry.yarnpkg.com/@theia/application-package/-/application-package-1.29.0.tgz#a8d9005f4232c3c235f0ad46294c645da8127062"
@@ -1398,78 +1374,6 @@
     "@theia/monaco" "1.29.0"
     "@theia/monaco-editor-core" "1.67.2"
     anser "^2.0.1"
-
-"@theia/core@1.25.0":
-  version "1.25.0"
-  resolved "https://registry.yarnpkg.com/@theia/core/-/core-1.25.0.tgz#3360ae56ba919f9b3a46d3feffd1925ca4a8fab4"
-  integrity sha512-u7g6QuVDsSIqIeWYKS5wgT+Zcl0970Q42Jvmc9kyLgYB8NhpcTHbh437uUfKwAN5jUChLiT2ew7dMcb0vGYhIQ==
-  dependencies:
-    "@babel/runtime" "^7.10.0"
-    "@phosphor/algorithm" "1"
-    "@phosphor/commands" "1"
-    "@phosphor/coreutils" "1"
-    "@phosphor/domutils" "1"
-    "@phosphor/dragdrop" "1"
-    "@phosphor/messaging" "1"
-    "@phosphor/properties" "1"
-    "@phosphor/signaling" "1"
-    "@phosphor/virtualdom" "1"
-    "@phosphor/widgets" "1"
-    "@primer/octicons-react" "^9.0.0"
-    "@theia/application-package" "1.25.0"
-    "@types/body-parser" "^1.16.4"
-    "@types/cookie" "^0.3.3"
-    "@types/dompurify" "^2.2.2"
-    "@types/express" "^4.16.0"
-    "@types/fs-extra" "^4.0.2"
-    "@types/lodash.debounce" "4.0.3"
-    "@types/lodash.throttle" "^4.1.3"
-    "@types/markdown-it" "^12.2.3"
-    "@types/react" "^16.8.0"
-    "@types/react-dom" "^16.8.0"
-    "@types/react-virtualized" "^9.18.3"
-    "@types/route-parser" "^0.1.1"
-    "@types/safer-buffer" "^2.1.0"
-    "@types/ws" "^5.1.2"
-    "@types/yargs" "^15"
-    "@vscode/codicons" "*"
-    ajv "^6.5.3"
-    body-parser "^1.17.2"
-    cookie "^0.4.0"
-    dompurify "^2.2.9"
-    drivelist "^9.0.2"
-    es6-promise "^4.2.4"
-    express "^4.16.3"
-    file-icons-js "~1.0.3"
-    font-awesome "^4.7.0"
-    fs-extra "^4.0.2"
-    fuzzy "^0.1.3"
-    iconv-lite "^0.6.0"
-    inversify "^5.1.1"
-    jschardet "^2.1.1"
-    keytar "7.2.0"
-    lodash.debounce "^4.0.8"
-    lodash.throttle "^4.1.1"
-    markdown-it "^12.3.2"
-    nsfw "^2.1.2"
-    p-debounce "^2.1.0"
-    perfect-scrollbar "^1.3.0"
-    react "^16.8.0"
-    react-dom "^16.8.0"
-    react-tooltip "^4.2.21"
-    react-virtualized "^9.20.0"
-    reconnecting-websocket "^4.2.0"
-    reflect-metadata "^0.1.10"
-    route-parser "^0.0.5"
-    safer-buffer "^2.1.2"
-    socket.io "4.4.1"
-    socket.io-client "4.4.1"
-    uuid "^8.3.2"
-    vscode-languageserver-protocol "~3.15.3"
-    vscode-uri "^2.1.1"
-    vscode-ws-jsonrpc "^0.2.0"
-    ws "^7.1.2"
-    yargs "^15.3.1"
 
 "@theia/core@1.29.0":
   version "1.29.0"
@@ -2269,13 +2173,6 @@
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.4.tgz#cd667bcfdd025213aafb7ca5915a932590acdcdc"
   integrity sha512-EEhsLsD6UsDM1yFhAvy0Cjr6VwmpMWqFBCb9w07wVugF7w9nfajxLuVmngTIpgS6svCnm6Vaw+MZhoDCKnOfsw==
 
-"@types/react-dom@^16.8.0":
-  version "16.9.16"
-  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.9.16.tgz#c591f2ed1c6f32e9759dfa6eb4abfd8041f29e39"
-  integrity sha512-Oqc0RY4fggGA3ltEgyPLc3IV9T73IGoWjkONbsyJ3ZBn+UPPCYpU2ec0i3cEbJuEdZtkqcCF2l1zf2pBdgUGSg==
-  dependencies:
-    "@types/react" "^16"
-
 "@types/react-dom@^18.0.6":
   version "18.0.6"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-18.0.6.tgz#36652900024842b74607a17786b6662dd1e103a1"
@@ -2283,36 +2180,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-virtualized@^9.18.3":
-  version "9.21.21"
-  resolved "https://registry.yarnpkg.com/@types/react-virtualized/-/react-virtualized-9.21.21.tgz#65c96f25314f0fb3d40536929dc78112753b49e1"
-  integrity sha512-Exx6I7p4Qn+BBA1SRyj/UwQlZ0I0Pq7g7uhAp0QQ4JWzZunqEqNBGTmCmMmS/3N9wFgAGWuBD16ap7k8Y14VPA==
-  dependencies:
-    "@types/prop-types" "*"
-    "@types/react" "^17"
-
 "@types/react@*", "@types/react@^18.0.15":
   version "18.0.18"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.18.tgz#9f16f33d57bc5d9dca848d12c3572110ff9429ac"
   integrity sha512-6hI08umYs6NaiHFEEGioXnxJ+oEhY3eRz8VCUaudZmGdtvPviCJB8mgaMxaDWAdPSYd4eFavrPk2QIolwbLYrg==
-  dependencies:
-    "@types/prop-types" "*"
-    "@types/scheduler" "*"
-    csstype "^3.0.2"
-
-"@types/react@^16", "@types/react@^16.8.0":
-  version "16.14.31"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.14.31.tgz#03757719ac16b460ab9124f718fdd079f6578fe8"
-  integrity sha512-CD3LuBW4xIeGy6BxuNZdXBOsuP00OHFuNOq/4e2xKDq6z02XvdH9wIkuPNmz7BRQpo5ncy1zT9fz4tTDqXbjzQ==
-  dependencies:
-    "@types/prop-types" "*"
-    "@types/scheduler" "*"
-    csstype "^3.0.2"
-
-"@types/react@^17":
-  version "17.0.49"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.49.tgz#df87ba4ca8b7942209c3dc655846724539dc1049"
-  integrity sha512-CCBPMZaPhcKkYUTqFs/hOWqKjPxhTEmnZWjlHHgIMop67DsXywf9B5Os9Hz8KSacjNOgIdnZVJamwl232uxoPg==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -3692,11 +3563,6 @@ clone@^2.1.2:
   resolved "https://registry.yarnpkg.com/clone/-/clone-2.1.2.tgz#1b7f4b9f591f1e8f83670401600345a02887435f"
   integrity sha512-3Pe/CF1Nn94hyhIYpjtiLhdCoEoz0DqQ+988E9gmeEdQZlojxnOb74wctFyuwWQHzqyf9X7C7MG8juUpqBJT8w==
 
-clsx@^1.0.4:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
-  integrity sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==
-
 cmd-shim@^2.0.2:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/cmd-shim/-/cmd-shim-2.1.0.tgz#e59a08d4248dda3bb502044083a4db4ac890579a"
@@ -4514,14 +4380,6 @@ dmg-license@^1.0.8:
     plist "^3.0.4"
     smart-buffer "^4.0.2"
     verror "^1.10.0"
-
-dom-helpers@^5.1.3:
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/dom-helpers/-/dom-helpers-5.2.1.tgz#d9400536b2bf8225ad98fe052e029451ac40e902"
-  integrity sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==
-  dependencies:
-    "@babel/runtime" "^7.8.7"
-    csstype "^3.0.2"
 
 dompurify@^2.2.9:
   version "2.4.0"
@@ -8221,7 +8079,7 @@ promise-retry@^2.0.1:
     err-code "^2.0.2"
     retry "^0.12.0"
 
-prop-types@^15.5.6, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@^15.5.6, prop-types@^15.6.1, prop-types@^15.7.2:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -8409,16 +8267,6 @@ react-autosize-textarea@^7.0.0:
     line-height "^0.3.1"
     prop-types "^15.5.6"
 
-react-dom@^16.8.0:
-  version "16.14.0"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.14.0.tgz#7ad838ec29a777fb3c75c3a190f661cf92ab8b89"
-  integrity sha512-1gCeQXDLoIqMgqD3IO2Ah9bnf0w9kzhwN5q4FGnHZ67hBm9yePzB5JJAIQCc8x3pFnNlwFq4RidZggNAAkzWWw==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-    prop-types "^15.6.2"
-    scheduler "^0.19.1"
-
 react-dom@^18.2.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.2.0.tgz#22aaf38708db2674ed9ada224ca4aa708d821e3d"
@@ -8431,11 +8279,6 @@ react-is@^16.13.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
-
-react-lifecycles-compat@^3.0.4:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
-  integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
 react-perfect-scrollbar@^1.5.3:
   version "1.5.8"
@@ -8453,18 +8296,6 @@ react-tooltip@^4.2.21:
     prop-types "^15.7.2"
     uuid "^7.0.3"
 
-react-virtualized@^9.20.0:
-  version "9.22.3"
-  resolved "https://registry.yarnpkg.com/react-virtualized/-/react-virtualized-9.22.3.tgz#f430f16beb0a42db420dbd4d340403c0de334421"
-  integrity sha512-MKovKMxWTcwPSxE1kK1HcheQTWfuCxAuBoSTf2gwyMM21NdX/PXUhnoP8Uc5dRKd+nKm8v41R36OellhdCpkrw==
-  dependencies:
-    "@babel/runtime" "^7.7.2"
-    clsx "^1.0.4"
-    dom-helpers "^5.1.3"
-    loose-envify "^1.4.0"
-    prop-types "^15.7.2"
-    react-lifecycles-compat "^3.0.4"
-
 react-virtuoso@^2.17.0:
   version "2.17.2"
   resolved "https://registry.yarnpkg.com/react-virtuoso/-/react-virtuoso-2.17.2.tgz#cc7323f300d5d80311bf828efcda95f6cc1edd51"
@@ -8472,15 +8303,6 @@ react-virtuoso@^2.17.0:
   dependencies:
     "@virtuoso.dev/react-urx" "^0.2.12"
     "@virtuoso.dev/urx" "^0.2.12"
-
-react@^16.8.0:
-  version "16.14.0"
-  resolved "https://registry.yarnpkg.com/react/-/react-16.14.0.tgz#94d776ddd0aaa37da3eda8fc5b6b18a4c9a3114d"
-  integrity sha512-0X2CImDkJGApiAlcf0ODKIneSwBPhqJawOa5wCtKbu7ZECrmS26NvtSILynQ66cgkT/RJ4LidJOc3bUESwmU8g==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-    prop-types "^15.6.2"
 
 react@^18.2.0:
   version "18.2.0"
@@ -8613,11 +8435,6 @@ rechoir@^0.7.0:
   integrity sha512-/njmZ8s1wVeR6pjTZ+0nCnv8SpZNRMT2D1RLOJQESlYFDBvwpTA4KWJpZ+sBJ4+vhjILRcK7JIFdGCdxEAAitg==
   dependencies:
     resolve "^1.9.0"
-
-reconnecting-websocket@^4.2.0:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/reconnecting-websocket/-/reconnecting-websocket-4.4.0.tgz#3b0e5b96ef119e78a03135865b8bb0af1b948783"
-  integrity sha512-D2E33ceRPga0NvTDhJmphEgJ7FUYF0v4lr1ki0csq06OdlxKfugGzN0dSkxM/NfqCxYELK4KcaTOUOjTV6Dcng==
 
 redent@^1.0.0:
   version "1.0.0"
@@ -8931,14 +8748,6 @@ sax@^1.2.4:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
   integrity sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==
-
-scheduler@^0.19.1:
-  version "0.19.1"
-  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.19.1.tgz#4f3e2ed2c1a7d65681f4c854fa8c5a1ccb40f196"
-  integrity sha512-n/zwRWRYSUj0/3g/otKDRPMh6qv2SYMWNq85IEa8iZyAv8od9zDYpGSnpBEjNgcMNq6Scbu5KfIPxNF72R/2EA==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
 
 scheduler@^0.23.0:
   version "0.23.0"
@@ -10239,7 +10048,7 @@ vhost@^3.0.2:
   resolved "https://registry.yarnpkg.com/vhost/-/vhost-3.0.2.tgz#2fb1decd4c466aa88b0f9341af33dc1aff2478d5"
   integrity sha512-S3pJdWrpFWrKMboRU4dLYgMrTgoPALsmYwOvyebK2M6X95b9kQrjZy5rwl3uzzpfpENe/XrNYu/2U+e7/bmT5g==
 
-vscode-jsonrpc@^5.0.0, vscode-jsonrpc@^5.0.1:
+vscode-jsonrpc@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/vscode-jsonrpc/-/vscode-jsonrpc-5.0.1.tgz#9bab9c330d89f43fc8c1e8702b5c36e058a01794"
   integrity sha512-JvONPptw3GAQGXlVV2utDcHx0BiY34FupW/kI6mZ5x06ER5DdPG/tXWMVHjTNULF5uKPOUUD0SaXg5QaubJL0A==
@@ -10298,13 +10107,6 @@ vscode-windows-ca-certs@^0.3.0:
   integrity sha512-CYrpCEKmAFQJoZNReOrelNL+VKyebOVRCqL9evrBlVcpWQDliliJgU5RggGS8FPGtQ3jAKLQt9frF0qlxYYPKA==
   dependencies:
     node-addon-api "^3.0.2"
-
-vscode-ws-jsonrpc@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/vscode-ws-jsonrpc/-/vscode-ws-jsonrpc-0.2.0.tgz#5e9c26e10da54a1a235da7d59e74508bbcb8edd9"
-  integrity sha512-NE9HNRgPjCaPyTJvIudcpyIWPImxwRDtuTX16yks7SAiZgSXigxAiZOvSvVBGmD1G/OMfrFo6BblOtjVR9DdVA==
-  dependencies:
-    vscode-jsonrpc "^5.0.0"
 
 watchpack@^2.4.0:
   version "2.4.0"

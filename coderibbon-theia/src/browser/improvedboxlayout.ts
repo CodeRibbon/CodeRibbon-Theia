@@ -313,9 +313,10 @@ export class ImprovedBoxLayout extends BoxLayout {
   // NOTE === changing functionality of BoxLayout
 
   protected onResize(msg: Widget.ResizeMessage): void {
+    crdebug("IBL: onResize", msg);
     if (this.parent!.isVisible) {
-      this.parent!.fit();
-      // this._update(msg.width, msg.height);
+      // this.parent!.fit();
+      this._update(msg.width, msg.height);
     }
   }
 
