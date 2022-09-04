@@ -2,12 +2,10 @@
 
 Install [nvm](https://github.com/creationix/nvm#install-script).
 
-    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | bash
-
 Install npm and node.
 
-    nvm install 10
-    nvm use 10
+    nvm install v16
+    nvm use v16
 
 Install yarn.
 
@@ -53,7 +51,7 @@ Start watching all packages, including `browser-app`, of your application with
 
 *or* watch only specific packages with
 
-    cd CodeRibbon-Theia
+    cd coderibbon-theia
     yarn watch
 
 and the browser example.
@@ -70,7 +68,7 @@ Start watching all packages, including `electron-app`, of your application with
 
 *or* watch only specific packages with
 
-    cd CodeRibbon-Theia
+    cd coderibbon-theia
     yarn watch
 
 and the Electron example.
