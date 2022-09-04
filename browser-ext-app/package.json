@@ -18,7 +18,7 @@
     "@theia/plugin-ext": "latest",
     "@theia/plugin-ext-vscode": "latest",
     "@theia/plugin-dev": "latest",
-    "coderibbon-theia": "^0.0.1-0"
+    "coderibbon-theia": "^0.0.3-0"
   },
   "devDependencies": {
     "@theia/cli": "latest"
