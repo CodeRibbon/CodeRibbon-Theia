@@ -25,7 +25,7 @@ import {
 
 // import { CodeRibbonApplicationShell } from './cr-application-shell';
 
-import {crdebug} from './CodeRibbon-logger';
+import {crdebug} from './coderibbon-logger';
 
 import { CodeRibbonTheiaRibbonPanel } from './cr-ribbon';
 

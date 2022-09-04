@@ -9,7 +9,7 @@ import {
   PreferenceContribution, PreferenceSchema,
 } from '@theia/core/lib/browser/preferences'
 
-import {crdebug} from './CodeRibbon-logger';
+import {crdebug} from './coderibbon-logger';
 
 export const CodeRibbonTheiaPreferenceSchema: PreferenceSchema = {
   "type": "object",

@@ -24,7 +24,7 @@ import {
   CorePreferences,
 } from '@theia/core/lib/browser/core-preferences';
 
-import { crdebug } from './CodeRibbon-logger';
+import { crdebug } from './coderibbon-logger';
 import { CodeRibbonTheiaPatch } from './cr-patch';
 import { RibbonPanel, RibbonStrip } from './cr-interfaces';
 import { ImprovedBoxPanel } from './improvedboxpanel';

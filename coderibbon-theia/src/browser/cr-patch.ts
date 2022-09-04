@@ -8,7 +8,7 @@ import {
   BoxEngine, BoxSizer,
 } from '@phosphor/widgets';
 
-import { crdebug } from './CodeRibbon-logger';
+import { crdebug } from './coderibbon-logger';
 
 export class CodeRibbonTheiaPatch extends TabPanel {
 

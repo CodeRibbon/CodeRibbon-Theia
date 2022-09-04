@@ -32,7 +32,7 @@ import {
   CorePreferences,
 } from '@theia/core/lib/browser/core-preferences';
 
-import { crdebug } from './CodeRibbon-logger';
+import { crdebug } from './coderibbon-logger';
 
 
 // @ts-expect-error Class 'ImprovedBoxLayout' incorrectly extends base class 'BoxLayout'. Property '_update' is private in type 'BoxLayout' but not in type 'ImprovedBoxLayout'.
