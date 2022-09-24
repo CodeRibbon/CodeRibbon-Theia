@@ -171,16 +171,22 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
   // this section is because phosphor's BoxPanel has only a tiny fraction of the
   // features that DockPanel has, and they're expected by Theia
 
+  // NOTE: pass to ImprovedBoxPanel
+  // saveLayout(): RibbonStrip.ILayoutConfig {
+  //
+  // }
+
   /**
    * Here to mimick phosphor restoration
    * https://github.com/phosphorjs/phosphor/blob/8fee9108/packages/widgets/src/docklayout.ts#L265
    *
    * @param  config The layout configuration to restore
    */
-  restoreLayout(config: RibbonStrip.ILayoutConfig): void {
-    // TODO
-    crdebug("RibbonStrip restoreLayout:", config);
-  }
+  // NOTE: pass to ImprovedBoxPanel
+  // restoreLayout(config: RibbonStrip.ILayoutConfig): void {
+  //   // TODO
+  //   crdebug("RibbonStrip restoreLayout:", config);
+  // }
 
   // // @ts-expect-error TS2425: Class defines instance member property 'widgets', but extended class defines it as instance member function.
   // widgets(): readonly Widget[] {
@@ -219,4 +225,8 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     return this._currentTitle;
   }
 
+}
+
+export namespace CodeRibbonTheiaRibbonStrip {
+  export type ILayoutConfig = ImprovedBoxLayout.ILayoutConfig;
 }

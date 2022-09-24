@@ -92,12 +92,14 @@ export class ImprovedBoxLayout extends BoxLayout {
     this.parent.fit();
   }
 
-  // saveLayout(): ???.ILayoutConfig {
-  //   // TODO
-  //   return {
-  //     main: undefined,
-  //   };
-  // }
+  saveLayout(): ImprovedBoxLayout.ILayoutConfig {
+    crdebug("IBL saveLayout");
+    return {
+      orientation: this.orientation,
+      sizers: this._sizers,
+      widgets: this.widgets,
+    };
+  }
 
   // iterHandles(): IIterator<HTMLDivElement> {
   //   // TODO this iterates my own handles, then the handles of any below me
@@ -275,7 +277,7 @@ export class ImprovedBoxLayout extends BoxLayout {
    * used by moveHandle to hold resize adjustments made by user
    */
   holdSizes(): void {
-    crdebug("IBL: holdSizes()");
+    // crdebug("IBL: holdSizes()");
     // @ts-expect-error TS2341: is private
     each(this._sizers, (sizer: BoxSizer) => {
       sizer.sizeHint = sizer.size;
@@ -313,7 +315,7 @@ export class ImprovedBoxLayout extends BoxLayout {
   // NOTE === changing functionality of BoxLayout
 
   protected onResize(msg: Widget.ResizeMessage): void {
-    crdebug("IBL: onResize", msg);
+    // crdebug("IBL: onResize", msg);
     if (this.parent!.isVisible) {
       // this.parent!.fit();
       this._update(msg.width, msg.height);
@@ -347,6 +349,12 @@ export namespace ImprovedBoxLayout {
    */
   export interface IAddOptions {
     index?: number;
+  }
+
+  export interface ILayoutConfig {
+    orientation: Private.Orientation;
+    sizers: BoxSizer[];
+    widgets: Widget[];
   }
 }
 

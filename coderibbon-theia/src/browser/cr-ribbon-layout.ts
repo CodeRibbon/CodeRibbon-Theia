@@ -57,12 +57,22 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
     return (this.parent!.node!.clientWidth / this.hpps);
   }
 
-  saveLayout(): RibbonPanel.ILayoutConfig {
-    // TODO
-    return {
-      main: undefined,
-    };
-  }
+  // /**
+  //  * Save current layout of the ribbon
+  //  * @return new config object for current layout state
+  //  *
+  //  * use the returned object as input to restoreLayout later
+  //  */
+  // saveLayout(): CodeRibbonTheiaRibbonLayout.IRibbonLayoutConfig {
+  //   crdebug("RibbonLayout saveLayout");
+  //   return {
+  //     stuff: "todo",
+  //   };
+  // }
+  //
+  // restoreLayout(config: CodeRibbonTheiaRibbonLayout.IRibbonLayoutConfig): void {
+  //
+  // }
 
   // NOTE === changing functionality of BoxLayout
 
@@ -308,4 +318,14 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
     }
   }
 
+}
+
+export namespace CodeRibbonTheiaRibbonLayout {
+  // export interface IRibbonLayoutConfig {
+  //   type: 'ribbon-area'; // compatibility for dock*
+  //   overview_active: boolean; // TODO: overview
+  //   focus_active: boolean; // if strip is focused
+  //   active_strip: number; // which strip is active
+  //   children: CodeRibbonTheiaRibbonStrip[];
+  // }
 }

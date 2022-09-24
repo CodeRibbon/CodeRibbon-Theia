@@ -409,6 +409,28 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
   //   msg.child.removeClass('p-RibbonPanel-child');
   // }
 
+  /**
+   * Save current layout of the ribbon
+   * @return new config object for current layout state
+   *
+   * use the returned object as input to restoreLayout later
+   */
+  saveLayout(): CodeRibbonTheiaRibbonLayout.IRibbonLayoutConfig {
+    crdebug("RibbonPanel saveLayout");
+    return {
+      type: 'ribbon-area',
+      overview_active: false, // TODO
+      focus_active: false, // TODO
+      active_strip: 0, // TODO
+      strip_configs: this._strips.map(strip => strip.saveLayout()),
+    };
+  }
+
+  restoreLayout(config: CodeRibbonTheiaRibbonPanel.IRibbonLayoutConfig): void {
+    crdebug("RibbonPanel restoreLayout:", config);
+    // TODO
+  }
+
   // NOTE === theia DockPanel API compatility section === NOTE //
 
   isElectron(): boolean {
@@ -576,6 +598,16 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     this.toDisposeOnToggleMaximized.push(Disposable.create(() => this.widgetRemoved.disconnect(removedListener)));
   }
 
+}
+
+export namespace CodeRibbonTheiaRibbonPanel {
+  export interface IRibbonLayoutConfig {
+    type: 'ribbon-area'; // compatibility for dock*
+    overview_active: boolean; // TODO: overview
+    focus_active: boolean; // if strip is focused
+    active_strip: number; // which strip is active
+    strip_configs: CodeRibbonTheiaRibbonStrip.ILayoutConfig[];
+  }
 }
 
 namespace Private {

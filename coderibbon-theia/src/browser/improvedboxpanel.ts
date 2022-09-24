@@ -21,6 +21,9 @@ import {
   ImprovedBoxLayout,
 } from './improvedboxlayout';
 
+// TODO prefer not to include CR stuff in IBP / IBL
+import { crdebug } from './cr-logger';
+
 /**
  * mostly stuff to bring BoxPanel up to par with DockPanel
  */
@@ -54,15 +57,14 @@ export class ImprovedBoxPanel extends BoxPanel {
   //   throw Error("NotYetImplemented");
   // }
 
-  // saveLayout() {
-  //   // TODO
-  //   throw Error("NotYetImplemented");
-  // }
+  saveLayout(): ImprovedBoxLayout.ILayoutConfig {
+    crdebug("IBP saveLayout");
+    return (this.layout as ImprovedBoxLayout).saveLayout();
+  }
 
-  // restoreLayout(config: ): void {
-  //   // TODO
-  //   throw Error("NotYetImplemented");
-  // }
+  restoreLayout(config: ImprovedBoxLayout.ILayoutConfig): void {
+    crdebug("IBP restoreLayout:", config);
+  }
 
   // selectWidget() {
   //   // TODO
