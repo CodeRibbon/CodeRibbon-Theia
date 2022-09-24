@@ -533,6 +533,20 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     return undefined;
   }
 
+  /**
+   * required (called by) the shell layout restorer,
+   * https://github.com/eclipse-theia/theia/blob/v1.29.0/packages/core/src/browser/shell/application-shell.ts#L719
+   * notice it does not actually give us any new information,
+   * so we can leave this method as a stub for good
+   *
+   * also the point of CR is we don't use tabs...
+   *
+   * @param title dummy method, not used
+   */
+  markActiveTabBar(title?: Title<Widget>): void {
+    crdebug("CRTRP: markActiveTabBar", title);
+  }
+
   protected readonly toDisposeOnToggleMaximized = new DisposableCollection();
   toggleMaximized(): void {
     // TODO ribbon elements stacking order:
