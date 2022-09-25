@@ -93,7 +93,7 @@ export class ImprovedBoxLayout extends BoxLayout {
   }
 
   saveLayout(): ImprovedBoxLayout.ILayoutConfig {
-    crdebug("IBL saveLayout");
+    crdebug("IBL saveLayout, widgets:", this.widgets);
     return {
       orientation: this.orientation,
       sizers: this._sizers,

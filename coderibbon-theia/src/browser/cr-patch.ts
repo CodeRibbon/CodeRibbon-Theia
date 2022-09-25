@@ -34,4 +34,20 @@ export class CodeRibbonTheiaPatch extends TabPanel {
       return undefined;
     }
   }
+
+  saveLayout(): CodeRibbonTheiaPatch.ILayoutConfig {
+    crdebug("Patch saveLayout");
+    return {
+      mode: this.contentful_size ? 'widget' : 'empty',
+      widget: this.contentful_widget,
+    }
+  }
+}
+
+export namespace CodeRibbonTheiaPatch {
+  export interface ILayoutConfig {
+    // Atom CR equivalent: fuzzyfinder, cr-tips, pane
+    mode: 'fuzzyfinder' | 'empty' | 'widget';
+    widget?: Widget; // mode-dependent
+  }
 }

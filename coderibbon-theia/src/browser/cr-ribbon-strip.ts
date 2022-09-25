@@ -5,6 +5,7 @@ import {
   TabBar, Widget, Title,
   DockPanel, BoxPanel,
   DockLayout, BoxLayout,
+  BoxSizer,
 } from '@phosphor/widgets';
 import {
   empty, IIterator,
@@ -171,10 +172,15 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
   // this section is because phosphor's BoxPanel has only a tiny fraction of the
   // features that DockPanel has, and they're expected by Theia
 
-  // NOTE: pass to ImprovedBoxPanel
-  // saveLayout(): RibbonStrip.ILayoutConfig {
-  //
-  // }
+  // NOTE: don't pass to ImprovedBoxPanel cause we need empty patch data
+  saveLayout(): CodeRibbonTheiaRibbonStrip.ILayoutConfig {
+    crdebug("RibbonStrip saveLayout");
+    return {
+      sizers: this.layout._sizers,
+      patches: this._patches.map(patch => patch.saveLayout()),
+      last_active_patch: 0, // TODO
+    }
+  }
 
   /**
    * Here to mimick phosphor restoration
@@ -182,11 +188,11 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
    *
    * @param  config The layout configuration to restore
    */
-  // NOTE: pass to ImprovedBoxPanel
-  // restoreLayout(config: RibbonStrip.ILayoutConfig): void {
-  //   // TODO
-  //   crdebug("RibbonStrip restoreLayout:", config);
-  // }
+  // NOTE: don't pass to ImprovedBoxPanel cause ... (above)
+  restoreLayout(config: CodeRibbonTheiaRibbonStrip.ILayoutConfig): void {
+    // TODO
+    crdebug("RibbonStrip restoreLayout:", config);
+  }
 
   // // @ts-expect-error TS2425: Class defines instance member property 'widgets', but extended class defines it as instance member function.
   // widgets(): readonly Widget[] {
@@ -228,5 +234,9 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
 }
 
 export namespace CodeRibbonTheiaRibbonStrip {
-  export type ILayoutConfig = ImprovedBoxLayout.ILayoutConfig;
+  export interface ILayoutConfig {
+    sizers: BoxSizer[];
+    patches: CodeRibbonTheiaPatch.ILayoutConfig[];
+    last_active_patch?: number; // TODO
+  }
 }

@@ -544,7 +544,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
    * @param title dummy method, not used
    */
   markActiveTabBar(title?: Title<Widget>): void {
-    crdebug("CRTRP: markActiveTabBar", title);
+    crdebug("RibbonPanel: markActiveTabBar", title);
   }
 
   protected readonly toDisposeOnToggleMaximized = new DisposableCollection();
