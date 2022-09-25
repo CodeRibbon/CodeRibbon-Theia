@@ -182,13 +182,11 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
   // features that DockPanel has, and they're expected by Theia
 
   // NOTE: don't pass to ImprovedBoxPanel cause we need empty patch data
-  // @ts-expect-error TS2416: Property 'saveLayout' in type 'CodeRibbonTheiaRibbonStrip' is not assignable to the same property in base type 'ImprovedBoxPanel'.
-  override saveLayout(): CodeRibbonTheiaRibbonStrip.ILayoutConfig {
+  saveLayout(): CodeRibbonTheiaRibbonStrip.ILayoutConfig {
     crdebug("RibbonStrip saveLayout");
     return {
-      orientation: 'vertical',
-      // sizers: this.layout?._sizers,
-      sizers: [], // TODO
+      orientation: 'vertical', // always
+      sizes: (this.layout as ImprovedBoxLayout)?.getNormalizedSizes(),
       patch_configs: this._patches.map(patch => patch.saveLayout()),
       last_active_patch: 0, // TODO
     }
@@ -201,7 +199,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
    * @param  config The layout configuration to restore
    */
   // NOTE: don't pass to ImprovedBoxPanel cause ... (above)
-  override restoreLayout(config: CodeRibbonTheiaRibbonStrip.ILayoutConfig): void {
+  restoreLayout(config: CodeRibbonTheiaRibbonStrip.ILayoutConfig): void {
     crdebug("RibbonStrip restoreLayout:", config);
 
     if (config.patch_configs) {
@@ -217,8 +215,20 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
       });
 
       // TODO sizers
+      if (config.sizes) {
+        crdebug("restoring RibbonStrip sizers...", config.sizes);
+        (this.layout as ImprovedBoxLayout).restoreNormalizedSizes(config.sizes);
+        // setTimeout(() => {
+        // });
+        // try {
+        // } catch {
+        //   crdebug("ERROR: failed to restoreNormalizedSizes, ignoring");
+        // }
+      }
 
       // TODO last_active_patch
+
+      this.update();
     }
 
   }
@@ -279,7 +289,7 @@ export namespace CodeRibbonTheiaRibbonStrip {
   }
 
   export interface ILayoutConfig {
-    sizers: BoxSizer[];
+    sizes: number[]; // normalized sizes (sum to 1.0)
     patch_configs: CodeRibbonTheiaPatch.ILayoutConfig[];
     last_active_patch?: number; // TODO
     orientation: 'vertical'; // ignored, BoxLayout compatibility

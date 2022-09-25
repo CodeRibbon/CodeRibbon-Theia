@@ -57,14 +57,15 @@ export class ImprovedBoxPanel extends BoxPanel {
   //   throw Error("NotYetImplemented");
   // }
 
-  saveLayout(): ImprovedBoxLayout.ILayoutConfig {
-    crdebug("IBP saveLayout");
-    return (this.layout as ImprovedBoxLayout).saveLayout();
-  }
+  // saveLayout(): ImprovedBoxLayout.ILayoutConfig {
+  //   crdebug("IBP saveLayout");
+  //   return (this.layout as ImprovedBoxLayout).saveLayout();
+  // }
 
-  restoreLayout(config: ImprovedBoxLayout.ILayoutConfig): void {
-    crdebug("IBP restoreLayout:", config);
-  }
+  // restoreLayout(config: ImprovedBoxLayout.ILayoutConfig): void {
+  //   crdebug("IBP restoreLayout:", config);
+  //   // TODO
+  // }
 
   // selectWidget() {
   //   // TODO

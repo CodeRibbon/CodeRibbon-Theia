@@ -92,14 +92,15 @@ export class ImprovedBoxLayout extends BoxLayout {
     this.parent.fit();
   }
 
-  saveLayout(): ImprovedBoxLayout.ILayoutConfig {
-    crdebug("IBL saveLayout, widgets:", this.widgets);
-    return {
-      orientation: this.orientation,
-      sizers: this._sizers,
-      widgets: this.widgets,
-    };
-  }
+  // saveLayout(): ImprovedBoxLayout.ILayoutConfig {
+  //   crdebug("IBL saveLayout, widgets:", this.widgets);
+  //   return {
+  //     orientation: this.orientation,
+  //     // TODO: this should be normalized instead...
+  //     // sizers: this._sizers,
+  //     // widgets: this.widgets,
+  //   };
+  // }
 
   // iterHandles(): IIterator<HTMLDivElement> {
   //   // TODO this iterates my own handles, then the handles of any below me
@@ -127,16 +128,26 @@ export class ImprovedBoxLayout extends BoxLayout {
   }
 
   update(left: number, top: number, width: number, height: number, spacing: number) {
-    // crdebug("IBL update()", this, left, top, width, height, spacing);
+    crdebug("IBL update()", this, left, top, width, height, spacing);
     let horizontal = this.orientation === 'horizontal';
     // @ts-expect-error TS2341: _items is private
     let fixed = Math.max(0, this._items.length - 1) * spacing;
     let space = Math.max(0, (horizontal ? width : height) - fixed);
 
+    if (space == 0) {
+      crdebug("ERROR: I am 99.9% sure that we should NOT update the IBL with 0 space, so I won't.");
+      //
+      return;
+    }
+
     // De-normalize the sizes if needed.
     if (this.normalized) {
+      crdebug("IBL update(): need to de-normalize sizers")
       // @ts-expect-error TS2341: _sizers is private
-      each(this._sizers, sizer => { sizer.sizeHint *= space; });
+      each(this._sizers, (sizer, i) => {
+        crdebug(`sizer ${i} was ${sizer.sizeHint} before, ${sizer.sizeHint*space} after`);
+        sizer.sizeHint *= space;
+      });
       this.normalized = false;
     }
 
@@ -322,6 +333,48 @@ export class ImprovedBoxLayout extends BoxLayout {
     }
   }
 
+  /**
+   * https://github.com/phosphorjs/phosphor/blob/master/packages/widgets/src/docklayout.ts#L1879
+   * @return the sizes normalized to a sum of 1.0
+   */
+  getNormalizedSizes(): number[] {
+    this.normalizeSizes();
+
+    // @ts-expect-error TS2341: _sizers is private
+    let sizes = this._sizers.map(sizer => sizer.size);
+
+    return sizes;
+  }
+
+  restoreNormalizedSizes(sizes: number[]): void {
+    // @ts-expect-error TS2341: _sizers is private
+    if (sizes.length != this._sizers.length) {
+      throw Error("Wrong number of normalized sizes to restore onto a box layout");
+    }
+
+    for (let i = 0; i < sizes.length; i++) {
+      let new_sizer = Private.createSizer(sizes[i]);
+      crdebug(`old sizer: ${JSON.stringify(this._sizers[i])}, new: ${JSON.stringify(new_sizer)}`);
+      // @ts-expect-error TS2341: _sizers is private
+      this._sizers[i] = new_sizer;
+      // // @ ts-expect-error TS2341: _sizers is private
+      // this._sizers[i].size = sizes[i];
+      // // @ ts-expect-error TS2341: _sizers is private
+      // this._sizers[i].sizeHint = sizes[i];
+    }
+    this.normalized = true;
+
+    // @ts-expect-error TS2341: _sizers is private
+    crdebug("restoreNormalizedSizes created new BoxSizers, first:", this._sizers[0]);
+
+    this._update(-1, -1);
+    // this.holdSizes();
+
+    if (this.parent) {
+      this.parent.update();
+    }
+  }
+
 }
 
 export namespace ImprovedBoxLayout {
@@ -366,4 +419,10 @@ namespace Private {
   // in docklayout:
   export type Orientation = 'horizontal' | 'vertical';
 
+  export function createSizer(hint: number): BoxSizer {
+    let sizer = new BoxSizer();
+    sizer.sizeHint = hint;
+    sizer.size = hint;
+    return sizer;
+  }
 }
