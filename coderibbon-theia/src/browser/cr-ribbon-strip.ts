@@ -55,7 +55,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
   // protected readonly onDidToggleMaximizedEmitter = new Emitter<Widget>();
   // readonly onDidToggleMaximized = this.onDidToggleMaximizedEmitter.event;
 
-  constructor(options?: RibbonStrip.IOptions,
+  constructor(options?: CodeRibbonTheiaRibbonStrip.IOptions,
     @inject(CorePreferences) protected readonly preferences?: CorePreferences,
   ) {
     super({
@@ -67,14 +67,22 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     crdebug("RibbonStrip constructor:", this, options);
   }
 
-  cr_init() {
-    crdebug("Strip init", this);
+  cr_init(options?: CodeRibbonTheiaRibbonStrip.IInitOptions) {
+    crdebug("RibbonStrip cr_init", this, options);
 
-    // while (this.widgets.length < this.vpps) {
-    for (let i = 0; i < 2; ++i) {
-      crdebug("adding patch to meet vpps ...");
-      let new_patch = this.createPatch();
+    if (options?.config) {
+      crdebug("RibbonStrip cr_init: restoring strip layout...");
+      this.restoreLayout(options.config);
     }
+    else {
+      // TODO vpps
+      // while (this.widgets.length < this.vpps) {
+      for (let i = 0; i < 2; ++i) {
+        crdebug("adding patch to meet vpps ...");
+        let new_patch = this.createPatch();
+      }
+    }
+
   }
 
   get vpps(): number {
@@ -89,14 +97,15 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
   }
 
   // TODO options
-  createPatch(options: any = {}) {
-    let new_patch = new CodeRibbonTheiaPatch();
+  createPatch(args: CodeRibbonTheiaRibbonStrip.ICreatePatchArgs = {}) {
+    let {index, options, init_options} = args;
+    let new_patch = new CodeRibbonTheiaPatch(options);
     super.addWidget(new_patch);
-    new_patch.init();
+    new_patch.cr_init(init_options);
     return new_patch;
   }
 
-  addWidget(widget: Widget, options?: RibbonPanel.IAddOptions): void {
+  addWidget(widget: Widget, options?: CodeRibbonTheiaRibbonStrip.ICreatePatchArgs): void {
     // TODO logic based on where to put the widget
     // super.addWidget(widget);
 
@@ -167,17 +176,20 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     this.widgetRemoved.emit(msg.child);
   }
 
-  // NOTE === phosphor DockPanel API compatility section === NOTE //
+  // NOTE === phosphor DockPanel API compatibility section === NOTE //
   // we might want to split this into a `ImprovedBoxPanel` class instead?
   // this section is because phosphor's BoxPanel has only a tiny fraction of the
   // features that DockPanel has, and they're expected by Theia
 
   // NOTE: don't pass to ImprovedBoxPanel cause we need empty patch data
-  saveLayout(): CodeRibbonTheiaRibbonStrip.ILayoutConfig {
+  // @ts-expect-error TS2416: Property 'saveLayout' in type 'CodeRibbonTheiaRibbonStrip' is not assignable to the same property in base type 'ImprovedBoxPanel'.
+  override saveLayout(): CodeRibbonTheiaRibbonStrip.ILayoutConfig {
     crdebug("RibbonStrip saveLayout");
     return {
-      sizers: this.layout._sizers,
-      patches: this._patches.map(patch => patch.saveLayout()),
+      orientation: 'vertical',
+      // sizers: this.layout?._sizers,
+      sizers: [], // TODO
+      patch_configs: this._patches.map(patch => patch.saveLayout()),
       last_active_patch: 0, // TODO
     }
   }
@@ -189,9 +201,26 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
    * @param  config The layout configuration to restore
    */
   // NOTE: don't pass to ImprovedBoxPanel cause ... (above)
-  restoreLayout(config: CodeRibbonTheiaRibbonStrip.ILayoutConfig): void {
-    // TODO
+  override restoreLayout(config: CodeRibbonTheiaRibbonStrip.ILayoutConfig): void {
     crdebug("RibbonStrip restoreLayout:", config);
+
+    if (config.patch_configs) {
+      // TODO any checks before we wipe all the patches?
+      this._patches.map(patch => patch.dispose());
+      config.patch_configs.map(patch_config => {
+        // TODO this could be passed in options to reduce calls
+        let new_patch = this.createPatch({
+          init_options: {
+            config: patch_config,
+          }
+        });
+      });
+
+      // TODO sizers
+
+      // TODO last_active_patch
+    }
+
   }
 
   // // @ts-expect-error TS2425: Class defines instance member property 'widgets', but extended class defines it as instance member function.
@@ -207,7 +236,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     return this._layoutModified;
   }
 
-  // NOTE === theia DockPanel API compatility section === NOTE //
+  // NOTE === theia DockPanel API compatibility section === NOTE //
 
   isElectron(): boolean {
     return environment.electron.is();
@@ -234,9 +263,26 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
 }
 
 export namespace CodeRibbonTheiaRibbonStrip {
+  export interface IOptions {
+    quota?: number;
+  }
+
+  export interface ICreatePatchArgs {
+    index?: number;
+    options?: CodeRibbonTheiaPatch.IOptions;
+    init_options?: CodeRibbonTheiaPatch.IInitOptions;
+  }
+
+  export interface IInitOptions {
+    config?: ILayoutConfig; // an optional layout to restore
+    quota?: number; // how many patches to have on init
+  }
+
   export interface ILayoutConfig {
     sizers: BoxSizer[];
-    patches: CodeRibbonTheiaPatch.ILayoutConfig[];
+    patch_configs: CodeRibbonTheiaPatch.ILayoutConfig[];
     last_active_patch?: number; // TODO
+    orientation: 'vertical'; // ignored, BoxLayout compatibility
+    widgets?: any; // ignored, BoxLayout compatibility
   }
 }

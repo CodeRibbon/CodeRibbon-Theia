@@ -12,14 +12,18 @@ import { crdebug } from './cr-logger';
 
 export class CodeRibbonTheiaPatch extends TabPanel {
 
-  constructor(options = {}) {
+  constructor(options: CodeRibbonTheiaPatch.IOptions = {}) {
     super();
     this.addClass('p-RibbonPatch');
     crdebug("Patch constructor", this);
   }
 
-  init() {
-    crdebug("Patch init", this);
+  cr_init(options: CodeRibbonTheiaPatch.IInitOptions = {}) {
+    crdebug("Patch cr_init", this);
+
+    if (options?.config) {
+      this.restoreLayout(options.config);
+    }
   }
 
   get contentful_size(): number {
@@ -42,9 +46,28 @@ export class CodeRibbonTheiaPatch extends TabPanel {
       widget: this.contentful_widget,
     }
   }
+
+  restoreLayout(config: CodeRibbonTheiaPatch.ILayoutConfig): void {
+    crdebug("Patch restoreLayout:", config);
+
+    if (config.widget) {
+      if (this.contentful_widget) {
+        this.contentful_widget.dispose();
+      }
+      this.addWidget(config.widget);
+    }
+  }
 }
 
 export namespace CodeRibbonTheiaPatch {
+  export interface IOptions {
+    // TODO
+  }
+
+  export interface IInitOptions {
+    config?: CodeRibbonTheiaPatch.ILayoutConfig;
+  }
+
   export interface ILayoutConfig {
     // Atom CR equivalent: fuzzyfinder, cr-tips, pane
     mode: 'fuzzyfinder' | 'empty' | 'widget';

@@ -65,6 +65,9 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
 
   protected _stripquota: number;
 
+  // prevents automatic modifications to the ribbon
+  protected _freeze_ribbon: boolean;
+
   constructor(options?: RibbonPanel.IOptions,
     @inject(CorePreferences) protected readonly preferences?: CorePreferences,
   ) {
@@ -95,10 +98,18 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     // TODO restore this
     this._stripquota = 4;
 
+    this._freeze_ribbon = false;
+
     this.autoAdjustRibbonTailLength();
   }
 
+  /**
+   * This function puts a Widget somewhere along the Ribbon
+   * @param widget   something that will end up in a patch
+   * @param options  how to decide where to place the thing
+   */
   override addWidget(widget: Widget, options?: RibbonPanel.IAddOptions): void {
+    crdebug("RibbonPanel addWidget:", widget, options);
 
     this.autoAdjustRibbonTailLength();
 
@@ -176,15 +187,18 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
 
   }
 
-  protected createNewRibbonStrip(
-    index?: number | undefined, options?: RibbonStrip.IOptions
-  ) {
+  protected createNewRibbonStrip(args: CodeRibbonTheiaRibbonPanel.ICreateNewRibbonStripOptions = {}) {
+    crdebug("RibbonPanel createNewRibbonStrip:", args);
+    if (this._freeze_ribbon) {
+      crdebug("WARN: createNewRibbonStrip while the ribbon is frozen.");
+    }
+    let {index, options, add_options, init_options} = args;
     if (index === undefined) {
       // append to ribbon
-      let new_strip = new CodeRibbonTheiaRibbonStrip();
+      let new_strip = new CodeRibbonTheiaRibbonStrip(options);
       super.addWidget(new_strip);
       // crdebug("New strip created, init...");
-      new_strip.cr_init();
+      new_strip.cr_init(init_options);
       return new_strip;
     }
     else {
@@ -194,7 +208,12 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
   }
 
   protected autoAdjustRibbonTailLength() {
-    crdebug("doin some work...");
+    crdebug("RibbonPanel autoAdjustRibbonTailLength");
+
+    if (this._freeze_ribbon) {
+      crdebug("Skip tail adjustment due to ribbon freeze.");
+      return;
+    }
 
     let strips = this._strips;
     if (strips.length < 1) {
@@ -358,23 +377,18 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     return scrollFinish;
   }
 
-  saveLayout(): RibbonPanel.ILayoutConfig {
-    crdebug("RibbonPanel saves layout");
-    return (this.layout as CodeRibbonTheiaRibbonLayout).saveLayout();
-  }
-
-  /**
-   * Here to mimick phosphor restoration
-   * https://github.com/phosphorjs/phosphor/blob/8fee9108/packages/widgets/src/docklayout.ts#L265
-   *
-   * @param  config The layout configuration to restore
-   */
-  restoreLayout(config: RibbonPanel.ILayoutConfig): void {
-    // TODO
-    crdebug("RibbonPanel restores layout with config", config);
-
-    // MessageLoop.postMessage(this, Private.LayoutModified);
-  }
+  // saveLayout(): RibbonPanel.ILayoutConfig {
+  //   crdebug("RibbonPanel saves layout");
+  //   return (this.layout as CodeRibbonTheiaRibbonLayout).saveLayout();
+  // }
+  //
+  //
+  // restoreLayout(config: RibbonPanel.ILayoutConfig): void {
+  //   // TODO
+  //   crdebug("RibbonPanel restores layout with config", config);
+  //
+  //   // MessageLoop.postMessage(this, Private.LayoutModified);
+  // }
 
   // NOTE === phosphor DockPanel API compatility section === NOTE //
   // we might want to split this into a `ImprovedBoxPanel` class instead?
@@ -415,7 +429,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
    *
    * use the returned object as input to restoreLayout later
    */
-  saveLayout(): CodeRibbonTheiaRibbonLayout.IRibbonLayoutConfig {
+  saveLayout(): CodeRibbonTheiaRibbonPanel.IRibbonLayoutConfig {
     crdebug("RibbonPanel saveLayout");
     return {
       type: 'ribbon-area',
@@ -426,9 +440,39 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     };
   }
 
+  /**
+   * Here to mimick phosphor restoration
+   * https://github.com/phosphorjs/phosphor/blob/8fee9108/packages/widgets/src/docklayout.ts#L265
+   *
+   * @param  config The layout configuration to restore
+   */
   restoreLayout(config: CodeRibbonTheiaRibbonPanel.IRibbonLayoutConfig): void {
     crdebug("RibbonPanel restoreLayout:", config);
-    // TODO
+    // TODO rest of these props
+    const {type, overview_active, focus_active, active_strip, strip_configs} = config;
+    if (type != 'ribbon-area') {
+      crdebug("RibbonPanel type mismatch in restored config!");
+      throw Error(`RibbonPanel does not support restoreLayout config type ${type}`);
+    }
+
+    // TODO can we check to make sure we aren't overwriting a current, contentful layout?
+    // also, should we?
+    if (strip_configs) {
+      this._freeze_ribbon = true;
+      // NOTE: we *cannot* use map here since we're changing the array
+      let prior_strip_count = this._strips.length;
+      for (let i = 0; i < prior_strip_count; i++) {
+        this._strips[0].dispose();
+      }
+      strip_configs.map(strip_config => {
+        let new_strip = this.createNewRibbonStrip({
+          init_options: {
+            config: strip_config,
+          }
+        });
+      });
+      this._freeze_ribbon = false;
+    }
   }
 
   // NOTE === theia DockPanel API compatility section === NOTE //
@@ -621,6 +665,13 @@ export namespace CodeRibbonTheiaRibbonPanel {
     focus_active: boolean; // if strip is focused
     active_strip: number; // which strip is active
     strip_configs: CodeRibbonTheiaRibbonStrip.ILayoutConfig[];
+  }
+
+  export interface ICreateNewRibbonStripOptions {
+    index?: number;
+    options?: CodeRibbonTheiaRibbonStrip.IOptions;
+    add_options?: RibbonStrip.IAddOptions;
+    init_options?: CodeRibbonTheiaRibbonStrip.IInitOptions;
   }
 }
 

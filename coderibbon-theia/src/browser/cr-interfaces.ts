@@ -48,7 +48,11 @@ export namespace RibbonPanel {
     /**
      * If true, will not scroll to nor focus / activate the added widget
      */
-    preventFocus?: boolean
+    preventFocus?: boolean;
+    /**
+     * Skip adjustment of the ribbon length after and before adding this?
+     */
+    skipAdjustRibbonTailLength?: boolean;
   }
   export interface IOptions {
     direction?: BoxLayout.Direction; // only horizontal
@@ -96,12 +100,13 @@ export namespace RibbonStrip {
      */
     useEmpty?: boolean;
   }
-  export interface IOptions {
-    // how many empty patches to init
-    size?: number;
-  }
-  export interface ILayoutConfig {
-    // main: ITabAreaConfig | ISplitAreaConfig | null;
-    main: any;
-  }
+  // moved to CodeRibbonTheiaRibbonStrip
+  // export interface IOptions {
+  //   // how many empty patches to init
+  //   size?: number;
+  // }
+  // export interface ILayoutConfig {
+  //   // main: ITabAreaConfig | ISplitAreaConfig | null;
+  //   main: any;
+  // }
 }
