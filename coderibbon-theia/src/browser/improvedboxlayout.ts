@@ -129,6 +129,7 @@ export class ImprovedBoxLayout extends BoxLayout {
 
   update(left: number, top: number, width: number, height: number, spacing: number) {
     crdebug("IBL update()", this, left, top, width, height, spacing);
+    crdebug("IBL update() START: normalized sizes are currently", this.getNormalizedSizes(), this.getNormalizedSizeHints());
     let horizontal = this.orientation === 'horizontal';
     // @ts-expect-error TS2341: _items is private
     let fixed = Math.max(0, this._items.length - 1) * spacing;
@@ -150,6 +151,7 @@ export class ImprovedBoxLayout extends BoxLayout {
       });
       this.normalized = false;
     }
+    crdebug("IBL update(): normalized sizes are currently", this.getNormalizedSizes(), this.getNormalizedSizeHints());
 
     // Distribute the layout space to the sizers.
     // @ts-expect-error TS2341: _sizers is private
@@ -180,6 +182,8 @@ export class ImprovedBoxLayout extends BoxLayout {
         top += spacing;
       }
     }
+
+    crdebug("IBL update() END: normalized sizes are currently", this.getNormalizedSizes(), this.getNormalizedSizeHints());
   }
 
   protected _update(offsetWidth: number, offsetHeight: number): void {
@@ -338,10 +342,40 @@ export class ImprovedBoxLayout extends BoxLayout {
    * @return the sizes normalized to a sum of 1.0
    */
   getNormalizedSizes(): number[] {
-    this.normalizeSizes();
+    // this.normalizeSizes();
+    //
+    // // @ ts-expect-error TS2341: _sizers is private
+    // let sizes = this._sizers.map(sizer => sizer.size);
+    //
+    // return sizes;
 
-    // @ts-expect-error TS2341: _sizers is private
+    let n = this._sizers.length;
+    if (n === 0) return [];
+
     let sizes = this._sizers.map(sizer => sizer.size);
+    let sum = reduce(sizes, (v, size) => v + size, 0);
+
+    if (sum === 0) {
+      each(sizes, (size, i) => { sizes[i] = 1 / n; });
+    } else {
+      each(sizes, (size, i) => { sizes[i] = size / sum; });
+    }
+
+    return sizes;
+  }
+
+  getNormalizedSizeHints(): number[] {
+    let n = this._sizers.length;
+    if (n === 0) return [];
+
+    let sizes = this._sizers.map(sizer => sizer.sizeHint);
+    let sum = reduce(sizes, (v, size) => v + size, 0);
+
+    if (sum === 0) {
+      each(sizes, (size, i) => { sizes[i] = 1 / n; });
+    } else {
+      each(sizes, (size, i) => { sizes[i] = size / sum; });
+    }
 
     return sizes;
   }
@@ -367,12 +401,12 @@ export class ImprovedBoxLayout extends BoxLayout {
     // @ts-expect-error TS2341: _sizers is private
     crdebug("restoreNormalizedSizes created new BoxSizers, first:", this._sizers[0]);
 
-    this._update(-1, -1);
+    // this._update(-1, -1);
     // this.holdSizes();
 
-    if (this.parent) {
-      this.parent.update();
-    }
+    // if (this.parent) {
+    //   this.parent.update();
+    // }
   }
 
 }
