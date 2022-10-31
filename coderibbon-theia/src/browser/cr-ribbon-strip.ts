@@ -6,6 +6,7 @@ import {
   DockPanel, BoxPanel,
   DockLayout, BoxLayout,
   BoxSizer,
+  FocusTracker,
 } from '@phosphor/widgets';
 import {
   empty, IIterator,
@@ -52,6 +53,9 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
    */
   readonly widgetRemoved = new Signal<this, Widget>(this);
 
+  protected readonly tracker = new FocusTracker<CodeRibbonTheiaPatch>();
+  // readonly patchAdded = new Signal<this, CodeRibbonTheiaPatch>(this);
+
   // protected readonly onDidToggleMaximizedEmitter = new Emitter<Widget>();
   // readonly onDidToggleMaximized = this.onDidToggleMaximizedEmitter.event;
 
@@ -85,6 +89,11 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
 
   }
 
+  dispose(): void {
+    this.tracker.dispose();
+    super.dispose();
+  }
+
   get vpps(): number {
     return 2; // TODO
   }
@@ -102,6 +111,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     let new_patch = new CodeRibbonTheiaPatch(options);
     super.addWidget(new_patch);
     new_patch.cr_init(init_options);
+    this.tracker.add(new_patch);
     return new_patch;
   }
 

@@ -4,6 +4,7 @@ import {
   TabBar, Widget, Title,
   DockPanel, BoxPanel,
   DockLayout, BoxLayout,
+  FocusTracker,
 } from '@phosphor/widgets';
 import {
   MessageService,
@@ -85,7 +86,9 @@ export class CodeRibbonApplicationShell extends ApplicationShell {
     ribbonPanel.widgetAdded.connect((_, widget) => this.fireDidAddWidget(widget));
     ribbonPanel.widgetRemoved.connect((_, widget) => this.fireDidRemoveWidget(widget));
 
-    ribbonPanel._cras = this;
+    ribbonPanel.cr_init({
+      shell: this,
+    });
 
     return ribbonPanel;
   }

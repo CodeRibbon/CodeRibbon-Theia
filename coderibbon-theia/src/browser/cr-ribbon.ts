@@ -22,6 +22,9 @@ import {
   UnsafeWidgetUtilities,
 } from '@theia/core/lib/browser/widgets';
 import {
+  ApplicationShell
+} from '@theia/core/lib/browser';
+import {
   TheiaDockPanel, BOTTOM_AREA_ID, MAIN_AREA_ID, MAXIMIZED_CLASS,
 } from '@theia/core/lib/browser/shell/theia-dock-panel';
 import {
@@ -64,6 +67,9 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
   protected readonly onDidToggleMaximizedEmitter = new Emitter<Widget>();
   readonly onDidToggleMaximized = this.onDidToggleMaximizedEmitter.event;
 
+  protected _shell: ApplicationShell = null;
+  protected readonly tracker = new FocusTracker<CodeRibbonTheiaRibbonStrip>();
+
   protected _stripquota: number;
 
   // prevents automatic modifications to the ribbon
@@ -103,6 +109,12 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     this._freeze_ribbon = false;
 
     this.autoAdjustRibbonTailLength();
+  }
+
+  cr_init(options: CodeRibbonTheiaRibbonPanel.IInitOptions) {
+    crdebug("CRTRP: cr_init", options);
+
+    this._shell = options.shell;
   }
 
   /**
@@ -202,18 +214,21 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
       crdebug("WARN: createNewRibbonStrip while the ribbon is frozen.");
     }
     let {index, options, add_options, init_options} = args;
+    let new_strip;
     if (index === undefined) {
       // append to ribbon
-      let new_strip = new CodeRibbonTheiaRibbonStrip(options);
+      new_strip = new CodeRibbonTheiaRibbonStrip(options);
       super.addWidget(new_strip);
       // crdebug("New strip created, init...");
       new_strip.cr_init(init_options);
-      return new_strip;
     }
     else {
       console.error("not yet, TODO");
       throw Error("NotYetImplemented");
     }
+
+    this.tracker.add(new_strip);
+    return new_strip;
   }
 
   protected autoAdjustRibbonTailLength() {
@@ -295,10 +310,6 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     return (
       (this.layout as CodeRibbonTheiaRibbonLayout).widgets as readonly CodeRibbonTheiaRibbonStrip[]
     );
-  }
-
-  get tracker(): readonly FocusTracker<Widget> {
-    return this._cras?.tracker;
   }
 
   get contentful_widgets(): readonly Widget[] {
@@ -666,6 +677,11 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
 }
 
 export namespace CodeRibbonTheiaRibbonPanel {
+
+  export interface IInitOptions {
+    shell: ApplicationShell;
+  }
+
   export interface IRibbonLayoutConfig {
     type: 'ribbon-area'; // compatibility for dock*
     overview_active: boolean; // TODO: overview
