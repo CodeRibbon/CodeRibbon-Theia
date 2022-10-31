@@ -239,19 +239,36 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
       return;
     }
 
-    let strips = this._strips;
-    if (strips.length < 1) {
+    if (this._strips.length < 1) {
       // create first RibbonStrip
       crdebug("Creating first Strip in Ribbon...");
       let new_strip = this.createNewRibbonStrip();
     }
 
-    let rightmost_strip = this._strips[this._strips.length-1];
+    let hpps = (this.layout as CodeRibbonTheiaRibbonLayout).hpps;
+    let strips = this._strips;
+    let rightmost_strip = strips[strips.length-1];
+    let rightmost_contentful_strip = this._rightmost_contentful_strip;
+
     if (rightmost_strip.contentful_size) {
       let new_strip = this.createNewRibbonStrip();
     }
 
-    if (strips.length < (this.layout as CodeRibbonTheiaRibbonLayout).hpps) {
+    if (rightmost_contentful_strip) {
+      let end_idx = strips.indexOf(rightmost_strip);
+      let tail_idx = strips.indexOf(rightmost_contentful_strip);
+
+      if (end_idx - tail_idx >= hpps) {
+        if (rightmost_strip.contentful_size != 0) throw Error("tried to trim off strip with content");
+        rightmost_strip.dispose();
+      }
+
+        // let count_to_remove = strips.indexOf(rightmost_strip) - strips.indexOf(rightmost_contentful_strip) - 1;
+        // crdebug(`trimming ${count_to_remove} excess empty strips from end of ribbon...`);
+
+    }
+
+    if (strips.length < hpps) {
       // ensure at least one screen of initial patches
       let toAdd = (this.layout as CodeRibbonTheiaRibbonLayout).hpps - strips.length;
       let new_strips = Array(toAdd).fill(0).map((_n) => {
