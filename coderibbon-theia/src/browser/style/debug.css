@@ -17,7 +17,7 @@
   font-weight: 700;
 }
 
-.p-RibbonStrip-child:after {
+.p-RibbonPatch:after {
   content: "Patch";
   top: 0px;
   position: absolute;

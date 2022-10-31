@@ -85,7 +85,37 @@ export class CodeRibbonApplicationShell extends ApplicationShell {
     ribbonPanel.widgetAdded.connect((_, widget) => this.fireDidAddWidget(widget));
     ribbonPanel.widgetRemoved.connect((_, widget) => this.fireDidRemoveWidget(widget));
 
+    ribbonPanel._cras = this;
+
     return ribbonPanel;
+  }
+
+  /**
+   * overriding this in order to ensure that when the layout is restored,
+   * all the restored widgets are tracked
+   *
+   * original: https://github.com/eclipse-theia/theia/blob/v1.29.0/packages/core/src/browser/shell/application-shell.ts#L769
+   *
+   * @param data  [description]
+   */
+  override registerWithFocusTracker(
+      data: /*ADDED TYPE:*/ CodeRibbonTheiaRibbonPanel.IRibbonLayoutConfig | DockLayout.ITabAreaConfig | DockLayout.ISplitAreaConfig | SidePanel.LayoutData | null
+  ): void {
+    crdebug("CRAS registerWithFocusTracker", data);
+    if (data && data.type == 'ribbon-area') {
+      // shortcut to tracking all the widgets restored from the config:
+      crdebug("CRAS registerWithFocusTracker tracking restored widgets...");
+      for (const strip of data.strip_configs) {
+        for (const patch of strip.patch_configs) {
+          if (patch.widget) {
+            this.track(patch.widget);
+          }
+        }
+      }
+    }
+    else {
+      super.registerWithFocusTracker(data);
+    }
   }
 
 }

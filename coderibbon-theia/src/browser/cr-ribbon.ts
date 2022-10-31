@@ -133,7 +133,8 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     // TODO focus the widget, scrolling, etc...
     crdebug("RibbonPanel activateWidget", widget);
     // super.activate();
-    // TODO column's activate first
+    // column's activate first:
+    let strip = null;
     if (widget instanceof CodeRibbonTheiaPatch) {
       let strip = widget.parent;
       if (!(strip instanceof CodeRibbonTheiaRibbonStrip)) {
@@ -141,7 +142,8 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
         throw Error("Patch not parented by Strip");
       }
       this.scrollStripIntoView((strip as CodeRibbonTheiaRibbonStrip)).then(() => {
-        widget.activate();
+        // widget.activate();
+        strip.activateWidget(widget);
         this.widgetActivated.emit(widget);
       }).catch((e) => {
         crdebug("scrollStripIntoView fail reason:", e);
@@ -167,7 +169,8 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
             throw Error("Patch not parented by Strip");
           }
           this.scrollStripIntoView((strip as CodeRibbonTheiaRibbonStrip)).then(() => {
-            widget.activate();
+            // widget.activate();
+            strip.activateWidget(widget);
             this.widgetActivated.emit(widget);
           }).catch((e) => {
             crdebug("scrollStripIntoView failure:", e);
@@ -429,14 +432,16 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
    *
    * use the returned object as input to restoreLayout later
    */
-  saveLayout(): CodeRibbonTheiaRibbonPanel.IRibbonLayoutConfig {
+  saveLayout(): CodeRibbonTheiaRibbonPanel.ILayoutConfig {
     crdebug("RibbonPanel saveLayout");
     return {
-      type: 'ribbon-area',
-      overview_active: false, // TODO
-      focus_active: false, // TODO
-      active_strip: 0, // TODO
-      strip_configs: this._strips.map(strip => strip.saveLayout()),
+      main: {
+        type: 'ribbon-area',
+        overview_active: false, // TODO
+        focus_active: false, // TODO
+        active_strip: 0, // TODO
+        strip_configs: this._strips.map(strip => strip.saveLayout()),
+      }
     };
   }
 
@@ -446,10 +451,10 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
    *
    * @param  config The layout configuration to restore
    */
-  restoreLayout(config: CodeRibbonTheiaRibbonPanel.IRibbonLayoutConfig): void {
+  restoreLayout(config: CodeRibbonTheiaRibbonPanel.ILayoutConfig): void {
     crdebug("RibbonPanel restoreLayout:", config);
     // TODO rest of these props
-    const {type, overview_active, focus_active, active_strip, strip_configs} = config;
+    const {type, overview_active, focus_active, active_strip, strip_configs} = config.main;
     if (type != 'ribbon-area') {
       crdebug("RibbonPanel type mismatch in restored config!");
       throw Error(`RibbonPanel does not support restoreLayout config type ${type}`);
@@ -665,6 +670,12 @@ export namespace CodeRibbonTheiaRibbonPanel {
     focus_active: boolean; // if strip is focused
     active_strip: number; // which strip is active
     strip_configs: CodeRibbonTheiaRibbonStrip.ILayoutConfig[];
+  }
+
+  // this needs to have `main` due to it's use in a few places:
+  // https://github.com/eclipse-theia/theia/blob/v1.29.0/packages/core/src/browser/shell/application-shell.ts#L715
+  export interface ILayoutConfig {
+    main: IRibbonLayoutConfig | null;
   }
 
   export interface ICreateNewRibbonStripOptions {

@@ -26,6 +26,11 @@ export class CodeRibbonTheiaPatch extends TabPanel {
     }
   }
 
+  activate(): void {
+    super.activate();
+    crdebug("Patch activate", this);
+  }
+
   get contentful_size(): number {
     return this.widgets.length;
   }
