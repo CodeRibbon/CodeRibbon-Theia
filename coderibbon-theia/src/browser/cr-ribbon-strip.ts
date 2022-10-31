@@ -63,7 +63,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
       direction: 'top-to-bottom',
       // spacing:
     });
-    this.addClass('p-RibbonStrip');
+    this.addClass('cr-RibbonStrip');
     crdebug("RibbonStrip constructor:", this, options);
   }
 
@@ -149,8 +149,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
   }
 
   has_empty_patch() {
-    // TODO
-    if (this.contentful_size < 2) {
+    if (this.contentful_size < this._patches.length) {
       return true;
     }
     else {
@@ -166,13 +165,13 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
   // overriding BoxPanel's p-BoxPanel-child
   protected onChildAdded(msg: Widget.ChildMessage) {
     super.onChildAdded(msg);
-    msg.child.addClass('p-RibbonStrip-child');
+    msg.child.addClass('cr-RibbonStrip-child');
     this.widgetAdded.emit(msg.child);
   }
 
   protected onChildRemoved(msg: Widget.ChildMessage): void {
     super.onChildRemoved(msg);
-    msg.child.removeClass('p-RibbonStrip-child');
+    msg.child.removeClass('cr-RibbonStrip-child');
     this.widgetRemoved.emit(msg.child);
   }
 

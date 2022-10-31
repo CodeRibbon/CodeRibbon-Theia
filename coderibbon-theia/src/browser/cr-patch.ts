@@ -14,7 +14,7 @@ export class CodeRibbonTheiaPatch extends TabPanel {
 
   constructor(options: CodeRibbonTheiaPatch.IOptions = {}) {
     super();
-    this.addClass('p-RibbonPatch');
+    this.addClass('cr-RibbonPatch');
     crdebug("Patch constructor", this);
   }
 

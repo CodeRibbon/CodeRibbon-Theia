@@ -1,12 +1,12 @@
-.p-RibbonStrip-child {
+.cr-RibbonStrip-child {
   border: 2px solid rebeccapurple;
 }
 
-.p-RibbonStrip {
+.cr-RibbonStrip {
   border: 2px solid darkred;
 }
 
-.p-RibbonStrip:after {
+.cr-RibbonStrip:after {
   content: "RibbonStrip";
   bottom: 0px;
   position: absolute;
@@ -17,7 +17,7 @@
   font-weight: 700;
 }
 
-.p-RibbonPatch:after {
+.cr-RibbonPatch:after {
   content: "Patch";
   top: 0px;
   position: absolute;
