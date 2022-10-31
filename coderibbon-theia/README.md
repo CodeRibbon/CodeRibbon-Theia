@@ -1,3 +1,3 @@
-# Empty Template Extension
+# CodeRibbon workspace for Eclipse Theia
 
-This template extension does not contain any features, but provides an empty stub including a frontend module and a generic contribution. It can be used as a starting point to implement any custom extension.
+Refer to parent README for now.
