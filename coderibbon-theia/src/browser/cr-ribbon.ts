@@ -48,7 +48,7 @@ const VISIBLE_MENU_MAXIMIZED_CLASS = 'theia-visible-menu-maximized';
 // based primarily on TheiaDockPanel implementation, since that's what it replaces
 // as such, license here falls to
 // SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
-@injectable()
+// @injectable()
 export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
 
   /**
@@ -67,7 +67,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
   protected readonly onDidToggleMaximizedEmitter = new Emitter<Widget>();
   readonly onDidToggleMaximized = this.onDidToggleMaximizedEmitter.event;
 
-  protected _shell: ApplicationShell = null;
+  // protected _shell: ApplicationShell = null;
   protected readonly tracker = new FocusTracker<CodeRibbonTheiaRibbonStrip>();
 
   protected _stripquota: number;
@@ -104,7 +104,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
 
     // TODO restore these
     this._stripquota = 4;
-    this._mru_strip = null;
+    // this._mru_strip = null;
 
     this._freeze_ribbon = false;
 
@@ -114,7 +114,14 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
   cr_init(options: CodeRibbonTheiaRibbonPanel.IInitOptions) {
     crdebug("CRTRP: cr_init", options);
 
-    this._shell = options.shell;
+    // this._shell = options.shell;
+
+    this.tracker.currentChanged.connect(() => {
+      this._strips.map((strip) => {
+        strip.node.classList.remove("cr-current");
+      });
+      this.mru_strip.node.classList.add("cr-current");
+    });
   }
 
   /**
@@ -204,7 +211,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     }
 
     // mark that strip as most recently used:
-    this._mru_strip = strip;
+    // this._mru_strip = strip;
 
   }
 
@@ -215,17 +222,16 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     }
     let {index, options, add_options, init_options} = args;
     let new_strip;
+    new_strip = new CodeRibbonTheiaRibbonStrip(options);
     if (index === undefined) {
       // append to ribbon
-      new_strip = new CodeRibbonTheiaRibbonStrip(options);
       super.addWidget(new_strip);
       // crdebug("New strip created, init...");
-      new_strip.cr_init(init_options);
     }
     else {
-      console.error("not yet, TODO");
-      throw Error("NotYetImplemented");
+      super.insertWidget(index, new_strip);
     }
+    new_strip.cr_init(init_options);
 
     this.tracker.add(new_strip);
     return new_strip;
@@ -418,6 +424,10 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     return scrollFinish;
   }
 
+  get mru_strip(): CodeRibbonTheiaRibbonStrip {
+    return this.tracker.currentWidget;
+  }
+
   // NOTE === phosphor DockPanel API compatility section === NOTE //
   // we might want to split this into a `ImprovedBoxPanel` class instead?
   // this section is because phosphor's BoxPanel has only a tiny fraction of the
@@ -504,10 +514,10 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
       this._freeze_ribbon = false;
     }
 
-    if (active_strip >= 0) {
-      this._mru_strip = this._strips[active_strip];
-      // TODO focus the last strip by active_strip
-    }
+    // if (active_strip >= 0) {
+    //   this._mru_strip = this._strips[active_strip];
+    //   // TODO focus the last strip by active_strip
+    // }
   }
 
   // NOTE === theia DockPanel API compatility section === NOTE //
@@ -696,7 +706,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
 export namespace CodeRibbonTheiaRibbonPanel {
 
   export interface IInitOptions {
-    shell: ApplicationShell;
+    // shell: ApplicationShell ;
   }
 
   export interface IRibbonLayoutConfig {

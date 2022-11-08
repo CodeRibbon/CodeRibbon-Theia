@@ -87,7 +87,7 @@ export class CodeRibbonApplicationShell extends ApplicationShell {
     ribbonPanel.widgetRemoved.connect((_, widget) => this.fireDidRemoveWidget(widget));
 
     ribbonPanel.cr_init({
-      shell: this,
+      // shell: this,
     });
 
     return ribbonPanel;

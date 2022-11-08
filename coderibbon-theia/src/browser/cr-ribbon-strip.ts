@@ -87,6 +87,12 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
       }
     }
 
+    this.tracker.currentChanged.connect(() => {
+      this._patches.map((patch) => {
+        patch.node.classList.remove("cr-current");
+      });
+      this.mru_patch.node.classList.add("cr-current");
+    });
   }
 
   dispose(): void {
@@ -156,6 +162,10 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     return (this._patches.map(patch => {
       return patch.contentful_widget;
     }).filter(Boolean) as Widget[]);
+  }
+
+  get mru_patch(): CodeRibbonTheiaPatch {
+    return this.tracker.currentWidget;
   }
 
   has_empty_patch() {

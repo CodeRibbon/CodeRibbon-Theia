@@ -4,6 +4,13 @@ import {
   Command, CommandContribution, CommandRegistry,
   MessageService,
 } from '@theia/core/lib/common';
+import {
+  ApplicationShell,
+} from '@theia/core/lib/browser';
+
+import {
+  CodeRibbonApplicationShell,
+} from './cr-application-shell';
 
 import {crdebug} from './cr-logger';
 
@@ -123,7 +130,10 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
 
   constructor(
     @inject(MessageService) private readonly messageService: MessageService,
+    // @inject(FrontendApplicationStateService) protected readonly stateService: FrontendApplicationStateService,
     // @inject(PreferenceService) protected readonly prefService: PreferenceService,
+    // @inject(CodeRibbonApplicationShell) private readonly cras: CodeRibbonApplicationShell,
+    @inject(ApplicationShell) protected readonly applicationShell: CodeRibbonApplicationShell,
   ) {}
 
   registerCommands(registry: CommandRegistry): void {
@@ -131,13 +141,53 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
       execute: () => {
         this.messageService.info("CodeRibbon says hello!");
         crdebug("Hello console! CommandContribution:", this);
+        // crdebug("CRAS is:", this.cras);
       }
     });
-    registry.registerCommand(CodeRibbonDevGetPanelCommand, {
+    // registry.registerCommand(CodeRibbonDevGetPanelCommand, {
+    //   execute: () => {
+    //     crdebug();
+    //   }
+    // });
+
+    // === NOTE: Nav section
+
+    // === NOTE: Manip section
+
+    registry.registerCommand(CodeRibbonManipulationCommands.createStripLeft, {
       execute: () => {
-        crdebug();
+        let ribbon = this.applicationShell.mainPanel;
+        crdebug("createStripLeft ribbon:", ribbon);
+        let cur_index = ribbon._strips.indexOf(ribbon.mru_strip);
+        if (cur_index < 0) throw Error("did not find a valid index for the currently active strip");
+        ribbon.createNewRibbonStrip({
+          index: cur_index,
+        });
       }
     });
+
+    registry.registerCommand(CodeRibbonManipulationCommands.createStripRight, {
+      execute: () => {
+        let ribbon = this.applicationShell.mainPanel;
+        crdebug("createStripLeft ribbon:", ribbon);
+        let cur_index = ribbon._strips.indexOf(ribbon.mru_strip);
+        if (cur_index < 0) throw Error("did not find a valid index for the currently active strip");
+        ribbon.createNewRibbonStrip({
+          index: cur_index + 1, // right side
+        });
+      }
+    });
+
+    registry.registerCommand(CodeRibbonManipulationCommands.closeStrip, {
+      execute: () => {
+        let ribbon = this.applicationShell.mainPanel;
+        crdebug("closeStrip", ribbon);
+        // TODO prompt if there are unsaved changes in this strip
+        ribbon.mru_strip.dispose();
+      }
+    });
+
+    // === NOTE: Arrange section
   }
 
 }

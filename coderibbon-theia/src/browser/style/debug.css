@@ -16,6 +16,9 @@
   border-radius: 8px 0px 0px 0px;
   font-weight: 700;
 }
+.cr-RibbonStrip.cr-current:after {
+  content: "Current RibbonStrip";
+}
 
 .cr-RibbonPatch:after {
   content: "Patch";
@@ -26,6 +29,12 @@
   border: 4px solid rebeccapurple;
   border-radius: 0px 0px 0px 8px;
   font-weight: 700;
+}
+.cr-RibbonPatch.cr-current:after {
+  content: "MRU Patch";
+}
+.cr-RibbonStrip.cr-current .cr-RibbonPatch.cr-current:after {
+  content: "Current Patch";
 }
 
 #theia-top-panel:after {
