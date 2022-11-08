@@ -87,12 +87,14 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
       }
     }
 
-    this.tracker.currentChanged.connect(() => {
+    let update_current_patch = () => {
       this._patches.map((patch) => {
         patch.node.classList.remove("cr-current");
       });
-      this.mru_patch.node.classList.add("cr-current");
-    });
+      if (this.mru_patch) this.mru_patch.node.classList.add("cr-current");
+    };
+    update_current_patch();
+    this.tracker.currentChanged.connect(update_current_patch);
   }
 
   dispose(): void {

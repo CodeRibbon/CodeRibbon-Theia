@@ -116,12 +116,14 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
 
     // this._shell = options.shell;
 
-    this.tracker.currentChanged.connect(() => {
+    let update_active_strip = () => {
       this._strips.map((strip) => {
         strip.node.classList.remove("cr-current");
       });
-      this.mru_strip.node.classList.add("cr-current");
-    });
+      if (this.mru_strip) this.mru_strip.node.classList.add("cr-current");
+    };
+    update_active_strip();
+    this.tracker.currentChanged.connect(update_active_strip);
   }
 
   /**
