@@ -368,78 +368,95 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     strip: CodeRibbonTheiaRibbonStrip,
     {
       skip_visible_check = false,
+      wait_for_transition = false,
       scroll_behavior = 'smooth',
     }: {
       skip_visible_check?: boolean;
+      wait_for_transition?: boolean;
       scroll_behavior?: ScrollBehavior;
     }={}
   ): Promise<boolean> {
     const scrollFinish = new Promise<boolean>((resolve, reject) => {
 
-      if (!skip_visible_check) {
-        // TODO check if a strip is already on-screen
-      }
+      let startScrollTo = () => {
 
-      var timeoutHandle: number | undefined = undefined;
-      let cur_scroll = this.scrollLeft;
-      let scrollDiff = 0;
-
-      let container_bounds = this.node.getBoundingClientRect();
-      let strip_bounds = strip.node.getBoundingClientRect();
-
-      if (strip_bounds.right > container_bounds.right) {
-        scrollDiff = strip_bounds.right - container_bounds.right;
-      }
-      else if (strip_bounds.left < container_bounds.left) {
-        scrollDiff = strip_bounds.left - container_bounds.left;
-      }
-
-      const target_scroll = cur_scroll + scrollDiff;
-      const fixed_scroll = Number(target_scroll.toFixed());
-
-      crdebug("Scrolling", scrollDiff, "to get", strip, "into view...");
-      this.node.classList.add("cr-managed-scroll-active");
-
-      const stopScrollCallback = () => {
-        cur_scroll = this.scrollLeft;
-        cur_scroll = Number(cur_scroll.toFixed());
-        let did_achieve = true;
-        if (cur_scroll != fixed_scroll && cur_scroll+1 != fixed_scroll) {
-          did_achieve = false;
+        if (!skip_visible_check) {
+          // TODO check if a strip is already on-screen
         }
-        this.node.classList.remove("cr-managed-scroll-active");
 
-        if (did_achieve) {
-          resolve(did_achieve);
-        }
-        else {
-          // TODO check if strip is on screen, if not, reject
-          reject("failed to achieve target scroll");
-        }
-      };
+        var timeoutHandle: number | undefined = undefined;
+        let cur_scroll = this.scrollLeft;
+        let scrollDiff = 0;
 
-      const checkScroll = () => {
-        if (Number(this.scrollLeft.toFixed()) == fixed_scroll) {
-          this.node.removeEventListener('scroll', checkScroll);
-          stopScrollCallback();
+        let container_bounds = this.node.getBoundingClientRect();
+        let strip_bounds = strip.node.getBoundingClientRect();
+
+        if (strip_bounds.right > container_bounds.right) {
+          scrollDiff = strip_bounds.right - container_bounds.right;
         }
-        else {
-          window.clearTimeout(timeoutHandle);
-          timeoutHandle = window.setTimeout(() => {
+        else if (strip_bounds.left < container_bounds.left) {
+          scrollDiff = strip_bounds.left - container_bounds.left;
+        }
+
+        const target_scroll = cur_scroll + scrollDiff;
+        const fixed_scroll = Number(target_scroll.toFixed());
+
+        crdebug("Scrolling", scrollDiff, "to get", strip, "into view...");
+        this.node.classList.add("cr-managed-scroll-active");
+
+        const stopScrollCallback = () => {
+          cur_scroll = this.scrollLeft;
+          cur_scroll = Number(cur_scroll.toFixed());
+          let did_achieve = true;
+          if (cur_scroll != fixed_scroll && cur_scroll+1 != fixed_scroll) {
+            did_achieve = false;
+          }
+          this.node.classList.remove("cr-managed-scroll-active");
+
+          if (did_achieve) {
+            resolve(did_achieve);
+          }
+          else {
+            // TODO check if strip is on screen, if not, reject
+            reject("failed to achieve target scroll");
+          }
+        };
+
+        const checkScroll = () => {
+          if (Number(this.scrollLeft.toFixed()) == fixed_scroll) {
             this.node.removeEventListener('scroll', checkScroll);
             stopScrollCallback();
-          }, 210); // ms timeout
-        }
-      };
+          }
+          else {
+            window.clearTimeout(timeoutHandle);
+            timeoutHandle = window.setTimeout(() => {
+              this.node.removeEventListener('scroll', checkScroll);
+              stopScrollCallback();
+            }, 210); // ms timeout
+          }
+        };
 
-      this.node.addEventListener('scroll', checkScroll);
-      checkScroll();
-      setTimeout(() => {
-        this.node.scrollTo({
-          left: target_scroll,
-          behavior: scroll_behavior,
+        this.node.addEventListener('scroll', checkScroll);
+        checkScroll();
+        setTimeout(() => {
+          this.node.scrollTo({
+            left: target_scroll,
+            behavior: scroll_behavior,
+          });
         });
-      });
+      }
+
+      if (wait_for_transition) {
+        let evt_handler = (e) => {
+          setTimeout(() => {
+            startScrollTo();
+          }
+          strip.node.removeEventListener('transitionend', evt_handler);
+        }
+        strip.node.addEventListener('transitionend', evt_handler);
+      } else {
+        startScrollTo();
+      }
 
     });
 

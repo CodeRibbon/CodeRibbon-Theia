@@ -182,6 +182,10 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
       execute: () => {
         let ribbon = this.applicationShell.mainPanel;
         crdebug("closeStrip", ribbon);
+        if (ribbon.mru_strip == null) {
+          this.messageService.warn("No patch currently in focus.");
+          return;
+        }
         // TODO prompt if there are unsaved changes in this strip
         ribbon.mru_strip.dispose();
       }
@@ -203,7 +207,7 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
         }
         ribbon.insertWidget(curidx-1, ribbon.mru_strip);
         setTimeout(() => { // setTimeout because update will happen after animation frame
-          ribbon.scrollStripIntoView(ribbon.mru_strip).then(() => {
+          ribbon.scrollStripIntoView(ribbon.mru_strip, {wait_for_transition: true}).then(() => {
             ribbon.autoAdjustRibbonTailLength();
           });
         });
@@ -224,7 +228,7 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
         ribbon.insertWidget(curidx+1, ribbon.mru_strip);
         ribbon.autoAdjustRibbonTailLength();
         setTimeout(() => {
-          ribbon.scrollStripIntoView(ribbon.mru_strip);
+          ribbon.scrollStripIntoView(ribbon.mru_strip, {wait_for_transition: true});
         });
       }
     });

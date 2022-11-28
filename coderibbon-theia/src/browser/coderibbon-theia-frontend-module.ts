@@ -24,7 +24,7 @@ import { CodeRibbonApplicationShell } from './cr-application-shell';
 
 import '../../src/browser/style/ribbon.less';
 // temp CSS
-import '../../src/browser/style/debug.css';
+import '../../src/browser/style/debug.less';
 
 export default new ContainerModule((bind, unbind, isBound, rebind) => {
 
