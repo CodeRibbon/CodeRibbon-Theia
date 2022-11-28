@@ -331,7 +331,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     }
   }
 
-  protected get _strips(): readonly CodeRibbonTheiaRibbonStrip[] {
+  get _strips(): readonly CodeRibbonTheiaRibbonStrip[] {
     return (
       (this.layout as CodeRibbonTheiaRibbonLayout).widgets as readonly CodeRibbonTheiaRibbonStrip[]
     );

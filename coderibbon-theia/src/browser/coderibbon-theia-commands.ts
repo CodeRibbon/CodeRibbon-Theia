@@ -188,6 +188,40 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
     });
 
     // === NOTE: Arrange section
+
+    registry.registerCommand(CodeRibbonArrangementCommands.moveStripLeft, {
+      execute: () => {
+        let ribbon = this.applicationShell.mainPanel;
+        crdebug("moveStripLeft", ribbon);
+        let curidx = ribbon._strips.indexOf(ribbon.mru_strip);
+        if (curidx <= 0) {
+          this.messageService.warn("Reached the beginning of the Ribbon!");
+          return;
+        }
+        ribbon.insertWidget(curidx-1, ribbon.mru_strip);
+        setTimeout(() => { // setTimeout because update will happen after animation frame
+          ribbon.scrollStripIntoView(ribbon.mru_strip).then(() => {
+            ribbon.autoAdjustRibbonTailLength();
+          });
+        });
+      }
+    });
+    registry.registerCommand(CodeRibbonArrangementCommands.moveStripRight, {
+      execute: () => {
+        let ribbon = this.applicationShell.mainPanel;
+        crdebug("moveStripRight", ribbon);
+        let curidx = ribbon._strips.indexOf(ribbon.mru_strip);
+        if (curidx >= ribbon._strips.length) {
+          this.messageService.warn("Reached the end of the Ribbon!");
+          return;
+        }
+        ribbon.insertWidget(curidx+1, ribbon.mru_strip);
+        ribbon.autoAdjustRibbonTailLength();
+        setTimeout(() => {
+          ribbon.scrollStripIntoView(ribbon.mru_strip);
+        });
+      }
+    });
   }
 
 }

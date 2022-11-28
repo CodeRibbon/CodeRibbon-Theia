@@ -13,6 +13,9 @@ import {
 } from './coderibbon-theia-commands';
 
 export const CodeRibbonTopMenuPath = [...MAIN_MENU_BAR, "7_coderibbon"];
+export const CodeRibbonNavigationCommands = [...CodeRibbonTopMenuPath, "1_navigation"];
+export const CodeRibbonManipulationMenu = [...CodeRibbonTopMenuPath, "2_manipulation"];
+export const CodeRibbonArrangementMenu = [...CodeRibbonTopMenuPath, "3_arrangement"];
 
 @injectable()
 // Add contribution interface to be implemented, e.g. "CodeRibbonTheiaContribution implements CommandContribution"
@@ -26,13 +29,30 @@ export class CodeRibbonTheiaMenuContribution implements MenuContribution {
       label: "Say Hello",
     });
 
-    menus.registerMenuAction(CodeRibbonTopMenuPath, {
+    // Manip
+
+    menus.registerMenuAction(CodeRibbonManipulationMenu, {
       commandId: CodeRibbonManipulationCommands.createStripLeft.id,
       label: "Create Column Left",
     });
-    menus.registerMenuAction(CodeRibbonTopMenuPath, {
+    menus.registerMenuAction(CodeRibbonManipulationMenu, {
       commandId: CodeRibbonManipulationCommands.createStripRight.id,
       label: "Create Column Right",
+    });
+    menus.registerMenuAction(CodeRibbonManipulationMenu, {
+      commandId: CodeRibbonManipulationCommands.closeStrip.id,
+      label: "Close Strip",
+    });
+
+    // Arrangement
+
+    menus.registerMenuAction(CodeRibbonArrangementMenu, {
+      commandId: CodeRibbonArrangementCommands.moveStripLeft.id,
+      label: "Move Column Left",
+    });
+    menus.registerMenuAction(CodeRibbonArrangementMenu, {
+      commandId: CodeRibbonArrangementCommands.moveStripRight.id,
+      label: "Move Column Right",
     });
   }
 
