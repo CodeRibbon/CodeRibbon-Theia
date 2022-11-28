@@ -22,7 +22,7 @@ import { CodeRibbonTheiaManager } from './coderibbon-theia-manager';
 import { CodeRibbonTheiaRibbonPanel } from './cr-ribbon';
 import { CodeRibbonApplicationShell } from './cr-application-shell';
 
-import '../../src/browser/style/ribbon.css';
+import '../../src/browser/style/ribbon.less';
 // temp CSS
 import '../../src/browser/style/debug.css';
 

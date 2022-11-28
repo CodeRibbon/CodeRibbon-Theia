@@ -193,6 +193,9 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
       execute: () => {
         let ribbon = this.applicationShell.mainPanel;
         crdebug("moveStripLeft", ribbon);
+        if (ribbon.mru_strip == null) {
+          this.messageService.warn("No patch in focus!");
+        }
         let curidx = ribbon._strips.indexOf(ribbon.mru_strip);
         if (curidx <= 0) {
           this.messageService.warn("Reached the beginning of the Ribbon!");
@@ -210,6 +213,9 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
       execute: () => {
         let ribbon = this.applicationShell.mainPanel;
         crdebug("moveStripRight", ribbon);
+        if (ribbon.mru_strip == null) {
+          this.messageService.warn("No patch in focus!");
+        }
         let curidx = ribbon._strips.indexOf(ribbon.mru_strip);
         if (curidx >= ribbon._strips.length) {
           this.messageService.warn("Reached the end of the Ribbon!");

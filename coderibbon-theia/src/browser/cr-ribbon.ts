@@ -75,6 +75,9 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
   // prevents automatic modifications to the ribbon
   protected _freeze_ribbon: boolean;
 
+  // drag-drop overlay:
+  readonly overlay: DockPanel.IOverlay;
+
   constructor(options?: RibbonPanel.IOptions,
     @inject(CorePreferences) protected readonly preferences?: CorePreferences,
   ) {
@@ -108,6 +111,10 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
 
     this._freeze_ribbon = false;
 
+    // this.overlay = options?.overlay || new DockPanel.Overlay();
+    this.overlay = new DockPanel.Overlay();
+    this.node.appendChild(this.overlay.node);
+
     this.autoAdjustRibbonTailLength();
   }
 
@@ -124,6 +131,18 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     };
     update_active_strip();
     this.tracker.currentChanged.connect(update_active_strip);
+  }
+
+  dispose(): void {
+    // this._releaseMouse(); // TODO
+    this.overlay.hide(0);
+
+    // TODO
+    // if (this._drag) {
+    //   this._drag.dispose();
+    // }
+
+    super.dispose();
   }
 
   /**
@@ -157,16 +176,17 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     crdebug("RibbonPanel activateWidget", widget);
     // super.activate();
     // column's activate first:
-    let strip = null;
+    let strip: CodeRibbonTheiaRibbonStrip | null = null;
     if (widget instanceof CodeRibbonTheiaPatch) {
-      strip = widget.parent;
-      if (!(strip instanceof CodeRibbonTheiaRibbonStrip)) {
+      if (!(widget.parent instanceof CodeRibbonTheiaRibbonStrip)) {
         crdebug("patch not parented by strip:", widget);
         throw Error("Patch not parented by Strip");
       }
+      strip = widget.parent;
+      if (!strip) throw Error("strip not found as parent of patch");
       this.scrollStripIntoView((strip as CodeRibbonTheiaRibbonStrip)).then(() => {
         // widget.activate();
-        strip.activateWidget(widget);
+        strip!.activateWidget(widget);
         this.widgetActivated.emit(widget);
       }).catch((e) => {
         crdebug("scrollStripIntoView fail reason:", e);
@@ -187,14 +207,14 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
       let w_parent = widget.parent;
       while (w_parent!.parent!) {
         if (w_parent instanceof CodeRibbonTheiaPatch) {
-          strip = w_parent.parent;
+          strip = (w_parent.parent as CodeRibbonTheiaRibbonStrip);
           if (!(strip instanceof CodeRibbonTheiaRibbonStrip)) {
             crdebug("patch without strip as parent:", w_parent);
             throw Error("Patch not parented by Strip");
           }
           this.scrollStripIntoView((strip as CodeRibbonTheiaRibbonStrip)).then(() => {
             // widget.activate();
-            strip.activateWidget(widget);
+            strip!.activateWidget(widget);
             this.widgetActivated.emit(widget);
           }).catch((e) => {
             crdebug("scrollStripIntoView failure:", e);
@@ -217,7 +237,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
 
   }
 
-  protected createNewRibbonStrip(args: CodeRibbonTheiaRibbonPanel.ICreateNewRibbonStripOptions = {}) {
+  createNewRibbonStrip(args: CodeRibbonTheiaRibbonPanel.ICreateNewRibbonStripOptions = {}) {
     crdebug("RibbonPanel createNewRibbonStrip:", args);
     if (this._freeze_ribbon) {
       crdebug("WARN: createNewRibbonStrip while the ribbon is frozen.");
@@ -239,7 +259,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     return new_strip;
   }
 
-  protected autoAdjustRibbonTailLength() {
+  autoAdjustRibbonTailLength() {
     crdebug("RibbonPanel autoAdjustRibbonTailLength");
 
     if (this._freeze_ribbon) {
@@ -427,7 +447,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
   }
 
   get mru_strip(): CodeRibbonTheiaRibbonStrip {
-    return this.tracker.currentWidget;
+    return (this.tracker.currentWidget as CodeRibbonTheiaRibbonStrip);
   }
 
   // NOTE === phosphor DockPanel API compatility section === NOTE //
@@ -474,7 +494,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
         type: 'ribbon-area',
         overview_active: false, // TODO
         focus_active: false, // TODO
-        active_strip: this._strips.indexOf(this._mru_strip),
+        active_strip: this._strips.indexOf(this.mru_strip),
         strip_configs: this._strips.map(strip => strip.saveLayout()),
       }
     };
@@ -489,6 +509,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
   restoreLayout(config: CodeRibbonTheiaRibbonPanel.ILayoutConfig): void {
     crdebug("RibbonPanel restoreLayout:", config);
     // TODO rest of these props
+    if (config.main == null) throw Error("Can't restoreLayout with no data");
     const {
       type, overview_active, focus_active, active_strip, strip_configs
     } = config.main;
@@ -731,6 +752,20 @@ export namespace CodeRibbonTheiaRibbonPanel {
     add_options?: RibbonStrip.IAddOptions;
     init_options?: CodeRibbonTheiaRibbonStrip.IInitOptions;
   }
+
+  // phosphor dockpanel mimickry
+  // export interface IOverlayGeometry {
+  //   top: number;
+  //   left: number;
+  //   right: number;
+  //   bottom: number;
+  // }
+  // export IOverlayGeometry = DockPanel.IOverlayGeometry;
+  // export interface IOverlay {
+  //   readonly node: HTMLDivElement;
+  //   show(geo: IOverlayGeometry): void;
+  //   hide(delay: number): void;
+  // }
 }
 
 namespace Private {

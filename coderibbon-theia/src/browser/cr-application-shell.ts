@@ -24,6 +24,9 @@ import {
 import {
   DockPanelRenderer, DockPanelRendererFactory, ApplicationShell,
 } from '@theia/core/lib/browser/shell/application-shell';
+import {
+  SidePanel,
+} from '@theia/core/lib/browser/shell/side-panel-handler';
 
 import { CodeRibbonTheiaRibbonPanel } from './cr-ribbon';
 

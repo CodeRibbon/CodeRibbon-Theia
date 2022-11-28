@@ -166,7 +166,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     }).filter(Boolean) as Widget[]);
   }
 
-  get mru_patch(): CodeRibbonTheiaPatch {
+  get mru_patch(): CodeRibbonTheiaPatch | null {
     return this.tracker.currentWidget;
   }
 

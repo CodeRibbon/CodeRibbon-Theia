@@ -13,7 +13,7 @@ import {
 } from './coderibbon-theia-commands';
 
 export const CodeRibbonTopMenuPath = [...MAIN_MENU_BAR, "7_coderibbon"];
-export const CodeRibbonNavigationCommands = [...CodeRibbonTopMenuPath, "1_navigation"];
+export const CodeRibbonNavigationMenu = [...CodeRibbonTopMenuPath, "1_navigation"];
 export const CodeRibbonManipulationMenu = [...CodeRibbonTopMenuPath, "2_manipulation"];
 export const CodeRibbonArrangementMenu = [...CodeRibbonTopMenuPath, "3_arrangement"];
 
