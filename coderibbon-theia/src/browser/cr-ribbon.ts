@@ -450,7 +450,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
         let evt_handler = (e) => {
           setTimeout(() => {
             startScrollTo();
-          }
+          }, 1);
           strip.node.removeEventListener('transitionend', evt_handler);
         }
         strip.node.addEventListener('transitionend', evt_handler);
