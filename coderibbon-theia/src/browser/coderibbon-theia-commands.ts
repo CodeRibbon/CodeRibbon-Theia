@@ -11,8 +11,12 @@ import {
 import {
   CodeRibbonApplicationShell,
 } from './cr-application-shell';
+import {
+  CodeRibbonTheiaRibbonStrip,
+} from './cr-ribbon-strip';
 
 import {crdebug} from './cr-logger';
+
 
 export const CodeRibbonHelloWorldCommand = {
   id: 'CodeRibbon.HelloWorld',
@@ -158,7 +162,12 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
       execute: () => {
         let ribbon = this.applicationShell.mainPanel;
         crdebug("createStripLeft ribbon:", ribbon);
-        let cur_index = ribbon._strips.indexOf(ribbon.mru_strip);
+        let strip = ribbon.mru_strip;
+        if (!(strip instanceof CodeRibbonTheiaRibbonStrip)) {
+          this.messageService.warn("No patch currently in focus.");
+          return;
+        }
+        let cur_index = ribbon._strips.indexOf(strip!);
         if (cur_index < 0) throw Error("did not find a valid index for the currently active strip");
         ribbon.createNewRibbonStrip({
           index: cur_index,
@@ -169,8 +178,13 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
     registry.registerCommand(CodeRibbonManipulationCommands.createStripRight, {
       execute: () => {
         let ribbon = this.applicationShell.mainPanel;
-        crdebug("createStripLeft ribbon:", ribbon);
-        let cur_index = ribbon._strips.indexOf(ribbon.mru_strip);
+        crdebug("createStripRight ribbon:", ribbon);
+        let strip = ribbon.mru_strip;
+        if (!(strip instanceof CodeRibbonTheiaRibbonStrip)) {
+          this.messageService.warn("No patch currently in focus.");
+          return;
+        }
+        let cur_index = ribbon._strips.indexOf(strip!);
         if (cur_index < 0) throw Error("did not find a valid index for the currently active strip");
         ribbon.createNewRibbonStrip({
           index: cur_index + 1, // right side
@@ -182,12 +196,13 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
       execute: () => {
         let ribbon = this.applicationShell.mainPanel;
         crdebug("closeStrip", ribbon);
-        if (ribbon.mru_strip == null) {
+        let strip = ribbon.mru_strip;
+        if (!(strip instanceof CodeRibbonTheiaRibbonStrip)) {
           this.messageService.warn("No patch currently in focus.");
           return;
         }
         // TODO prompt if there are unsaved changes in this strip
-        ribbon.mru_strip.dispose();
+        strip.dispose();
       }
     });
 
@@ -197,17 +212,19 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
       execute: () => {
         let ribbon = this.applicationShell.mainPanel;
         crdebug("moveStripLeft", ribbon);
-        if (ribbon.mru_strip == null) {
+        let strip = ribbon.mru_strip;
+        if (!(strip instanceof CodeRibbonTheiaRibbonStrip)) {
           this.messageService.warn("No patch in focus!");
+          return;
         }
-        let curidx = ribbon._strips.indexOf(ribbon.mru_strip);
+        let curidx = ribbon._strips.indexOf(strip!);
         if (curidx <= 0) {
           this.messageService.warn("Reached the beginning of the Ribbon!");
           return;
         }
-        ribbon.insertWidget(curidx-1, ribbon.mru_strip);
+        ribbon.insertWidget(curidx-1, (strip as CodeRibbonTheiaRibbonStrip));
         setTimeout(() => { // setTimeout because update will happen after animation frame
-          ribbon.scrollStripIntoView(ribbon.mru_strip, {wait_for_transition: true}).then(() => {
+          ribbon.scrollStripIntoView((strip as CodeRibbonTheiaRibbonStrip), {wait_for_transition: true}).then(() => {
             ribbon.autoAdjustRibbonTailLength();
           });
         });
@@ -217,18 +234,20 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
       execute: () => {
         let ribbon = this.applicationShell.mainPanel;
         crdebug("moveStripRight", ribbon);
-        if (ribbon.mru_strip == null) {
+        let strip = ribbon.mru_strip;
+        if (!(strip instanceof CodeRibbonTheiaRibbonStrip)) {
           this.messageService.warn("No patch in focus!");
+          return;
         }
-        let curidx = ribbon._strips.indexOf(ribbon.mru_strip);
+        let curidx = ribbon._strips.indexOf(strip!);
         if (curidx >= ribbon._strips.length) {
           this.messageService.warn("Reached the end of the Ribbon!");
           return;
         }
-        ribbon.insertWidget(curidx+1, ribbon.mru_strip);
+        ribbon.insertWidget(curidx+1, (strip as CodeRibbonTheiaRibbonStrip));
         ribbon.autoAdjustRibbonTailLength();
         setTimeout(() => {
-          ribbon.scrollStripIntoView(ribbon.mru_strip, {wait_for_transition: true});
+          ribbon.scrollStripIntoView((strip as CodeRibbonTheiaRibbonStrip), {wait_for_transition: true});
         });
       }
     });

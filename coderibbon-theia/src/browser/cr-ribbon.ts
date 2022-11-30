@@ -447,7 +447,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
       }
 
       if (wait_for_transition) {
-        let evt_handler = (e) => {
+        let evt_handler = (e: TransitionEvent) => {
           setTimeout(() => {
             startScrollTo();
           }, 1);
@@ -463,8 +463,8 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     return scrollFinish;
   }
 
-  get mru_strip(): CodeRibbonTheiaRibbonStrip {
-    return (this.tracker.currentWidget as CodeRibbonTheiaRibbonStrip);
+  get mru_strip(): CodeRibbonTheiaRibbonStrip | null {
+    return this.tracker.currentWidget;
   }
 
   // NOTE === phosphor DockPanel API compatility section === NOTE //
@@ -506,12 +506,14 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
    */
   saveLayout(): CodeRibbonTheiaRibbonPanel.ILayoutConfig {
     crdebug("RibbonPanel saveLayout");
+    let active_strip = this.mru_strip;
+    if (!(active_strip instanceof CodeRibbonTheiaRibbonStrip)) active_strip = this._strips[0];
     return {
       main: {
         type: 'ribbon-area',
         overview_active: false, // TODO
         focus_active: false, // TODO
-        active_strip: this._strips.indexOf(this.mru_strip),
+        active_strip: this._strips.indexOf(active_strip),
         strip_configs: this._strips.map(strip => strip.saveLayout()),
       }
     };
