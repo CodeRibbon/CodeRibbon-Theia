@@ -15,6 +15,7 @@ Install yarn.
 
     cd CodeRibbon-Theia
     yarn
+    yarn prepare
 
 ## Running the browser example
 
