@@ -145,7 +145,8 @@ export class ImprovedBoxLayout extends BoxLayout {
     if (this.normalized) {
       crdebug("IBL update(): need to de-normalize sizers")
       // @ts-expect-error TS2341: _sizers is private
-      each(this._sizers, (sizer, i) => {
+      each(this._sizers, (sizer: BoxSizer, i) => {
+        // @ts-ignore debugging statement
         crdebug(`sizer ${i} was ${sizer.sizeHint} before, ${sizer.sizeHint*space} after`);
         sizer.sizeHint *= space;
       });
@@ -349,11 +350,13 @@ export class ImprovedBoxLayout extends BoxLayout {
     //
     // return sizes;
 
+    // @ts-expect-error TS2341: _sizers is private
     let n = this._sizers.length;
     if (n === 0) return [];
 
-    let sizes = this._sizers.map(sizer => sizer.size);
-    let sum = reduce(sizes, (v, size) => v + size, 0);
+    // @ts-expect-error TS2341: _sizers is private
+    let sizes: number[] = this._sizers.map(sizer => (sizer as BoxSizer).size);
+    let sum = reduce(sizes, (v, size: number) => v + size, 0);
 
     if (sum === 0) {
       each(sizes, (size, i) => { sizes[i] = 1 / n; });
@@ -365,10 +368,12 @@ export class ImprovedBoxLayout extends BoxLayout {
   }
 
   getNormalizedSizeHints(): number[] {
+    // @ts-expect-error TS2341: _sizers is private
     let n = this._sizers.length;
     if (n === 0) return [];
 
-    let sizes = this._sizers.map(sizer => sizer.sizeHint);
+    // @ts-expect-error TS2341: _sizers is private
+    let sizes: number[] = this._sizers.map(sizer => sizer.sizeHint);
     let sum = reduce(sizes, (v, size) => v + size, 0);
 
     if (sum === 0) {
@@ -388,6 +393,7 @@ export class ImprovedBoxLayout extends BoxLayout {
 
     for (let i = 0; i < sizes.length; i++) {
       let new_sizer = Private.createSizer(sizes[i]);
+      // @ts-expect-error TS2341: _sizers is private
       crdebug(`old sizer: ${JSON.stringify(this._sizers[i])}, new: ${JSON.stringify(new_sizer)}`);
       // @ts-expect-error TS2341: _sizers is private
       this._sizers[i] = new_sizer;
