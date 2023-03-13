@@ -1,0 +1,42 @@
+{
+  "private": true,
+  "name": "electron-app",
+  "version": "0.0.1-0",
+  "dependencies": {
+    "@theia/core": "1.35.0",
+    "@theia/editor": "1.35.0",
+    "@theia/electron": "1.35.0",
+    "@theia/filesystem": "1.35.0",
+    "@theia/markers": "1.35.0",
+    "@theia/messages": "1.35.0",
+    "@theia/monaco": "1.35.0",
+    "@theia/navigator": "1.35.0",
+    "@theia/preferences": "1.35.0",
+    "@theia/process": "1.35.0",
+    "@theia/terminal": "1.35.0",
+    "@theia/workspace": "1.35.0",
+    "coderibbon-theia": "^0.0.3-0"
+  },
+  "devDependencies": {
+    "@theia/cli": "1.35.0",
+    "electron": "^15.3.5"
+  },
+  "scripts": {
+    "build": "yarn -s compile && yarn -s bundle",
+    "bundle": "theia build --mode development",
+    "clean": "theia clean",
+    "compile": "tsc -b",
+    "lint": "theiaext lint",
+    "rebuild": "theia rebuild:electron --cacheRoot ../..",
+    "start": "yarn -s rebuild && theia start --plugins=local-dir:../../plugins",
+    "start:debug": "yarn -s start --log-level=debug --remote-debugging-port=9222",
+    "start:watch": "concurrently --kill-others -n tsc,bundle,run -c red,yellow,green \"tsc -b -w --preserveWatchOutput\" \"yarn -s watch:bundle\" \"yarn -s start\"",
+    "test": "yarn -s rebuild && electron-mocha --timeout 60000 \"./lib/test/**/*.espec.js\"",
+    "watch": "concurrently --kill-others -n tsc,bundle -c red,blue \"tsc -b -w --preserveWatchOutput\" \"yarn -s watch:bundle\"",
+    "watch:bundle": "theia build --watch --mode development",
+    "watch:compile": "tsc -b -w"
+  },
+  "theia": {
+    "target": "electron"
+  }
+}
