@@ -3,7 +3,7 @@ node_modules
 lib
 *.log
 *.tsbuildinfo
-applications/*-app/*
-!applications/*-app/package.json
-!applications/*-app/webpack.config.js
-!applications/*-app/tsconfig.json
+applications/*/*
+!applications/*/package.json
+!applications/*/webpack.config.js
+!applications/*/tsconfig.json
