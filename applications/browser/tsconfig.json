@@ -1,1 +1,12 @@
-../browser-app/tsconfig.json
+{
+    "extends": "../../configs/base.tsconfig",
+    "include": [],
+    "compilerOptions": {
+      "composite": true
+    },
+    "references": [
+      {
+        "path": "../../coderibbon-theia"
+      }
+    ]
+}
