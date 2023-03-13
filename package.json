@@ -17,10 +17,8 @@
     "bundle": "lerna run bundle",
     "watch": "lerna run --parallel watch",
     "test": "lerna run test",
-    "browser": "yarn --cwd applications/browser-app",
-    "browser-ext": "yarn --cwd applications/browser-ext-app",
-    "electron": "yarn --cwd applications/electron-app",
-    "electron-ext": "yarn --cwd applications/electron-ext-app"
+    "browser": "yarn --cwd applications/browser",
+    "electron": "yarn --cwd applications/electron"
   },
   "devDependencies": {
     "@theia/cli": "1.35.0",
