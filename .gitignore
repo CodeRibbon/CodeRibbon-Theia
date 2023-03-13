@@ -2,6 +2,6 @@ node_modules
 .browser_modules
 lib
 *.log
-*-app/*
-!*-app/package.json
-!*-app/webpack.config.js
+applications/*-app/*
+!applications/*-app/package.json
+!applications/*-app/webpack.config.js
