@@ -1,8 +1,8 @@
 appId: coderibbon.coderibbon-theia
 productName: CodeRibbon-Preview
 
-electronDist: ../node_modules/electron/dist
-electronVersion: 15.5.1
+electronDist: ../../node_modules/electron/dist
+electronVersion: 15.5.7
 asar: false
 
 directories:
