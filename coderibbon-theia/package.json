@@ -14,14 +14,15 @@
   "devDependencies": {
     "less": "^4.1.3",
     "less-loader": "^11.1.0",
-    "rimraf": "latest",
-    "typescript": "latest"
+    "rimraf": "^2.7.1",
+    "typescript": "^4.5.5"
   },
   "scripts": {
-    "prepare": "yarn run clean && yarn run build",
-    "clean": "rimraf lib",
-    "build": "tsc",
-    "watch": "tsc -w"
+    "prepare": "yarn clean && yarn build",
+    "clean": "rimraf lib *.tsbuildinfo",
+    "build": "tsc -b",
+    "lint": "eslint --ext js,jsx,ts,tsx src",
+    "lint:fix": "eslint --ext js,jsx,ts,tsx src --fix"
   },
   "theiaExtensions": [
     {
