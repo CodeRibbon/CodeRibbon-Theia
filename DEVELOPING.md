@@ -20,28 +20,11 @@ Install yarn.
 
     yarn browser start
 
-*or:*
-
-    yarn rebuild:browser
-    cd browser-app
-    yarn start
-
-*or:* launch `Start Browser Backend` configuration from VS code.
-
 Open http://localhost:3000 in the browser.
 
 ## Running the Electron example
 
-    yarn start:electron
-
-*or:*
-
-    yarn rebuild:electron
-    cd electron-app
-    yarn start
-
-*or:* launch `Start Electron Backend` configuration from VS code.
-
+    yarn electron start
 
 ## Developing with the browser example
 
@@ -54,11 +37,6 @@ Start watching all packages, including `browser-app`, of your application with
     cd coderibbon-theia
     yarn watch
 
-and the browser example.
-
-    cd browser-app
-    yarn watch
-
 Run the example as [described above](#Running-the-browser-example)
 ## Developing with the Electron example
 
@@ -69,11 +47,6 @@ Start watching all packages, including `electron-app`, of your application with
 *or* watch only specific packages with
 
     cd coderibbon-theia
-    yarn watch
-
-and the Electron example.
-
-    cd electron-app
     yarn watch
 
 Run the example as [described above](#Running-the-Electron-example)
