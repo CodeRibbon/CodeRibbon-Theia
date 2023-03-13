@@ -1,9 +1,12 @@
 {
   "extends": "../../configs/base.tsconfig",
-  "include": [],
   "compilerOptions": {
-    "composite": true
+    "composite": true,
+    "outDir": "lib/test"
   },
+  "include": [
+    "test"
+  ],
   "references": [
     {
       "path": "../../dev-packages/cli"
@@ -28,6 +31,9 @@
     },
     {
       "path": "../../packages/editor-preview"
+    },
+    {
+      "path": "../../packages/external-terminal"
     },
     {
       "path": "../../packages/file-search"
@@ -81,9 +87,6 @@
       "path": "../../packages/plugin-ext-vscode"
     },
     {
-      "path": "../../packages/plugin-metrics"
-    },
-    {
       "path": "../../packages/preferences"
     },
     {
@@ -103,9 +106,6 @@
     },
     {
       "path": "../../packages/search-in-workspace"
-    },
-    {
-      "path": "../../packages/secondary-window"
     },
     {
       "path": "../../packages/task"

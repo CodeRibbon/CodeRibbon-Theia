@@ -5,3 +5,4 @@ lib
 applications/*-app/*
 !applications/*-app/package.json
 !applications/*-app/webpack.config.js
+!applications/*-app/tsconfig.json

@@ -18,7 +18,8 @@ Install yarn.
 
 ## Running the browser example
 
-    yarn start:browser
+    yarn browser build
+    yarn browser start
 
 *or:*
 
