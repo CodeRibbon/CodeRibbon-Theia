@@ -40,7 +40,7 @@ export class ImprovedBoxPanel extends BoxPanel {
     this._renderer = options.renderer || DockPanel.defaultRenderer;
   }
 
-  dispose(): void {
+  override dispose(): void {
     this._releaseMouse();
 
     // this.overlay.hide(0);
@@ -174,11 +174,11 @@ export class ImprovedBoxPanel extends BoxPanel {
     document.removeEventListener('contextmenu', this, true);
   }
 
-  protected onBeforeAttach(msg: Message): void {
+  protected override onBeforeAttach(msg: Message): void {
     this.node.addEventListener('mousedown', this);
   }
 
-  protected onAfterDetach(msg: Message): void {
+  protected override onAfterDetach(msg: Message): void {
     this.node.removeEventListener('mousedown', this);
   }
 

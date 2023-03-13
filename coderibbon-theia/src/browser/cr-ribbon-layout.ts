@@ -16,14 +16,14 @@ import {
 import {
   empty,
 } from '@phosphor/algorithm';
-import {
-  MessageService,
-  Emitter, environment,
-  Disposable, DisposableCollection,
-} from '@theia/core/lib/common';
-import {
-  TheiaDockPanel, BOTTOM_AREA_ID, MAIN_AREA_ID, MAXIMIZED_CLASS,
-} from '@theia/core/lib/browser/shell/theia-dock-panel';
+// import {
+//   MessageService,
+//   Emitter, environment,
+//   Disposable, DisposableCollection,
+// } from '@theia/core/lib/common';
+// import {
+//   TheiaDockPanel, BOTTOM_AREA_ID, MAIN_AREA_ID, MAXIMIZED_CLASS,
+// } from '@theia/core/lib/browser/shell/theia-dock-panel';
 import {
   FrontendApplicationStateService,
 } from '@theia/core/lib/browser/frontend-application-state';
@@ -76,7 +76,7 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
 
   // NOTE === changing functionality of BoxLayout
 
-  protected onResize(msg: Widget.ResizeMessage): void {
+  protected override onResize(msg: Widget.ResizeMessage): void {
     if (this.parent!.isVisible) {
       this.parent!.fit();
       // this._update(msg.width, msg.height);

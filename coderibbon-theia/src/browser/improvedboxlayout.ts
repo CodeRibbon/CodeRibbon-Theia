@@ -1,4 +1,4 @@
-import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
+// import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
 
 import { Signal } from '@phosphor/signaling';
 import {
@@ -11,20 +11,20 @@ import {
 import {
   ElementExt,
 } from '@phosphor/domutils';
-import {
-  Message, MessageLoop,
-} from '@phosphor/messaging';
+// import {
+//   Message, MessageLoop,
+// } from '@phosphor/messaging';
 import {
   empty, IIterator, each, chain, ArrayExt, reduce,
 } from '@phosphor/algorithm';
-import {
-  MessageService,
-  Emitter, environment,
-  Disposable, DisposableCollection,
-} from '@theia/core/lib/common';
-import {
-  TheiaDockPanel, BOTTOM_AREA_ID, MAIN_AREA_ID, MAXIMIZED_CLASS,
-} from '@theia/core/lib/browser/shell/theia-dock-panel';
+// import {
+//   MessageService,
+//   Emitter, environment,
+//   Disposable, DisposableCollection,
+// } from '@theia/core/lib/common';
+// import {
+//   TheiaDockPanel, BOTTOM_AREA_ID, MAIN_AREA_ID, MAXIMIZED_CLASS,
+// } from '@theia/core/lib/browser/shell/theia-dock-panel';
 import {
   FrontendApplicationStateService,
 } from '@theia/core/lib/browser/frontend-application-state';
@@ -48,7 +48,7 @@ export class ImprovedBoxLayout extends BoxLayout {
     this.renderer = options.renderer || DockPanel.defaultRenderer;
   }
 
-  protected init(): void {
+  protected override init(): void {
     super.init();
 
     // each(this, widget => {
@@ -64,7 +64,7 @@ export class ImprovedBoxLayout extends BoxLayout {
   //   return super.widgets;
   // }
 
-  addWidget(widget: Widget, options: ImprovedBoxLayout.IAddOptions = {}): void {
+  override addWidget(widget: Widget, options: ImprovedBoxLayout.IAddOptions = {}): void {
     crdebug("IBL addWidget()", this, widget, options);
 
     let index = (typeof options.index === 'undefined') ? this.widgets.length : options.index;
@@ -187,7 +187,7 @@ export class ImprovedBoxLayout extends BoxLayout {
     crdebug("IBL update() END: normalized sizes are currently", this.getNormalizedSizes(), this.getNormalizedSizeHints());
   }
 
-  protected _update(offsetWidth: number, offsetHeight: number): void {
+  protected override _update(offsetWidth: number, offsetHeight: number): void {
     // @ts-expect-error TS2341: _update is private
     super._update(offsetWidth, offsetHeight);
 
@@ -330,7 +330,7 @@ export class ImprovedBoxLayout extends BoxLayout {
 
   // NOTE === changing functionality of BoxLayout
 
-  protected onResize(msg: Widget.ResizeMessage): void {
+  protected override onResize(msg: Widget.ResizeMessage): void {
     // crdebug("IBL: onResize", msg);
     if (this.parent!.isVisible) {
       // this.parent!.fit();

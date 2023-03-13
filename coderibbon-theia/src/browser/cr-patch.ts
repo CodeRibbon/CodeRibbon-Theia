@@ -1,5 +1,5 @@
 
-import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
+// import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
 
 import {
   TabBar, Widget, Title,
@@ -26,7 +26,7 @@ export class CodeRibbonTheiaPatch extends TabPanel {
     }
   }
 
-  activate(): void {
+  override activate(): void {
     super.activate();
     crdebug("Patch activate", this);
   }

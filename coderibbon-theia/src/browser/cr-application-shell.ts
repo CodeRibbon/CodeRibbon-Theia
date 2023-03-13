@@ -12,9 +12,9 @@ import {
 import {
   FrontendApplicationStateService,
 } from '@theia/core/lib/browser/frontend-application-state';
-import {
-  FrontendApplication, FrontendApplicationContribution,
-} from '@theia/core/lib/browser/frontend-application';
+// import {
+//   FrontendApplication, FrontendApplicationContribution,
+// } from '@theia/core/lib/browser/frontend-application';
 import {
   CorePreferences,
 } from '@theia/core/lib/browser/core-preferences';

@@ -5,10 +5,10 @@ import {
   MenuContribution, CommandContribution,
   MenuModelRegistry, MessageService,
 } from '@theia/core/lib/common';
-import {
-  FrontendApplicationContribution,
-  bindViewContribution, WidgetFactory,
-} from '@theia/core/lib/browser';
+// import {
+//   FrontendApplicationContribution,
+//   bindViewContribution, WidgetFactory,
+// } from '@theia/core/lib/browser';
 import { PreferenceContribution } from '@theia/core/lib/browser/preferences';
 import {
   ApplicationShell,

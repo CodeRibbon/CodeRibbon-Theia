@@ -8,17 +8,17 @@ import {
   BoxSizer,
   FocusTracker,
 } from '@phosphor/widgets';
-import {
-  empty, IIterator,
-} from '@phosphor/algorithm';
+// import {
+//   empty, IIterator,
+// } from '@phosphor/algorithm';
 import {
   MessageService,
   Emitter, environment,
   Disposable, DisposableCollection,
 } from '@theia/core/lib/common';
-import {
-  TheiaDockPanel, BOTTOM_AREA_ID, MAIN_AREA_ID, MAXIMIZED_CLASS,
-} from '@theia/core/lib/browser/shell/theia-dock-panel';
+// import {
+//   TheiaDockPanel, BOTTOM_AREA_ID, MAIN_AREA_ID, MAXIMIZED_CLASS,
+// } from '@theia/core/lib/browser/shell/theia-dock-panel';
 import {
   FrontendApplicationStateService,
 } from '@theia/core/lib/browser/frontend-application-state';
@@ -28,7 +28,7 @@ import {
 
 import { crdebug } from './cr-logger';
 import { CodeRibbonTheiaPatch } from './cr-patch';
-import { RibbonPanel, RibbonStrip } from './cr-interfaces';
+// import { RibbonPanel, RibbonStrip } from './cr-interfaces';
 import { ImprovedBoxPanel } from './improvedboxpanel';
 import { ImprovedBoxLayout } from './improvedboxlayout';
 
@@ -97,7 +97,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     this.tracker.currentChanged.connect(update_current_patch);
   }
 
-  dispose(): void {
+  override dispose(): void {
     this.tracker.dispose();
     super.dispose();
   }
@@ -123,7 +123,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     return new_patch;
   }
 
-  addWidget(widget: Widget, options?: CodeRibbonTheiaRibbonStrip.ICreatePatchArgs): void {
+  override addWidget(widget: Widget, options?: CodeRibbonTheiaRibbonStrip.ICreatePatchArgs): void {
     // TODO logic based on where to put the widget
     // super.addWidget(widget);
 
@@ -185,13 +185,13 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
   // }
 
   // overriding BoxPanel's p-BoxPanel-child
-  protected onChildAdded(msg: Widget.ChildMessage) {
+  protected override onChildAdded(msg: Widget.ChildMessage) {
     super.onChildAdded(msg);
     msg.child.addClass('cr-RibbonStrip-child');
     this.widgetAdded.emit(msg.child);
   }
 
-  protected onChildRemoved(msg: Widget.ChildMessage): void {
+  protected override onChildRemoved(msg: Widget.ChildMessage): void {
     super.onChildRemoved(msg);
     msg.child.removeClass('cr-RibbonStrip-child');
     this.widgetRemoved.emit(msg.child);

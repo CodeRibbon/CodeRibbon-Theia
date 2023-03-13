@@ -133,7 +133,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     this.tracker.currentChanged.connect(update_active_strip);
   }
 
-  dispose(): void {
+  override dispose(): void {
     // this._releaseMouse(); // TODO
     this.overlay.hide(0);
 
