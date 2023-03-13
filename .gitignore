@@ -2,6 +2,7 @@ node_modules
 .browser_modules
 lib
 *.log
+*.tsbuildinfo
 applications/*-app/*
 !applications/*-app/package.json
 !applications/*-app/webpack.config.js
