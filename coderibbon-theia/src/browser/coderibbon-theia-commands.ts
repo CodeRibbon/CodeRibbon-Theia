@@ -156,6 +156,64 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
 
     // === NOTE: Nav section
 
+    registry.registerCommand(CodeRibbonNavigationCommands.moveFocusNext, {
+      execute: () => {
+        let ribbon = this.applicationShell.mainPanel;
+        let strip = ribbon.mru_strip;
+        if (!(strip instanceof CodeRibbonTheiaRibbonStrip)) {
+          this.messageService.warn("No patch currently in focus.");
+          return;
+        }
+        let cur_patch = strip.mru_patch;
+        if (!cur_patch) {
+          this.messageService.warn("No active patch.");
+          return;
+        }
+        crdebug("moveFocusNext:", cur_patch);
+        let cur_patch_idx = strip._patches.indexOf(cur_patch);
+        let next_patch = strip.get_sibling(cur_patch, 'after');
+        if (!next_patch) {
+          let next_strip = ribbon.get_sibling(strip, 'after');
+          if (!(next_strip instanceof CodeRibbonTheiaRibbonStrip)) {
+            this.messageService.warn("Reached the end of the Ribbon.");
+            return;
+          }
+          next_patch = next_strip._patches[0];
+        }
+        // next_patch.activate();
+        ribbon.activateWidget(next_patch);
+      }
+    });
+
+    registry.registerCommand(CodeRibbonNavigationCommands.moveFocusPrev, {
+      execute: () => {
+        let ribbon = this.applicationShell.mainPanel;
+        let strip = ribbon.mru_strip;
+        if (!(strip instanceof CodeRibbonTheiaRibbonStrip)) {
+          this.messageService.warn("No patch currently in focus.");
+          return;
+        }
+        let cur_patch = strip.mru_patch;
+        if (!cur_patch) {
+          this.messageService.warn("No active patch.");
+          return;
+        }
+        crdebug("moveFocusPrev:", cur_patch);
+        let cur_patch_idx = strip._patches.indexOf(cur_patch);
+        let prev_patch = strip.get_sibling(cur_patch, 'before');
+        if (!prev_patch) {
+          let prev_strip = ribbon.get_sibling(strip, 'before');
+          if (!(prev_strip instanceof CodeRibbonTheiaRibbonStrip)) {
+            this.messageService.warn("Reached the start of the Ribbon.");
+            return;
+          }
+          prev_patch = prev_strip._patches[0];
+        }
+        // next_patch.activate();
+        ribbon.activateWidget(prev_patch);
+      }
+    })
+
     // === NOTE: Manip section
 
     registry.registerCommand(CodeRibbonManipulationCommands.createStripLeft, {

@@ -29,6 +29,7 @@ export class CodeRibbonTheiaPatch extends TabPanel {
   override activate(): void {
     super.activate();
     crdebug("Patch activate", this);
+    if (this.contentful_widget) this.contentful_widget.activate();
   }
 
   get contentful_size(): number {

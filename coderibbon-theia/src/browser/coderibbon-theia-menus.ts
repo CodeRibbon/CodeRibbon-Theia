@@ -29,6 +29,13 @@ export class CodeRibbonTheiaMenuContribution implements MenuContribution {
       label: "Say Hello",
     });
 
+    // Navigation
+
+    menus.registerMenuAction(CodeRibbonNavigationMenu, {
+      commandId: CodeRibbonNavigationCommands.moveFocusNext.id,
+      label: "Move focus to next patch",
+    });
+
     // Manip
 
     menus.registerMenuAction(CodeRibbonManipulationMenu, {

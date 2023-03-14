@@ -5,10 +5,11 @@ import {
   MenuContribution, CommandContribution,
   MenuModelRegistry, MessageService,
 } from '@theia/core/lib/common';
-// import {
-//   FrontendApplicationContribution,
-//   bindViewContribution, WidgetFactory,
-// } from '@theia/core/lib/browser';
+import {
+  // FrontendApplicationContribution,
+  // bindViewContribution, WidgetFactory,
+  KeybindingContribution,
+} from '@theia/core/lib/browser';
 import { PreferenceContribution } from '@theia/core/lib/browser/preferences';
 import {
   ApplicationShell,
@@ -21,6 +22,7 @@ import { CodeRibbonTheiaPreferenceSchema } from './coderibbon-theia-preferences'
 import { CodeRibbonTheiaManager } from './coderibbon-theia-manager';
 import { CodeRibbonTheiaRibbonPanel } from './cr-ribbon';
 import { CodeRibbonApplicationShell } from './cr-application-shell';
+import { CodeRibbonTheiaKeybindingContribution } from './coderibbon-theia-keybinds';
 
 import '../../src/browser/style/ribbon.less';
 // temp CSS
@@ -35,6 +37,7 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
 
   bind(CommandContribution).to(CodeRibbonTheiaCommandContribution);
   bind(MenuContribution).to(CodeRibbonTheiaMenuContribution);
+  bind(KeybindingContribution).to(CodeRibbonTheiaKeybindingContribution);
 
   // TODO fix prefs
   // bind(PreferenceContribution).toConstantValue({

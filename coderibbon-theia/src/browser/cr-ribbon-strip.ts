@@ -106,7 +106,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     return 2; // TODO
   }
 
-  protected get _patches(): readonly CodeRibbonTheiaPatch[] {
+  get _patches(): readonly CodeRibbonTheiaPatch[] {
     // TODO filter to Patches?
     // TODO error below avoidable?
     // ts-expect-error TS2322: Type 'readonly Widget[]' is not assignable to type 'Iterable<CodeRibbonTheiaPatch>'.
@@ -168,6 +168,31 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
 
   get mru_patch(): CodeRibbonTheiaPatch | null {
     return this.tracker.currentWidget;
+  }
+
+  get_sibling(ref: CodeRibbonTheiaPatch, side: string) {
+    const ref_idx = this._patches.indexOf(ref);
+    if (ref_idx == -1) {
+      crdebug("get_sibling: ref passed not in patches?", ref);
+      return undefined;
+    }
+
+    switch (side) {
+      case 'before':
+      case 'above':
+        if (ref_idx <= 0) {
+          return undefined;
+        }
+        return this._patches[ref_idx - 1];
+      case 'after':
+      case 'below':
+        if ((ref_idx+1) >= this._patches.length) {
+          return undefined;
+        }
+        return this._patches[ref_idx + 1];
+      default:
+        throw new Error("get_sibling invalid side:" + side);
+    }
   }
 
   has_empty_patch() {
