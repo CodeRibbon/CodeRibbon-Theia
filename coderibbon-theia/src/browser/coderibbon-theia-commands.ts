@@ -207,7 +207,7 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
             this.messageService.warn("Reached the start of the Ribbon.");
             return;
           }
-          prev_patch = prev_strip._patches[0];
+          prev_patch = prev_strip._patches[prev_strip._patches.length-1];
         }
         // next_patch.activate();
         ribbon.activateWidget(prev_patch);

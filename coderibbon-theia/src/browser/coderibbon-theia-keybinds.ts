@@ -36,6 +36,7 @@ export const CodeRibbonDefaultKeybindings = [
   },
 ]
 
+@injectable()
 export class CodeRibbonTheiaKeybindingContribution implements KeybindingContribution {
 
   // constructor(
