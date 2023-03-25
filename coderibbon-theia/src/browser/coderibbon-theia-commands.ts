@@ -212,7 +212,7 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
         // next_patch.activate();
         ribbon.activateWidget(prev_patch);
       }
-    })
+    });
 
     // === NOTE: Manip section
 
