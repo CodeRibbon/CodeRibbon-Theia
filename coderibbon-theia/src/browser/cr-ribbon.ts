@@ -753,8 +753,8 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
       // @ts-expect-error TS7053: Element implicitly has an 'any' type
       layout["onResize"] = () =>
         onResize.bind(layout)(Widget.ResizeMessage.UnknownSize);
-      // @ts-expect-error TS7053: Element implicitly has an 'any' type
       this.toDisposeOnToggleMaximized.push(
+        // @ts-expect-error TS7053: Element implicitly has an 'any' type
         Disposable.create(() => (layout["onResize"] = onResize)),
       );
     }

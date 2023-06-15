@@ -437,8 +437,8 @@ export class ImprovedBoxLayout extends BoxLayout {
 
     for (let i = 0; i < sizes.length; i++) {
       let new_sizer = Private.createSizer(sizes[i]);
-      // @ts-expect-error TS2341: _sizers is private
       crdebug(
+        // @ts-expect-error TS2341: _sizers is private
         `old sizer: ${JSON.stringify(this._sizers[i])}, new: ${JSON.stringify(
           new_sizer,
         )}`,
@@ -452,9 +452,9 @@ export class ImprovedBoxLayout extends BoxLayout {
     }
     this.normalized = true;
 
-    // @ts-expect-error TS2341: _sizers is private
     crdebug(
       "restoreNormalizedSizes created new BoxSizers, first:",
+      // @ts-expect-error TS2341: _sizers is private
       this._sizers[0],
     );
 
