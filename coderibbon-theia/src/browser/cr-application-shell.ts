@@ -1,53 +1,56 @@
-import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
+import {
+  injectable,
+  inject,
+  postConstruct,
+} from "@theia/core/shared/inversify";
 
 import {
-  TabBar, Widget, Title,
-  DockPanel, BoxPanel,
-  DockLayout, BoxLayout,
+  TabBar,
+  Widget,
+  Title,
+  DockPanel,
+  BoxPanel,
+  DockLayout,
+  BoxLayout,
   FocusTracker,
-} from '@phosphor/widgets';
-import {
-  MessageService,
-} from '@theia/core/lib/common';
-import {
-  FrontendApplicationStateService,
-} from '@theia/core/lib/browser/frontend-application-state';
+} from "@phosphor/widgets";
+import { MessageService } from "@theia/core/lib/common";
+import { FrontendApplicationStateService } from "@theia/core/lib/browser/frontend-application-state";
 // import {
 //   FrontendApplication, FrontendApplicationContribution,
 // } from '@theia/core/lib/browser/frontend-application';
+import { CorePreferences } from "@theia/core/lib/browser/core-preferences";
 import {
-  CorePreferences,
-} from '@theia/core/lib/browser/core-preferences';
+  TheiaDockPanel,
+  BOTTOM_AREA_ID,
+  MAIN_AREA_ID,
+  MAXIMIZED_CLASS,
+} from "@theia/core/lib/browser/shell/theia-dock-panel";
 import {
-  TheiaDockPanel, BOTTOM_AREA_ID, MAIN_AREA_ID, MAXIMIZED_CLASS,
-} from '@theia/core/lib/browser/shell/theia-dock-panel';
-import {
-  DockPanelRenderer, DockPanelRendererFactory, ApplicationShell,
-} from '@theia/core/lib/browser/shell/application-shell';
-import {
-  SidePanel,
-} from '@theia/core/lib/browser/shell/side-panel-handler';
+  DockPanelRenderer,
+  DockPanelRendererFactory,
+  ApplicationShell,
+} from "@theia/core/lib/browser/shell/application-shell";
+import { SidePanel } from "@theia/core/lib/browser/shell/side-panel-handler";
 
-import { CodeRibbonTheiaRibbonPanel } from './cr-ribbon';
+import { CodeRibbonTheiaRibbonPanel } from "./cr-ribbon";
 
-import {crdebug} from './cr-logger';
+import { crdebug } from "./cr-logger";
 
 // https://github.com/eclipse-theia/theia/blob/f0cdf69e65cd048dfeb06c45ff4189a6d5cf14a6/packages/core/src/browser/shell/application-shell.ts#L42
 /** The class name added to ApplicationShell instances. */
-const APPLICATION_SHELL_CLASS = 'theia-ApplicationShell';
+const APPLICATION_SHELL_CLASS = "theia-ApplicationShell";
 /** The class name added to the main and bottom area panels. */
-const MAIN_BOTTOM_AREA_CLASS = 'theia-app-centers';
+const MAIN_BOTTOM_AREA_CLASS = "theia-app-centers";
 /** Status bar entry identifier for the bottom panel toggle button. */
-const BOTTOM_PANEL_TOGGLE_ID = 'bottom-panel-toggle';
+const BOTTOM_PANEL_TOGGLE_ID = "bottom-panel-toggle";
 /** The class name added to the main area panel. */
-const MAIN_AREA_CLASS = 'theia-app-main';
+const MAIN_AREA_CLASS = "theia-app-main";
 /** The class name added to the bottom area panel. */
-const BOTTOM_AREA_CLASS = 'theia-app-bottom';
-
+const BOTTOM_AREA_CLASS = "theia-app-bottom";
 
 @injectable()
 export class CodeRibbonApplicationShell extends ApplicationShell {
-
   // @ts-expect-error TS2416: Property in type is not assignable to the same property in base type
   override mainPanel: CodeRibbonTheiaRibbonPanel;
 
@@ -73,8 +76,8 @@ export class CodeRibbonApplicationShell extends ApplicationShell {
 
     // what I want, based on BoxPanel
     const ribbonPanel = new CodeRibbonTheiaRibbonPanel({
-      alignment: 'start',
-      direction: 'left-to-right',
+      alignment: "start",
+      direction: "left-to-right",
       spacing: 0,
     });
 
@@ -86,8 +89,12 @@ export class CodeRibbonApplicationShell extends ApplicationShell {
     // }, this.corePreferences);
 
     ribbonPanel.id = MAIN_AREA_ID;
-    ribbonPanel.widgetAdded.connect((_, widget) => this.fireDidAddWidget(widget));
-    ribbonPanel.widgetRemoved.connect((_, widget) => this.fireDidRemoveWidget(widget));
+    ribbonPanel.widgetAdded.connect((_, widget) =>
+      this.fireDidAddWidget(widget),
+    );
+    ribbonPanel.widgetRemoved.connect((_, widget) =>
+      this.fireDidRemoveWidget(widget),
+    );
 
     ribbonPanel.cr_init({
       // shell: this,
@@ -105,10 +112,15 @@ export class CodeRibbonApplicationShell extends ApplicationShell {
    * @param data  [description]
    */
   override registerWithFocusTracker(
-      data: /*ADDED TYPE:*/ CodeRibbonTheiaRibbonPanel.IRibbonLayoutConfig | DockLayout.ITabAreaConfig | DockLayout.ISplitAreaConfig | SidePanel.LayoutData | null
+    data: /*ADDED TYPE:*/
+    | CodeRibbonTheiaRibbonPanel.IRibbonLayoutConfig
+      | DockLayout.ITabAreaConfig
+      | DockLayout.ISplitAreaConfig
+      | SidePanel.LayoutData
+      | null,
   ): void {
     crdebug("CRAS registerWithFocusTracker", data);
-    if (data && data.type == 'ribbon-area') {
+    if (data && data.type == "ribbon-area") {
       // shortcut to tracking all the widgets restored from the config:
       crdebug("CRAS registerWithFocusTracker tracking restored widgets...");
       for (const strip of data.strip_configs) {
@@ -118,10 +130,8 @@ export class CodeRibbonApplicationShell extends ApplicationShell {
           }
         }
       }
-    }
-    else {
+    } else {
       super.registerWithFocusTracker(data);
     }
   }
-
 }

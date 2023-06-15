@@ -1,20 +1,26 @@
-
 // import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
 
 import {
-  TabBar, Widget, Title,
-  DockPanel, BoxPanel, Panel, StackedPanel, TabPanel,
-  DockLayout, BoxLayout,
-  BoxEngine, BoxSizer,
-} from '@phosphor/widgets';
+  TabBar,
+  Widget,
+  Title,
+  DockPanel,
+  BoxPanel,
+  Panel,
+  StackedPanel,
+  TabPanel,
+  DockLayout,
+  BoxLayout,
+  BoxEngine,
+  BoxSizer,
+} from "@phosphor/widgets";
 
-import { crdebug } from './cr-logger';
+import { crdebug } from "./cr-logger";
 
 export class CodeRibbonTheiaPatch extends TabPanel {
-
   constructor(options: CodeRibbonTheiaPatch.IOptions = {}) {
     super();
-    this.addClass('cr-RibbonPatch');
+    this.addClass("cr-RibbonPatch");
     crdebug("Patch constructor", this);
   }
 
@@ -39,8 +45,7 @@ export class CodeRibbonTheiaPatch extends TabPanel {
   get contentful_widget(): Widget | undefined {
     if (this.widgets.length) {
       return this.widgets[0];
-    }
-    else {
+    } else {
       return undefined;
     }
   }
@@ -48,9 +53,9 @@ export class CodeRibbonTheiaPatch extends TabPanel {
   saveLayout(): CodeRibbonTheiaPatch.ILayoutConfig {
     crdebug("Patch saveLayout");
     return {
-      mode: this.contentful_size ? 'widget' : 'empty',
+      mode: this.contentful_size ? "widget" : "empty",
       widget: this.contentful_widget,
-    }
+    };
   }
 
   restoreLayout(config: CodeRibbonTheiaPatch.ILayoutConfig): void {
@@ -76,7 +81,7 @@ export namespace CodeRibbonTheiaPatch {
 
   export interface ILayoutConfig {
     // Atom CR equivalent: fuzzyfinder, cr-tips, pane
-    mode: 'fuzzyfinder' | 'empty' | 'widget';
+    mode: "fuzzyfinder" | "empty" | "widget";
     widget?: Widget; // mode-dependent
   }
 }

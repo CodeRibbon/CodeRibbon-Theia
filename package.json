@@ -15,7 +15,6 @@
     "clean": "lerna run clean && rimraf node_modules",
     "build": "lerna run build",
     "bundle": "lerna run bundle",
-    "watch": "lerna run --parallel watch",
     "test": "lerna run test",
     "browser": "yarn --cwd applications/browser",
     "electron": "yarn --cwd applications/electron"
@@ -33,9 +32,10 @@
     "eslint-plugin-no-unsanitized": "^3.1.5",
     "eslint-plugin-react": "^7.23.2",
     "lerna": "^6.0.1",
+    "prettier": "2.8.8",
     "rimraf": "^2.7.1",
-    "tslint": "^5.12.0",
     "ts-node": "^10.0.0",
+    "tslint": "^5.12.0",
     "type-fest": "^0.20.2",
     "yargs": "17.2.1"
   },

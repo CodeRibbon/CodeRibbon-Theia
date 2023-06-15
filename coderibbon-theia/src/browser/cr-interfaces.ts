@@ -1,34 +1,29 @@
+import { Widget, BoxLayout } from "@phosphor/widgets";
 
-import {
-  Widget,
-  BoxLayout,
-} from '@phosphor/widgets';
-
-import { CodeRibbonTheiaRibbonLayout } from './cr-ribbon-layout';
+import { CodeRibbonTheiaRibbonLayout } from "./cr-ribbon-layout";
 
 export namespace RibbonPanel {
-  export type InsertMode = (
+  export type InsertMode =
     // At the tail of the ribbon:
     // the empty patch directly following the last/rightmost contentful patch
-    'ribbon-tail' |
+    | "ribbon-tail"
 
     // Place a new patch above or below the current one in this column
-    'split-down' |
-    'split-up' |
+    | "split-down"
+    | "split-up"
 
     // Place a new patch at the top or bottom of this column
-    'split-top' |
-    'split-bottom' |
+    | "split-top"
+    | "split-bottom"
 
     // Create a new column on the right or left of the current, put widget there
-    'split-right' |
-    'split-left' |
+    | "split-right"
+    | "split-left"
 
     // Place the widget such that it ends up in either the right or left
     // on-screen column, creating a new one if no empty patches are available
-    'screen-right' |
-    'screen-left'
-  )
+    | "screen-right"
+    | "screen-left";
   export interface IAddOptions {
     /**
      * Options for inserting a Widget onto the Ribbon, when undefined the user's
@@ -68,22 +63,21 @@ export namespace RibbonPanel {
 }
 
 export namespace RibbonStrip {
-  export type InsertMode = (
+  export type InsertMode =
     // Place a new patch above or below the current one in this column
-    'split-down' |
-    'split-up' |
+    | "split-down"
+    | "split-up"
 
     // Place a new patch at the top or bottom of this column
-    'split-top' |
-    'split-bottom' |
+    | "split-top"
+    | "split-bottom"
 
     // Create a new column on the right or left of the current, put widget there
-    'split-right' |
-    'split-left' |
+    | "split-right"
+    | "split-left"
 
     // Remove active item, replace
-    'replace-current'
-  )
+    | "replace-current";
   export interface IAddOptions {
     /**
      * Options for inserting a Widget onto the RibbonStrip

@@ -1,27 +1,27 @@
-import { injectable, inject } from '@theia/core/shared/inversify';
+import { injectable, inject } from "@theia/core/shared/inversify";
 
 import {
-  Command, CommandContribution, CommandRegistry,
+  Command,
+  CommandContribution,
+  CommandRegistry,
   MessageService,
-} from '@theia/core/lib/common';
+} from "@theia/core/lib/common";
 import {
-  ApplicationShell, KeybindingContribution, KeybindingRegistry,
-} from '@theia/core/lib/browser';
+  ApplicationShell,
+  KeybindingContribution,
+  KeybindingRegistry,
+} from "@theia/core/lib/browser";
 
-import {
-  CodeRibbonApplicationShell,
-} from './cr-application-shell';
-import {
-  CodeRibbonTheiaRibbonStrip,
-} from './cr-ribbon-strip';
+import { CodeRibbonApplicationShell } from "./cr-application-shell";
+import { CodeRibbonTheiaRibbonStrip } from "./cr-ribbon-strip";
 
-import {crdebug} from './cr-logger';
+import { crdebug } from "./cr-logger";
 
 import {
   CodeRibbonNavigationCommands,
   CodeRibbonManipulationCommands,
   CodeRibbonArrangementCommands,
-} from './coderibbon-theia-commands';
+} from "./coderibbon-theia-commands";
 
 export const CodeRibbonDefaultKeybindings = [
   {
@@ -34,11 +34,12 @@ export const CodeRibbonDefaultKeybindings = [
     command: CodeRibbonNavigationCommands.moveFocusPrev.id,
     // when: "editorFocus"
   },
-]
+];
 
 @injectable()
-export class CodeRibbonTheiaKeybindingContribution implements KeybindingContribution {
-
+export class CodeRibbonTheiaKeybindingContribution
+  implements KeybindingContribution
+{
   // constructor(
   //   @inject(MessageService) private readonly messageService: MessageService,
   //   // @inject(FrontendApplicationStateService) protected readonly stateService: FrontendApplicationStateService,
@@ -48,7 +49,7 @@ export class CodeRibbonTheiaKeybindingContribution implements KeybindingContribu
   // ) {}
 
   registerKeybindings(keybindings: KeybindingRegistry): void {
-    CodeRibbonDefaultKeybindings.forEach(kb => {
+    CodeRibbonDefaultKeybindings.forEach((kb) => {
       crdebug("Loading keybinding:", kb);
       keybindings.registerKeybinding(kb);
     });

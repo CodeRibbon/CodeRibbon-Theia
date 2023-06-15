@@ -1,22 +1,30 @@
 // import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
 
-import { Signal } from '@phosphor/signaling';
+import { Signal } from "@phosphor/signaling";
 import {
-  TabBar, Widget, Title,
-  DockPanel, BoxPanel,
-  DockLayout, BoxLayout,
-  BoxEngine, BoxSizer,
+  TabBar,
+  Widget,
+  Title,
+  DockPanel,
+  BoxPanel,
+  DockLayout,
+  BoxLayout,
+  BoxEngine,
+  BoxSizer,
   LayoutItem,
-} from '@phosphor/widgets';
-import {
-  ElementExt,
-} from '@phosphor/domutils';
+} from "@phosphor/widgets";
+import { ElementExt } from "@phosphor/domutils";
 // import {
 //   Message, MessageLoop,
 // } from '@phosphor/messaging';
 import {
-  empty, IIterator, each, chain, ArrayExt, reduce,
-} from '@phosphor/algorithm';
+  empty,
+  IIterator,
+  each,
+  chain,
+  ArrayExt,
+  reduce,
+} from "@phosphor/algorithm";
 // import {
 //   MessageService,
 //   Emitter, environment,
@@ -25,25 +33,19 @@ import {
 // import {
 //   TheiaDockPanel, BOTTOM_AREA_ID, MAIN_AREA_ID, MAXIMIZED_CLASS,
 // } from '@theia/core/lib/browser/shell/theia-dock-panel';
-import {
-  FrontendApplicationStateService,
-} from '@theia/core/lib/browser/frontend-application-state';
-import {
-  CorePreferences,
-} from '@theia/core/lib/browser/core-preferences';
+import { FrontendApplicationStateService } from "@theia/core/lib/browser/frontend-application-state";
+import { CorePreferences } from "@theia/core/lib/browser/core-preferences";
 
-import { crdebug } from './cr-logger';
-
+import { crdebug } from "./cr-logger";
 
 // @ts-expect-error Class 'ImprovedBoxLayout' incorrectly extends base class 'BoxLayout'. Property '_update' is private in type 'BoxLayout' but not in type 'ImprovedBoxLayout'.
 export class ImprovedBoxLayout extends BoxLayout {
-
   readonly handles: HTMLDivElement[] = [];
   readonly renderer: ImprovedBoxLayout.IRenderer;
   normalized: boolean = false;
 
   constructor(options: ImprovedBoxLayout.IOptions) {
-    super((options as BoxLayout.IOptions));
+    super(options as BoxLayout.IOptions);
     // NOTE differs from base: IOptions required renderer?
     this.renderer = options.renderer || DockPanel.defaultRenderer;
   }
@@ -55,7 +57,9 @@ export class ImprovedBoxLayout extends BoxLayout {
     //   this.attachWidget( widget);
     // });
 
-    each(this.handles, handle => { this.parent!.node.appendChild(handle); });
+    each(this.handles, (handle) => {
+      this.parent!.node.appendChild(handle);
+    });
 
     this.parent!.fit();
   }
@@ -64,10 +68,16 @@ export class ImprovedBoxLayout extends BoxLayout {
   //   return super.widgets;
   // }
 
-  override addWidget(widget: Widget, options: ImprovedBoxLayout.IAddOptions = {}): void {
+  override addWidget(
+    widget: Widget,
+    options: ImprovedBoxLayout.IAddOptions = {},
+  ): void {
     crdebug("IBL addWidget()", this, widget, options);
 
-    let index = (typeof options.index === 'undefined') ? this.widgets.length : options.index;
+    let index =
+      typeof options.index === "undefined"
+        ? this.widgets.length
+        : options.index;
 
     // fix override to PanelLayout addWidget:
     this.insertWidget(index, widget);
@@ -118,41 +128,61 @@ export class ImprovedBoxLayout extends BoxLayout {
    */
   syncHandles(): void {
     each(this.handles, (handle, i) => {
-      handle.setAttribute('data-orientation', this.orientation);
+      handle.setAttribute("data-orientation", this.orientation);
       if (i === this.handles.length - 1) {
-        handle.classList.add('p-mod-hidden');
+        handle.classList.add("p-mod-hidden");
       } else {
-        handle.classList.remove('p-mod-hidden');
+        handle.classList.remove("p-mod-hidden");
       }
     });
   }
 
-  update(left: number, top: number, width: number, height: number, spacing: number) {
+  update(
+    left: number,
+    top: number,
+    width: number,
+    height: number,
+    spacing: number,
+  ) {
     crdebug("IBL update()", this, left, top, width, height, spacing);
-    crdebug("IBL update() START: normalized sizes are currently", this.getNormalizedSizes(), this.getNormalizedSizeHints());
-    let horizontal = this.orientation === 'horizontal';
+    crdebug(
+      "IBL update() START: normalized sizes are currently",
+      this.getNormalizedSizes(),
+      this.getNormalizedSizeHints(),
+    );
+    let horizontal = this.orientation === "horizontal";
     // @ts-expect-error TS2341: _items is private
     let fixed = Math.max(0, this._items.length - 1) * spacing;
     let space = Math.max(0, (horizontal ? width : height) - fixed);
 
     if (space == 0) {
-      crdebug("ERROR: I am 99.9% sure that we should NOT update the IBL with 0 space, so I won't.");
+      crdebug(
+        "ERROR: I am 99.9% sure that we should NOT update the IBL with 0 space, so I won't.",
+      );
       //
       return;
     }
 
     // De-normalize the sizes if needed.
     if (this.normalized) {
-      crdebug("IBL update(): need to de-normalize sizers")
+      crdebug("IBL update(): need to de-normalize sizers");
       // @ts-expect-error TS2341: _sizers is private
       each(this._sizers, (sizer: BoxSizer, i) => {
         // @ts-ignore debugging statement
-        crdebug(`sizer ${i} was ${sizer.sizeHint} before, ${sizer.sizeHint*space} after`);
+        crdebug(
+          `sizer ${i} was ${sizer.sizeHint} before, ${
+            sizer.sizeHint * space
+          } after`,
+        );
         sizer.sizeHint *= space;
       });
       this.normalized = false;
     }
-    crdebug("IBL update(): normalized sizes are currently", this.getNormalizedSizes(), this.getNormalizedSizeHints());
+    crdebug(
+      "IBL update(): normalized sizes are currently",
+      this.getNormalizedSizes(),
+      this.getNormalizedSizeHints(),
+    );
 
     // Distribute the layout space to the sizers.
     // @ts-expect-error TS2341: _sizers is private
@@ -184,7 +214,11 @@ export class ImprovedBoxLayout extends BoxLayout {
       }
     }
 
-    crdebug("IBL update() END: normalized sizes are currently", this.getNormalizedSizes(), this.getNormalizedSizeHints());
+    crdebug(
+      "IBL update() END: normalized sizes are currently",
+      this.getNormalizedSizes(),
+      this.getNormalizedSizeHints(),
+    );
   }
 
   protected override _update(offsetWidth: number, offsetHeight: number): void {
@@ -218,12 +252,12 @@ export class ImprovedBoxLayout extends BoxLayout {
     // function because based on direction of boxlayout
     // @ts-expect-error TS2341: this._direction is private
     switch (this._direction) {
-      case 'top-to-bottom':
-      case 'bottom-to-top':
-        return 'vertical';
-      case 'left-to-right':
-      case 'right-to-left':
-        return 'horizontal';
+      case "top-to-bottom":
+      case "bottom-to-top":
+        return "vertical";
+      case "left-to-right":
+      case "right-to-left":
+        return "horizontal";
       default:
         throw Error("Invalid _direction of BoxLayout");
     }
@@ -239,7 +273,7 @@ export class ImprovedBoxLayout extends BoxLayout {
    */
   moveHandle(handle: HTMLDivElement, offsetX: number, offsetY: number): void {
     crdebug("IBL: moveHandle", handle, offsetX, offsetY);
-    if (handle.classList.contains('p-mod-hidden')) {
+    if (handle.classList.contains("p-mod-hidden")) {
       crdebug("Trying to move a hidden handle???");
       return;
     }
@@ -247,7 +281,7 @@ export class ImprovedBoxLayout extends BoxLayout {
     // TODO check that handle belongs to this boxlayout?
 
     let delta: number;
-    if (this.orientation === 'horizontal') {
+    if (this.orientation === "horizontal") {
       delta = offsetX - handle.offsetLeft;
     } else {
       delta = offsetY - handle.offsetTop;
@@ -264,7 +298,7 @@ export class ImprovedBoxLayout extends BoxLayout {
       // @ts-expect-error TS2341: _sizers is private
       this._sizers,
       0, // data.index // TODO fix to actual index of handle
-      delta
+      delta,
     );
 
     if (this.parent) {
@@ -276,11 +310,11 @@ export class ImprovedBoxLayout extends BoxLayout {
     let handle = this.renderer.createHandle();
 
     let style = handle.style;
-    style.position = 'absolute';
-    style.top = '0';
-    style.left = '0';
-    style.width = '0';
-    style.height = '0';
+    style.position = "absolute";
+    style.top = "0";
+    style.left = "0";
+    style.width = "0";
+    style.height = "0";
 
     if (this.parent) {
       this.parent.node.appendChild(handle);
@@ -355,13 +389,17 @@ export class ImprovedBoxLayout extends BoxLayout {
     if (n === 0) return [];
 
     // @ts-expect-error TS2341: _sizers is private
-    let sizes: number[] = this._sizers.map(sizer => (sizer as BoxSizer).size);
+    let sizes: number[] = this._sizers.map((sizer) => (sizer as BoxSizer).size);
     let sum = reduce(sizes, (v, size: number) => v + size, 0);
 
     if (sum === 0) {
-      each(sizes, (size, i) => { sizes[i] = 1 / n; });
+      each(sizes, (size, i) => {
+        sizes[i] = 1 / n;
+      });
     } else {
-      each(sizes, (size, i) => { sizes[i] = size / sum; });
+      each(sizes, (size, i) => {
+        sizes[i] = size / sum;
+      });
     }
 
     return sizes;
@@ -373,13 +411,17 @@ export class ImprovedBoxLayout extends BoxLayout {
     if (n === 0) return [];
 
     // @ts-expect-error TS2341: _sizers is private
-    let sizes: number[] = this._sizers.map(sizer => sizer.sizeHint);
+    let sizes: number[] = this._sizers.map((sizer) => sizer.sizeHint);
     let sum = reduce(sizes, (v, size) => v + size, 0);
 
     if (sum === 0) {
-      each(sizes, (size, i) => { sizes[i] = 1 / n; });
+      each(sizes, (size, i) => {
+        sizes[i] = 1 / n;
+      });
     } else {
-      each(sizes, (size, i) => { sizes[i] = size / sum; });
+      each(sizes, (size, i) => {
+        sizes[i] = size / sum;
+      });
     }
 
     return sizes;
@@ -388,13 +430,19 @@ export class ImprovedBoxLayout extends BoxLayout {
   restoreNormalizedSizes(sizes: number[]): void {
     // @ts-expect-error TS2341: _sizers is private
     if (sizes.length != this._sizers.length) {
-      throw Error("Wrong number of normalized sizes to restore onto a box layout");
+      throw Error(
+        "Wrong number of normalized sizes to restore onto a box layout",
+      );
     }
 
     for (let i = 0; i < sizes.length; i++) {
       let new_sizer = Private.createSizer(sizes[i]);
       // @ts-expect-error TS2341: _sizers is private
-      crdebug(`old sizer: ${JSON.stringify(this._sizers[i])}, new: ${JSON.stringify(new_sizer)}`);
+      crdebug(
+        `old sizer: ${JSON.stringify(this._sizers[i])}, new: ${JSON.stringify(
+          new_sizer,
+        )}`,
+      );
       // @ts-expect-error TS2341: _sizers is private
       this._sizers[i] = new_sizer;
       // // @ ts-expect-error TS2341: _sizers is private
@@ -405,7 +453,10 @@ export class ImprovedBoxLayout extends BoxLayout {
     this.normalized = true;
 
     // @ts-expect-error TS2341: _sizers is private
-    crdebug("restoreNormalizedSizes created new BoxSizers, first:", this._sizers[0]);
+    crdebug(
+      "restoreNormalizedSizes created new BoxSizers, first:",
+      this._sizers[0],
+    );
 
     // this._update(-1, -1);
     // this.holdSizes();
@@ -414,7 +465,6 @@ export class ImprovedBoxLayout extends BoxLayout {
     //   this.parent.update();
     // }
   }
-
 }
 
 export namespace ImprovedBoxLayout {
@@ -457,7 +507,7 @@ namespace Private {
   // we don't use that, we ARE the node...
 
   // in docklayout:
-  export type Orientation = 'horizontal' | 'vertical';
+  export type Orientation = "horizontal" | "vertical";
 
   export function createSizer(hint: number): BoxSizer {
     let sizer = new BoxSizer();

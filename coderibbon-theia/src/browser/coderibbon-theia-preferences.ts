@@ -1,19 +1,18 @@
 // @ts-nocheck
 
-import { injectable } from '@theia/core/shared/inversify';
+import { injectable } from "@theia/core/shared/inversify";
 
+import { MessageService } from "@theia/core/lib/common";
 import {
-  MessageService,
-} from '@theia/core/lib/common';
-import {
-  PreferenceContribution, PreferenceSchema,
-} from '@theia/core/lib/browser/preferences'
+  PreferenceContribution,
+  PreferenceSchema,
+} from "@theia/core/lib/browser/preferences";
 
-import {crdebug} from './cr-logger';
+import { crdebug } from "./cr-logger";
 
 export const CodeRibbonTheiaPreferenceSchema: PreferenceSchema = {
-  "type": "object",
-  "properties": {
+  type: "object",
+  properties: {
     // "ribbon.patchesPerScreenCalculation": {
     //   "type": "object",
     //   "description": "Method for determining how many patch columns should be shown on screen.",
@@ -108,5 +107,5 @@ export const CodeRibbonTheiaPreferenceSchema: PreferenceSchema = {
     //     }
     //   }
     // }
-  }
-}
+  },
+};

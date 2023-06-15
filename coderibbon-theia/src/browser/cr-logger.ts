@@ -5,4 +5,6 @@
 //   MenuContribution, MenuModelRegistry, MessageService, MenuPath, MAIN_MENU_BAR,
 // } from '@theia/core/lib/common';
 
-export var crdebug = (...args: any[]) => { console.log.apply(console, ["CR:", ...args]); };
+export var crdebug = (...args: any[]) => {
+  console.log.apply(console, ["CR:", ...args]);
+};

@@ -1,39 +1,27 @@
-import { injectable, inject } from '@theia/core/shared/inversify';
+import { injectable, inject } from "@theia/core/shared/inversify";
 
+import { Widget } from "@phosphor/widgets";
+import { MessageService } from "@theia/core/lib/common";
 import {
-  Widget,
-} from '@phosphor/widgets';
-import {
-  MessageService,
-} from '@theia/core/lib/common';
-import {
-  AbstractViewContribution, ViewContributionOptions,
+  AbstractViewContribution,
+  ViewContributionOptions,
   FrontendApplicationContribution,
-} from '@theia/core/lib/browser';
-import {
-  FrontendApplication,
-} from '@theia/core/lib/browser/frontend-application';
-import {
-  FrontendApplicationStateService,
-} from '@theia/core/lib/browser/frontend-application-state';
-import {
-  ApplicationShell,
-} from '@theia/core/lib/browser/shell/application-shell';
-import {
-  CorePreferences,
-} from '@theia/core/lib/browser/core-preferences';
+} from "@theia/core/lib/browser";
+import { FrontendApplication } from "@theia/core/lib/browser/frontend-application";
+import { FrontendApplicationStateService } from "@theia/core/lib/browser/frontend-application-state";
+import { ApplicationShell } from "@theia/core/lib/browser/shell/application-shell";
+import { CorePreferences } from "@theia/core/lib/browser/core-preferences";
 
 // import { CodeRibbonApplicationShell } from './cr-application-shell';
 
-import {crdebug} from './cr-logger';
+import { crdebug } from "./cr-logger";
 
-import { CodeRibbonTheiaRibbonPanel } from './cr-ribbon';
+import { CodeRibbonTheiaRibbonPanel } from "./cr-ribbon";
 
 const CR_MAIN_AREA_ID = "cr-theia-ribbon";
 
 @injectable()
 export class CodeRibbonTheiaManager implements FrontendApplicationContribution {
-
   protected frontendApplication: FrontendApplication;
   protected ribbonPanel: CodeRibbonTheiaRibbonPanel;
 
@@ -123,5 +111,4 @@ export class CodeRibbonTheiaManager implements FrontendApplicationContribution {
     crdebug("manager onStop: goodbye!");
     return;
   }
-
 }

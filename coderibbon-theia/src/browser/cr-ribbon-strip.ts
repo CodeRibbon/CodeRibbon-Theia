@@ -1,37 +1,42 @@
-import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
-
-import { Signal } from '@phosphor/signaling';
 import {
-  TabBar, Widget, Title,
-  DockPanel, BoxPanel,
-  DockLayout, BoxLayout,
+  injectable,
+  inject,
+  postConstruct,
+} from "@theia/core/shared/inversify";
+
+import { Signal } from "@phosphor/signaling";
+import {
+  TabBar,
+  Widget,
+  Title,
+  DockPanel,
+  BoxPanel,
+  DockLayout,
+  BoxLayout,
   BoxSizer,
   FocusTracker,
-} from '@phosphor/widgets';
+} from "@phosphor/widgets";
 // import {
 //   empty, IIterator,
 // } from '@phosphor/algorithm';
 import {
   MessageService,
-  Emitter, environment,
-  Disposable, DisposableCollection,
-} from '@theia/core/lib/common';
+  Emitter,
+  environment,
+  Disposable,
+  DisposableCollection,
+} from "@theia/core/lib/common";
 // import {
 //   TheiaDockPanel, BOTTOM_AREA_ID, MAIN_AREA_ID, MAXIMIZED_CLASS,
 // } from '@theia/core/lib/browser/shell/theia-dock-panel';
-import {
-  FrontendApplicationStateService,
-} from '@theia/core/lib/browser/frontend-application-state';
-import {
-  CorePreferences,
-} from '@theia/core/lib/browser/core-preferences';
+import { FrontendApplicationStateService } from "@theia/core/lib/browser/frontend-application-state";
+import { CorePreferences } from "@theia/core/lib/browser/core-preferences";
 
-import { crdebug } from './cr-logger';
-import { CodeRibbonTheiaPatch } from './cr-patch';
+import { crdebug } from "./cr-logger";
+import { CodeRibbonTheiaPatch } from "./cr-patch";
 // import { RibbonPanel, RibbonStrip } from './cr-interfaces';
-import { ImprovedBoxPanel } from './improvedboxpanel';
-import { ImprovedBoxLayout } from './improvedboxlayout';
-
+import { ImprovedBoxPanel } from "./improvedboxpanel";
+import { ImprovedBoxLayout } from "./improvedboxlayout";
 
 // Main Ribbon View replacement
 // based primarily on TheiaDockPanel implementation, since that's what it replaces
@@ -39,7 +44,6 @@ import { ImprovedBoxLayout } from './improvedboxlayout';
 // SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
 @injectable()
 export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
-
   /**
    * Emitted when a widget is added to the panel.
    */
@@ -59,15 +63,16 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
   // protected readonly onDidToggleMaximizedEmitter = new Emitter<Widget>();
   // readonly onDidToggleMaximized = this.onDidToggleMaximizedEmitter.event;
 
-  constructor(options?: CodeRibbonTheiaRibbonStrip.IOptions,
+  constructor(
+    options?: CodeRibbonTheiaRibbonStrip.IOptions,
     @inject(CorePreferences) protected readonly preferences?: CorePreferences,
   ) {
     super({
-      alignment: 'start',
-      direction: 'top-to-bottom',
+      alignment: "start",
+      direction: "top-to-bottom",
       // spacing:
     });
-    this.addClass('cr-RibbonStrip');
+    this.addClass("cr-RibbonStrip");
     crdebug("RibbonStrip constructor:", this, options);
   }
 
@@ -77,8 +82,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     if (options?.config) {
       crdebug("RibbonStrip cr_init: restoring strip layout...");
       this.restoreLayout(options.config);
-    }
-    else {
+    } else {
       // TODO vpps
       // while (this.widgets.length < this.vpps) {
       for (let i = 0; i < 2; ++i) {
@@ -110,12 +114,13 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     // TODO filter to Patches?
     // TODO error below avoidable?
     // ts-expect-error TS2322: Type 'readonly Widget[]' is not assignable to type 'Iterable<CodeRibbonTheiaPatch>'.
-    return ((this.layout as ImprovedBoxLayout).widgets as readonly CodeRibbonTheiaPatch[]);
+    return (this.layout as ImprovedBoxLayout)
+      .widgets as readonly CodeRibbonTheiaPatch[];
   }
 
   // TODO options
   createPatch(args: CodeRibbonTheiaRibbonStrip.ICreatePatchArgs = {}) {
-    let {index, options, init_options} = args;
+    let { index, options, init_options } = args;
     let new_patch = new CodeRibbonTheiaPatch(options);
     super.addWidget(new_patch);
     new_patch.cr_init(init_options);
@@ -123,11 +128,14 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     return new_patch;
   }
 
-  override addWidget(widget: Widget, options?: CodeRibbonTheiaRibbonStrip.ICreatePatchArgs): void {
+  override addWidget(
+    widget: Widget,
+    options?: CodeRibbonTheiaRibbonStrip.ICreatePatchArgs,
+  ): void {
     // TODO logic based on where to put the widget
     // super.addWidget(widget);
 
-    let target_patch = this._patches.find(patch => {
+    let target_patch = this._patches.find((patch) => {
       return patch.contentful_size == 0;
     });
     if (!target_patch) {
@@ -161,9 +169,11 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
   }
 
   get contentful_widgets(): readonly Widget[] {
-    return (this._patches.map(patch => {
-      return patch.contentful_widget;
-    }).filter(Boolean) as Widget[]);
+    return this._patches
+      .map((patch) => {
+        return patch.contentful_widget;
+      })
+      .filter(Boolean) as Widget[];
   }
 
   get mru_patch(): CodeRibbonTheiaPatch | null {
@@ -178,15 +188,15 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     }
 
     switch (side) {
-      case 'before':
-      case 'above':
+      case "before":
+      case "above":
         if (ref_idx <= 0) {
           return undefined;
         }
         return this._patches[ref_idx - 1];
-      case 'after':
-      case 'below':
-        if ((ref_idx+1) >= this._patches.length) {
+      case "after":
+      case "below":
+        if (ref_idx + 1 >= this._patches.length) {
           return undefined;
         }
         return this._patches[ref_idx + 1];
@@ -198,8 +208,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
   has_empty_patch() {
     if (this.contentful_size < this._patches.length) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
@@ -212,13 +221,13 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
   // overriding BoxPanel's p-BoxPanel-child
   protected override onChildAdded(msg: Widget.ChildMessage) {
     super.onChildAdded(msg);
-    msg.child.addClass('cr-RibbonStrip-child');
+    msg.child.addClass("cr-RibbonStrip-child");
     this.widgetAdded.emit(msg.child);
   }
 
   protected override onChildRemoved(msg: Widget.ChildMessage): void {
     super.onChildRemoved(msg);
-    msg.child.removeClass('cr-RibbonStrip-child');
+    msg.child.removeClass("cr-RibbonStrip-child");
     this.widgetRemoved.emit(msg.child);
   }
 
@@ -231,11 +240,11 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
   saveLayout(): CodeRibbonTheiaRibbonStrip.ILayoutConfig {
     crdebug("RibbonStrip saveLayout");
     return {
-      orientation: 'vertical', // always
+      orientation: "vertical", // always
       sizes: (this.layout as ImprovedBoxLayout)?.getNormalizedSizes(),
-      patch_configs: this._patches.map(patch => patch.saveLayout()),
+      patch_configs: this._patches.map((patch) => patch.saveLayout()),
       last_active_patch: 0, // TODO
-    }
+    };
   }
 
   /**
@@ -250,13 +259,13 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
 
     if (config.patch_configs) {
       // TODO any checks before we wipe all the patches?
-      this._patches.map(patch => patch.dispose());
-      config.patch_configs.map(patch_config => {
+      this._patches.map((patch) => patch.dispose());
+      config.patch_configs.map((patch_config) => {
         // TODO this could be passed in options to reduce calls
         let new_patch = this.createPatch({
           init_options: {
             config: patch_config,
-          }
+          },
         });
       });
 
@@ -276,7 +285,6 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
 
       this.update();
     }
-
   }
 
   // // @ts-expect-error TS2425: Class defines instance member property 'widgets', but extended class defines it as instance member function.
@@ -305,9 +313,9 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     if (title) {
       const resetCurrent = () => this.markAsCurrent(undefined);
       title.owner.disposed.connect(resetCurrent);
-      this.toDisposeOnMarkAsCurrent.push(Disposable.create(() =>
-        title.owner.disposed.disconnect(resetCurrent)
-      ));
+      this.toDisposeOnMarkAsCurrent.push(
+        Disposable.create(() => title.owner.disposed.disconnect(resetCurrent)),
+      );
     }
   }
 
@@ -315,7 +323,6 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
   get currentTitle(): Title<Widget> | undefined {
     return this._currentTitle;
   }
-
 }
 
 export namespace CodeRibbonTheiaRibbonStrip {
@@ -338,7 +345,7 @@ export namespace CodeRibbonTheiaRibbonStrip {
     sizes: number[]; // normalized sizes (sum to 1.0)
     patch_configs: CodeRibbonTheiaPatch.ILayoutConfig[];
     last_active_patch?: number; // TODO
-    orientation: 'vertical'; // ignored, BoxLayout compatibility
+    orientation: "vertical"; // ignored, BoxLayout compatibility
     widgets?: any; // ignored, BoxLayout compatibility
   }
 }

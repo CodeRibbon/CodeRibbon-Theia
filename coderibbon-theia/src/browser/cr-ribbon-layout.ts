@@ -1,21 +1,24 @@
-import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
+import {
+  injectable,
+  inject,
+  postConstruct,
+} from "@theia/core/shared/inversify";
 
-import { Signal } from '@phosphor/signaling';
+import { Signal } from "@phosphor/signaling";
 import {
-  TabBar, Widget, Title,
-  DockPanel, BoxPanel,
-  DockLayout, BoxLayout,
-  BoxEngine, BoxSizer,
-} from '@phosphor/widgets';
-import {
-  ElementExt,
-} from '@phosphor/domutils';
-import {
-  Message, MessageLoop,
-} from '@phosphor/messaging';
-import {
-  empty,
-} from '@phosphor/algorithm';
+  TabBar,
+  Widget,
+  Title,
+  DockPanel,
+  BoxPanel,
+  DockLayout,
+  BoxLayout,
+  BoxEngine,
+  BoxSizer,
+} from "@phosphor/widgets";
+import { ElementExt } from "@phosphor/domutils";
+import { Message, MessageLoop } from "@phosphor/messaging";
+import { empty } from "@phosphor/algorithm";
 // import {
 //   MessageService,
 //   Emitter, environment,
@@ -24,22 +27,16 @@ import {
 // import {
 //   TheiaDockPanel, BOTTOM_AREA_ID, MAIN_AREA_ID, MAXIMIZED_CLASS,
 // } from '@theia/core/lib/browser/shell/theia-dock-panel';
-import {
-  FrontendApplicationStateService,
-} from '@theia/core/lib/browser/frontend-application-state';
-import {
-  CorePreferences,
-} from '@theia/core/lib/browser/core-preferences';
+import { FrontendApplicationStateService } from "@theia/core/lib/browser/frontend-application-state";
+import { CorePreferences } from "@theia/core/lib/browser/core-preferences";
 
-import { crdebug } from './cr-logger';
+import { crdebug } from "./cr-logger";
 
-import { RibbonPanel } from './cr-interfaces';
-
+import { RibbonPanel } from "./cr-interfaces";
 
 @injectable()
 // @ts-expect-error TS2415: Class incorrectly extends base class
 export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
-
   // Horizontal Patches Per Screen
   private _hpps: number = 2;
   set hpps(value: number) {
@@ -54,7 +51,7 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
   }
 
   get patchWidth(): number {
-    return (this.parent!.node!.clientWidth / this.hpps);
+    return this.parent!.node!.clientWidth / this.hpps;
   }
 
   // /**
@@ -148,7 +145,7 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
 
     // Update the box sizing and add it to the computed min size.
     // @ts-expect-error TS2341: Property is private
-    let box = this._box = ElementExt.boxSizing(this.parent!.node);
+    let box = (this._box = ElementExt.boxSizing(this.parent!.node));
     minW += box.horizontalSum;
     minH += box.verticalSum;
 
@@ -224,26 +221,26 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
     let delta: number;
     // @ts-expect-error TS2341: Property is private
     switch (this._direction) {
-    case 'left-to-right':
-      // @ts-expect-error TS2341: Property is private
-      delta = BoxEngine.calc(this._sizers, Math.max(0, width - this._fixed));
-      break;
-    case 'top-to-bottom':
-      // @ts-expect-error TS2341: Property is private
-      delta = BoxEngine.calc(this._sizers, Math.max(0, height - this._fixed));
-      break;
-    case 'right-to-left':
-      // @ts-expect-error TS2341: Property is private
-      delta = BoxEngine.calc(this._sizers, Math.max(0, width - this._fixed));
-      left += width;
-      break;
-    case 'bottom-to-top':
-      // @ts-expect-error TS2341: Property is private
-      delta = BoxEngine.calc(this._sizers, Math.max(0, height - this._fixed));
-      top += height;
-      break;
-    default:
-      throw 'unreachable';
+      case "left-to-right":
+        // @ts-expect-error TS2341: Property is private
+        delta = BoxEngine.calc(this._sizers, Math.max(0, width - this._fixed));
+        break;
+      case "top-to-bottom":
+        // @ts-expect-error TS2341: Property is private
+        delta = BoxEngine.calc(this._sizers, Math.max(0, height - this._fixed));
+        break;
+      case "right-to-left":
+        // @ts-expect-error TS2341: Property is private
+        delta = BoxEngine.calc(this._sizers, Math.max(0, width - this._fixed));
+        left += width;
+        break;
+      case "bottom-to-top":
+        // @ts-expect-error TS2341: Property is private
+        delta = BoxEngine.calc(this._sizers, Math.max(0, height - this._fixed));
+        top += height;
+        break;
+      default:
+        throw "unreachable";
     }
 
     // Setup the variables for justification and alignment offset.
@@ -254,22 +251,22 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
     if (delta > 0) {
       // @ts-expect-error TS2341: Property is private
       switch (this._alignment) {
-      case 'start':
-        break;
-      case 'center':
-        extra = 0;
-        offset = delta / 2;
-        break;
-      case 'end':
-        extra = 0;
-        offset = delta;
-        break;
-      case 'justify':
-        extra = delta / nVisible;
-        offset = 0;
-        break;
-      default:
-        throw 'unreachable';
+        case "start":
+          break;
+        case "center":
+          extra = 0;
+          offset = delta / 2;
+          break;
+        case "end":
+          extra = 0;
+          offset = delta;
+          break;
+        case "justify":
+          extra = delta / nVisible;
+          offset = 0;
+          break;
+        default:
+          throw "unreachable";
       }
     }
 
@@ -292,32 +289,31 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
       // Update the widget geometry and advance the relevant edge.
       // @ts-expect-error TS2341: Property is private
       switch (this._direction) {
-      case 'left-to-right':
-        item.update(left + offset, top, size + extra, height);
-        // @ts-expect-error TS2341: Property is private
-        left += size + extra + this._spacing;
-        break;
-      case 'top-to-bottom':
-        item.update(left, top + offset, width, size + extra);
-        // @ts-expect-error TS2341: Property is private
-        top += size + extra + this._spacing;
-        break;
-      case 'right-to-left':
-        item.update(left - offset - size - extra, top, size + extra, height);
-        // @ts-expect-error TS2341: Property is private
-        left -= size + extra + this._spacing;
-        break;
-      case 'bottom-to-top':
-        item.update(left, top - offset - size - extra, width, size + extra);
-        // @ts-expect-error TS2341: Property is private
-        top -= size + extra + this._spacing;
-        break;
-      default:
-        throw 'unreachable';
+        case "left-to-right":
+          item.update(left + offset, top, size + extra, height);
+          // @ts-expect-error TS2341: Property is private
+          left += size + extra + this._spacing;
+          break;
+        case "top-to-bottom":
+          item.update(left, top + offset, width, size + extra);
+          // @ts-expect-error TS2341: Property is private
+          top += size + extra + this._spacing;
+          break;
+        case "right-to-left":
+          item.update(left - offset - size - extra, top, size + extra, height);
+          // @ts-expect-error TS2341: Property is private
+          left -= size + extra + this._spacing;
+          break;
+        case "bottom-to-top":
+          item.update(left, top - offset - size - extra, width, size + extra);
+          // @ts-expect-error TS2341: Property is private
+          top -= size + extra + this._spacing;
+          break;
+        default:
+          throw "unreachable";
       }
     }
   }
-
 }
 
 export namespace CodeRibbonTheiaRibbonLayout {
