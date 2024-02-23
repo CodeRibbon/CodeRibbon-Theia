@@ -20,7 +20,7 @@
     "electron": "yarn --cwd applications/electron"
   },
   "devDependencies": {
-    "@theia/cli": "1.35.0",
+    "@theia/cli": "1.46.1",
     "@typescript-eslint/eslint-plugin": "^4.25.0",
     "@typescript-eslint/eslint-plugin-tslint": "^4.25.0",
     "@typescript-eslint/parser": "^4.25.0",
