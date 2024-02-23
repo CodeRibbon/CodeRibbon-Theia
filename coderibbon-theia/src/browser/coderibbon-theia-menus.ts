@@ -10,7 +10,7 @@ import {
 } from "@theia/core/lib/common";
 
 import {
-  CodeRibbonHelloWorldCommand,
+  CodeRibbonDebuggingCommands,
   CodeRibbonNavigationCommands,
   CodeRibbonManipulationCommands,
   CodeRibbonArrangementCommands,
@@ -36,9 +36,11 @@ export class CodeRibbonTheiaMenuContribution implements MenuContribution {
   registerMenus(menus: MenuModelRegistry): void {
     menus.registerSubmenu(CodeRibbonTopMenuPath, "CodeRibbon");
 
+    // General
+
     menus.registerMenuAction(CodeRibbonTopMenuPath, {
-      commandId: CodeRibbonHelloWorldCommand.id,
-      label: "Say Hello",
+      commandId: CodeRibbonDebuggingCommands.testFuzzyFinderCommand.id,
+      label: "Test FuzzyFinder",
     });
 
     // Navigation

@@ -13,9 +13,15 @@ import { CodeRibbonTheiaRibbonStrip } from "./cr-ribbon-strip";
 
 import { crdebug } from "./cr-logger";
 
-export const CodeRibbonHelloWorldCommand = {
-  id: "CodeRibbon.HelloWorld",
-  label: "Hello, CodeRibbon.",
+export const CodeRibbonDebuggingCommands = {
+  helloWorldCommand: {
+    id: "CodeRibbon.HelloWorld",
+    label: "Hello, CodeRibbon.",
+  },
+  testFuzzyFinderCommand: {
+    id: "CodeRibbon.dev.test_ff",
+    label: "CodeRibbon Test FuzzyFinder",
+  },
 };
 
 export const CodeRibbonDevGetPanelCommand = {
@@ -136,18 +142,22 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
   ) {}
 
   registerCommands(registry: CommandRegistry): void {
-    registry.registerCommand(CodeRibbonHelloWorldCommand, {
+
+    // === NOTE: Debugging section
+    // TODO: only register these in debug mode
+
+    registry.registerCommand(CodeRibbonDebuggingCommands.helloWorldCommand, {
       execute: () => {
         this.messageService.info("CodeRibbon says hello!");
         crdebug("Hello console! CommandContribution:", this);
         // crdebug("CRAS is:", this.cras);
       },
     });
-    // registry.registerCommand(CodeRibbonDevGetPanelCommand, {
-    //   execute: () => {
-    //     crdebug();
-    //   }
-    // });
+    registry.registerCommand(CodeRibbonDebuggingCommands.testFuzzyFinderCommand, {
+      execute: () => {
+        crdebug();
+      }
+    });
 
     // === NOTE: Nav section
 

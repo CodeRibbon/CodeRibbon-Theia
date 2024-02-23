@@ -10,7 +10,7 @@ import { Command, CommandRegistry } from '@theia/core/lib/common/command';
 @injectable()
 export class CodeRibbonFuzzyFileOpenerWidget extends ReactWidget {
   static readonly ID = "coderibbon:fuzzy-file-opener";
-  static readonly LABEL = "Fuzzy File Finder";
+  static readonly LABEL = "CodeRibbon Fuzzy File Finder";
 
   @postConstruct()
   protected async init(): Promise<void> {
