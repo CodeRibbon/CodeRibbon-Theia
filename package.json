@@ -8,16 +8,17 @@
     "url": "https://github.com/CodeRibbon/CodeRibbon-Theia/issues"
   },
   "scripts": {
+    "clean": "lerna run clean && rimraf node_modules",
+    "build": "lerna run build",
     "prepare": "lerna run prepare --concurrency 1",
     "watch": "lerna run --parallel watch",
     "lint": "lerna run lint",
     "lint:fix": "lerna run lint:fix",
-    "clean": "lerna run clean && rimraf node_modules",
-    "build": "lerna run build",
     "bundle": "lerna run bundle",
     "test": "lerna run test",
     "browser": "yarn --cwd applications/browser",
-    "electron": "yarn --cwd applications/electron"
+    "electron": "yarn --cwd applications/electron",
+    "download:plugins": "theia download:plugins --rate-limit=15 --parallel=false --ignore-errors"
   },
   "devDependencies": {
     "@theia/cli": "1.46.1",
@@ -42,5 +43,17 @@
   "workspaces": [
     "coderibbon-theia",
     "applications/*"
+  ],
+  "theiaPluginsDir": "plugins",
+  "theiaPlugins": {
+    "vscode.git": "https://open-vsx.org/api/vscode/git/1.52.1/file/vscode.git-1.52.1.vsix",
+    "vscode.markdown-language-features": "https://open-vsx.org/api/vscode/markdown-language-features/1.39.2/file/vscode.markdown-language-features-1.39.2.vsix",
+    "vscode-builtin-extensions-pack": "https://open-vsx.org/api/eclipse-theia/builtin-extension-pack/1.50.1/file/eclipse-theia.builtin-extension-pack-1.50.1.vsix"
+  },
+  "theiaPluginsExcludeIds": [
+    "vscode.extension-editing",
+    "vscode.microsoft-authentication",
+    "ms-vscode.js-debug-companion",
+    "VisualStudioExptTeam.vscodeintellicode"
   ]
 }

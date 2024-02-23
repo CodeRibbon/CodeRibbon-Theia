@@ -2,7 +2,7 @@ appId: coderibbon.coderibbon-theia
 productName: CodeRibbon-Preview
 
 electronDist: ../../node_modules/electron/dist
-electronVersion: 15.5.7
+electronVersion: 23.2.4
 asar: false
 
 directories:
@@ -14,7 +14,7 @@ files:
   - scripts
   - "!**node_modules/electron/**"
 extraResources:
-  - from: plugins
+  - from: ../../plugins
     to: app/plugins
 
 linux:
