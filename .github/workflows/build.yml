@@ -12,7 +12,9 @@ jobs:
           node-version: 18
           cache: yarn
 
-      - run: yarn
+      - run: yarn install
+
+      - run: yarn electron rebuild
 
       - run: yarn electron build
 
@@ -22,4 +24,3 @@ jobs:
         with:
           path: applications/electron/dist/*.AppImage
           name: coderibbon-electron-appimage
-

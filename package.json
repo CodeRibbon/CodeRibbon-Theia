@@ -8,19 +8,20 @@
     "url": "https://github.com/CodeRibbon/CodeRibbon-Theia/issues"
   },
   "scripts": {
+    "clean": "lerna run clean && rimraf node_modules",
+    "build": "lerna run build",
     "prepare": "lerna run prepare --concurrency 1",
     "watch": "lerna run --parallel watch",
     "lint": "lerna run lint",
     "lint:fix": "lerna run lint:fix",
-    "clean": "lerna run clean && rimraf node_modules",
-    "build": "lerna run build",
     "bundle": "lerna run bundle",
     "test": "lerna run test",
     "browser": "yarn --cwd applications/browser",
-    "electron": "yarn --cwd applications/electron"
+    "electron": "yarn --cwd applications/electron",
+    "download:plugins": "theia download:plugins --rate-limit=15 --parallel=false --ignore-errors"
   },
   "devDependencies": {
-    "@theia/cli": "1.35.0",
+    "@theia/cli": "1.46.1",
     "@typescript-eslint/eslint-plugin": "^4.25.0",
     "@typescript-eslint/eslint-plugin-tslint": "^4.25.0",
     "@typescript-eslint/parser": "^4.25.0",
@@ -42,5 +43,17 @@
   "workspaces": [
     "coderibbon-theia",
     "applications/*"
+  ],
+  "theiaPluginsDir": "plugins",
+  "theiaPlugins": {
+    "vscode.git": "https://open-vsx.org/api/vscode/git/1.83.1/file/vscode.git-1.83.1.vsix",
+    "vscode.markdown-language-features": "https://open-vsx.org/api/vscode/markdown-language-features/1.83.1/file/vscode.markdown-language-features-1.83.1.vsix",
+    "vscode-builtin-extensions-pack": "https://open-vsx.org/api/eclipse-theia/builtin-extension-pack/1.83.1/file/eclipse-theia.builtin-extension-pack-1.83.1.vsix"
+  },
+  "theiaPluginsExcludeIds": [
+    "vscode.extension-editing",
+    "vscode.microsoft-authentication",
+    "ms-vscode.js-debug-companion",
+    "VisualStudioExptTeam.vscodeintellicode"
   ]
 }

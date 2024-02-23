@@ -4,6 +4,7 @@ lib
 *.log
 *.tsbuildinfo
 applications/*/*
+plugins/
 !applications/*/package.json
 !applications/*/webpack.config.js
 !applications/*/tsconfig.json

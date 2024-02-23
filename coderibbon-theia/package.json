@@ -9,7 +9,7 @@
     "src"
   ],
   "dependencies": {
-    "@theia/core": "1.35.0"
+    "@theia/core": "1.46.1"
   },
   "devDependencies": {
     "less": "^4.1.3",
