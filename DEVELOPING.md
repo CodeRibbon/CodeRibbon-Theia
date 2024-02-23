@@ -4,8 +4,8 @@ Install [nvm](https://github.com/creationix/nvm#install-script).
 
 Install npm and node.
 
-    nvm install v16
-    nvm use v16
+    nvm install v18
+    nvm use v18
 
 Install yarn.
 
@@ -18,12 +18,14 @@ Install yarn.
 
 ## Running the browser example
 
+    yarn browser build
     yarn browser start
 
 Open http://localhost:3000 in the browser.
 
 ## Running the Electron example
 
+    yarn electron build
     yarn electron start
 
 ## Developing with the browser example
