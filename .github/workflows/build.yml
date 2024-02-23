@@ -1,0 +1,25 @@
+name: Build appimage
+on: [push]
+jobs:
+  coderibbon-theia-appimage:
+    name: Build CodeRibbon-Theia appimage
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: yarn
+
+      - run: yarn
+
+      - run: yarn electron build
+
+      - run: yarn electron package
+
+      - uses: actions/upload-artifact@v4
+        with:
+          path: applications/electron/dist/*.AppImage
+          name: coderibbon-electron-appimage
+
