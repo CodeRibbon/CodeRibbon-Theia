@@ -13,7 +13,7 @@ export class CodeRibbonFuzzyFileOpenerWidget extends ReactWidget {
   static readonly LABEL = "CodeRibbon Fuzzy File Finder";
 
   @postConstruct()
-  protected async init(): Promise<void> {
+  protected init(): void {
     this.id = CodeRibbonFuzzyFileOpenerWidget.ID;
     this.title.label = CodeRibbonFuzzyFileOpenerWidget.LABEL;
     this.title.caption = CodeRibbonFuzzyFileOpenerWidget.LABEL;
