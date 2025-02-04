@@ -1,18 +1,18 @@
 appId: coderibbon.coderibbon-theia
 productName: CodeRibbon-Preview
 
-asar: false
-
-directories:
-  buildResources: resources
+# asar: false
+#
+# directories:
+#   buildResources: resources
 
 files:
   - src-gen
   - lib
   - scripts
-  - "!**node_modules/electron/**"
+  - "!**node_modules/**"
 extraResources:
-  - from: ../../plugins
+  - from: ../plugins
     to: app/plugins
 
 linux:

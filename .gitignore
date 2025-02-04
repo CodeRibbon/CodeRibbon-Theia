@@ -6,3 +6,4 @@ lib
 !*-app/package.json
 !*-app/webpack.config.js
 !*-app/electron-builder.yml
+!*-app/scripts/
