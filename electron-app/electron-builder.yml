@@ -1,8 +1,7 @@
 appId: coderibbon.coderibbon-theia
 productName: CodeRibbon-Preview
 
-# asar: false
-#
+asar: false
 # directories:
 #   buildResources: resources
 

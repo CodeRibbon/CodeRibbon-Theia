@@ -32,9 +32,9 @@
   ],
   "theiaPluginsDir": "plugins",
   "theiaPlugins": {
-    "vscode.git": "https://open-vsx.org/api/vscode/git/1.83.1/file/vscode.git-1.83.1.vsix",
-    "vscode.markdown-language-features": "https://open-vsx.org/api/vscode/markdown-language-features/1.83.1/file/vscode.markdown-language-features-1.83.1.vsix",
-    "vscode-builtin-extensions-pack": "https://open-vsx.org/api/eclipse-theia/builtin-extension-pack/1.83.1/file/eclipse-theia.builtin-extension-pack-1.83.1.vsix"
+    "vscode.git": "https://open-vsx.org/api/vscode/git/1.95.3/file/vscode.git-1.95.3.vsix",
+    "vscode.markdown-language-features": "https://open-vsx.org/api/vscode/markdown-language-features/1.95.3/file/vscode.markdown-language-features-1.95.3.vsix",
+    "vscode-builtin-extensions-pack": "https://open-vsx.org/api/eclipse-theia/builtin-extension-pack/1.95.3/file/eclipse-theia.builtin-extension-pack-1.95.3.vsix"
   },
   "theiaPluginsExcludeIds": [
     "vscode.extension-editing",
