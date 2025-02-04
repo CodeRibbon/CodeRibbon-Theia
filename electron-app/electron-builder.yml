@@ -1,0 +1,26 @@
+appId: coderibbon.coderibbon-theia
+productName: CodeRibbon-Preview
+
+asar: false
+
+directories:
+  buildResources: resources
+
+files:
+  - src-gen
+  - lib
+  - scripts
+  - "!**node_modules/electron/**"
+extraResources:
+  - from: ../../plugins
+    to: app/plugins
+
+linux:
+  category: Development
+  target:
+    - AppImage
+
+appImage:
+  artifactName: ${productName}.${ext}
+
+# afterPack: ./scripts/after-pack.js

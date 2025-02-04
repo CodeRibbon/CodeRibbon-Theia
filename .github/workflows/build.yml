@@ -20,5 +20,5 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          path: applications/electron/dist/*.AppImage
+          path: electron-app/dist/*.AppImage
           name: coderibbon-electron-appimage
