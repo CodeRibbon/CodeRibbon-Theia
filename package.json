@@ -14,13 +14,21 @@
     "watch:browser": "lerna run --parallel watch --ignore electron-app",
     "watch:electron": "lerna run --parallel watch --ignore browser-app",
     "browser": "yarn --cwd browser-app",
-    "electron": "yarn --cwd electron-app"
+    "electron": "yarn --cwd electron-app",
+    "download:plugins": "theia download:plugins --rate-limit=15 --parallel=false && yarn permissions:writeable",
+    "permissions:writeable": "ts-node scripts/make-files-writeable.ts plugins"
   },
   "devDependencies": {
-    "lerna": "2.4.0"
+    "@types/yargs": "^17.0.33",
+    "lerna": "2.4.0",
+    "ts-node": "^10.0.0",
+    "type-fest": "^0.20.2",
+    "yargs": "17.2.1"
   },
   "workspaces": [
-    "coderibbon-theia", "browser-app", "electron-app"
+    "coderibbon-theia",
+    "browser-app",
+    "electron-app"
   ],
   "theiaPluginsDir": "plugins",
   "theiaPlugins": {
