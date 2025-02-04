@@ -28,7 +28,6 @@
     "clean:dist": "rimraf dist",
     "build": "yarn -s rebuild && theia build --app-target=\"electron\" --mode development",
     "build:prod": "yarn -s rebuild && theia build --app-target=\"electron\"",
-    "bundle": "yarn rebuild && theia build --mode development",
     "rebuild": "theia rebuild:electron --cacheRoot ..",
     "start": "theia start",
     "watch": "yarn rebuild && theia build --watch --mode development",
