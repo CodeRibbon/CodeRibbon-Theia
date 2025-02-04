@@ -9,8 +9,11 @@
   },
   "scripts": {
     "clean": "lerna run clean && rimraf node_modules",
-    "build": "lerna run build",
-    "prepare": "lerna run prepare --concurrency 1",
+    "build": "yarn build:extensions && yarn build:applications",
+    "build:dev": "yarn build:extensions && yarn build:applications:dev",
+    "build:applications": "yarn build:extensions && lerna run --scope=\"*-app\" build:prod --concurrency 1",
+    "build:applications:dev": "yarn build:extensions && lerna run --scope=\"*-app\" build --concurrency 1",
+    "build:extensions": "lerna run --scope=\"coderibbon-theia\" build",
     "watch": "lerna run --parallel watch",
     "lint": "lerna run lint",
     "lint:fix": "lerna run lint:fix",
@@ -18,10 +21,14 @@
     "test": "lerna run test",
     "browser": "yarn --cwd applications/browser",
     "electron": "yarn --cwd applications/electron",
-    "download:plugins": "theia download:plugins --rate-limit=15 --parallel=false --ignore-errors"
+    "download:plugins": "theia download:plugins --rate-limit=15 --parallel=false && yarn permissions:writeable",
+    "update:theia": "ts-node scripts/update-theia-version.ts",
+    "update:theia:children": "lerna run update:theia -- ",
+    "update:next": "ts-node scripts/update-theia-version.ts next && lerna run update:next",
+    "postinstall": "theia-patch"
   },
   "devDependencies": {
-    "@theia/cli": "1.46.1",
+    "@theia/cli": "1.58.1",
     "@typescript-eslint/eslint-plugin": "^4.25.0",
     "@typescript-eslint/eslint-plugin-tslint": "^4.25.0",
     "@typescript-eslint/parser": "^4.25.0",
@@ -40,9 +47,13 @@
     "type-fest": "^0.20.2",
     "yargs": "17.2.1"
   },
+  "engines": {
+    "yarn": ">=1.7.0 <2",
+    "node": ">=18.0.0"
+  },
   "workspaces": [
-    "coderibbon-theia",
-    "applications/*"
+    "applications/*",
+    "coderibbon-theia"
   ],
   "theiaPluginsDir": "plugins",
   "theiaPlugins": {
