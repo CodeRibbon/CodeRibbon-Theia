@@ -35,8 +35,7 @@
             "windows": {
                 "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
             },
-            "program": "${workspaceRoot}/electron-app/src-gen/frontend/electron-main.js",
-            "protocol": "inspector",
+            "program": "${workspaceRoot}/electron-app/src-gen/backend/electron-main.js",
             "args": [
                 "--loglevel=debug",
                 "--hostname=localhost",
@@ -47,7 +46,7 @@
             },
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceRoot}/electron-app/src-gen/frontend/electron-main.js",
+                "${workspaceRoot}/electron-app/src-gen/backend/electron-main.js",
                 "${workspaceRoot}/electron-app/src-gen/backend/main.js",
                 "${workspaceRoot}/*/lib/**/*.js",
                 "${workspaceRoot}/node_modules/@theia/*/lib/**/*.js"

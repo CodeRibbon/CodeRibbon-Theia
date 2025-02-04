@@ -1,12 +1,30 @@
 {
-    "extends": "../configs/base.tsconfig",
     "compilerOptions": {
+        "skipLibCheck": true,
+        "declaration": true,
+        "declarationMap": true,
+        "noImplicitAny": true,
+        "noEmitOnError": false,
+        "noImplicitThis": true,
+        "noUnusedLocals": false,
+        "strictNullChecks": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "downlevelIteration": true,
+        "resolveJsonModule": true,
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "target": "ES2017",
+        "jsx": "react",
+        "lib": [
+            "ES2017",
+            "dom"
+        ],
+        "sourceMap": true,
         "rootDir": "src",
-        "outDir": "lib",
-        "baseUrl": ".",
-        "noUnusedLocals": false
+        "outDir": "lib"
     },
     "include": [
-        "src",
+        "src"
     ]
 }
