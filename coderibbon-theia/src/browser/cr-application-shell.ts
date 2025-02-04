@@ -67,6 +67,20 @@ export class CodeRibbonApplicationShell extends ApplicationShell {
     renderer.tabBarClasses.push(MAIN_BOTTOM_AREA_CLASS);
     renderer.tabBarClasses.push(MAIN_AREA_CLASS);
 
+    /**
+     * used in a get
+     * https://github.com/eclipse-theia/theia/blob/05982e8cc568e845f5a08f75a8771328a957e01c/packages/plugin-ext/src/main/browser/tabs/tabs-main.ts#L76
+     * 2025-02-04T11:04:41.808Z root ERROR Failed to load plugins: TypeError: Cannot read properties of undefined (reading 'onDidCreateTabBar')
+     *
+     * WARNING: I feel like this may be a point where plugin functionality breaks later on:
+     * this might be where context menu additions on tabs are eaten away
+     * because we've completely replaced the normal DockPanel
+     *
+     * DockPanel takes this `renderer` but BoxPanel does not
+     */
+    // @ts-ignore TS2341: _mainPanelRenderer is private
+    this._mainPanelRenderer = renderer;
+
     // original, untouched
     // const dockPanel = new TheiaDockPanel({
     //   mode: 'multiple-document',
