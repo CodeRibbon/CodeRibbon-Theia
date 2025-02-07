@@ -1,10 +1,10 @@
 node_modules
 .browser_modules
 lib
+/plugins/
 *.log
-*.tsbuildinfo
-applications/*/*
-plugins/
-!applications/*/package.json
-!applications/*/webpack.config.js
-!applications/*/tsconfig.json
+*-app/*
+!*-app/package.json
+!*-app/webpack.config.js
+!*-app/electron-builder.yml
+!*-app/scripts/

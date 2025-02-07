@@ -1,54 +1,40 @@
 {
   "private": true,
-  "version": "0.0.3",
-  "license": "EPL-2.0",
-  "author": "Ben Klein <robobenklein@gmail.com>",
-  "homepage": "https://github.com/CodeRibbon/CodeRibbon-Theia",
-  "bugs": {
-    "url": "https://github.com/CodeRibbon/CodeRibbon-Theia/issues"
+  "engines": {
+    "yarn": ">=1.7.0 <2",
+    "node": ">=18"
   },
   "scripts": {
-    "clean": "lerna run clean && rimraf node_modules",
-    "build": "lerna run build",
-    "prepare": "lerna run prepare --concurrency 1",
-    "watch": "lerna run --parallel watch",
-    "lint": "lerna run lint",
-    "lint:fix": "lerna run lint:fix",
-    "bundle": "lerna run bundle",
-    "test": "lerna run test",
-    "browser": "yarn --cwd applications/browser",
-    "electron": "yarn --cwd applications/electron",
-    "download:plugins": "theia download:plugins --rate-limit=15 --parallel=false --ignore-errors"
+    "build:browser": "yarn --cwd browser-app bundle",
+    "build:electron": "yarn --cwd electron-app build",
+    "prepare": "lerna run prepare",
+    "postinstall": "theia check:theia-version",
+    "start:browser": "yarn --cwd browser-app start",
+    "start:electron": "yarn --cwd electron-app start",
+    "watch:browser": "lerna run --parallel watch --ignore electron-app",
+    "watch:electron": "lerna run --parallel watch --ignore browser-app",
+    "browser": "yarn --cwd browser-app",
+    "electron": "yarn --cwd electron-app",
+    "download:plugins": "theia download:plugins --rate-limit=15 --parallel=false && yarn permissions:writeable",
+    "permissions:writeable": "ts-node scripts/make-files-writeable.ts plugins"
   },
   "devDependencies": {
-    "@theia/cli": "1.46.1",
-    "@typescript-eslint/eslint-plugin": "^4.25.0",
-    "@typescript-eslint/eslint-plugin-tslint": "^4.25.0",
-    "@typescript-eslint/parser": "^4.25.0",
-    "concurrently": "^3.5.0",
-    "eslint": "^7.27.0",
-    "eslint-plugin-deprecation": "1.2.1",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-no-null": "^1.0.2",
-    "eslint-plugin-no-unsanitized": "^3.1.5",
-    "eslint-plugin-react": "^7.23.2",
-    "lerna": "^6.0.1",
-    "prettier": "2.8.8",
-    "rimraf": "^2.7.1",
+    "@types/yargs": "^17.0.33",
+    "lerna": "2.4.0",
     "ts-node": "^10.0.0",
-    "tslint": "^5.12.0",
     "type-fest": "^0.20.2",
     "yargs": "17.2.1"
   },
   "workspaces": [
     "coderibbon-theia",
-    "applications/*"
+    "browser-app",
+    "electron-app"
   ],
   "theiaPluginsDir": "plugins",
   "theiaPlugins": {
-    "vscode.git": "https://open-vsx.org/api/vscode/git/1.83.1/file/vscode.git-1.83.1.vsix",
-    "vscode.markdown-language-features": "https://open-vsx.org/api/vscode/markdown-language-features/1.83.1/file/vscode.markdown-language-features-1.83.1.vsix",
-    "vscode-builtin-extensions-pack": "https://open-vsx.org/api/eclipse-theia/builtin-extension-pack/1.83.1/file/eclipse-theia.builtin-extension-pack-1.83.1.vsix"
+    "vscode.git": "https://open-vsx.org/api/vscode/git/1.95.3/file/vscode.git-1.95.3.vsix",
+    "vscode.markdown-language-features": "https://open-vsx.org/api/vscode/markdown-language-features/1.95.3/file/vscode.markdown-language-features-1.95.3.vsix",
+    "vscode-builtin-extensions-pack": "https://open-vsx.org/api/eclipse-theia/builtin-extension-pack/1.95.3/file/eclipse-theia.builtin-extension-pack-1.95.3.vsix"
   },
   "theiaPluginsExcludeIds": [
     "vscode.extension-editing",

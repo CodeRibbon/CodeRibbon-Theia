@@ -1,11 +1,11 @@
 import { injectable, inject } from "@theia/core/shared/inversify";
 
-import {
-  Command,
-  CommandContribution,
-  CommandRegistry,
-  MessageService,
-} from "@theia/core/lib/common";
+// import {
+//   Command,
+//   // CommandContribution,
+//   // CommandRegistry,
+//   // MessageService,
+// } from "@theia/core/lib/common";
 import {
   ApplicationShell,
   KeybindingContribution,

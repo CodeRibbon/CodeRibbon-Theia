@@ -9,18 +9,18 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: yarn
 
       - run: yarn install
 
-      - run: yarn electron rebuild
+      - run: yarn download:plugins
 
-      - run: yarn electron build
+      - run: yarn build:electron
 
       - run: yarn electron package
 
       - uses: actions/upload-artifact@v4
         with:
-          path: applications/electron/dist/*.AppImage
+          path: electron-app/dist/*.AppImage
           name: coderibbon-electron-appimage

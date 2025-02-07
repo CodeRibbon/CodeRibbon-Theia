@@ -24,10 +24,14 @@ import {
   find,
   iter,
 } from "@phosphor/algorithm";
-import { MessageLoop } from "@phosphor/messaging";
+import {
+  MessageLoop,
+  ConflatableMessage
+} from "@phosphor/messaging";
 import {
   MessageService,
   Emitter,
+  Event,
   environment,
   Disposable,
   DisposableCollection,
@@ -73,6 +77,16 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
 
   protected readonly onDidToggleMaximizedEmitter = new Emitter<Widget>();
   readonly onDidToggleMaximized = this.onDidToggleMaximizedEmitter.event;
+
+  // robobenklein: copied in as response to error:
+  /**
+    2025-02-04T10:41:01.310Z root ERROR Could not start contribution TypeError: app.shell.mainPanel.onDidChangeCurrent is not a function
+      at WorkspaceWindowTitleUpdater.onStart (file:///home/robo/code/coderibbon/CodeRibbon-Theia/electron-app/lib/frontend/bundle.js:76348:29)
+   */
+  protected readonly onDidChangeCurrentEmitter = new Emitter<Title<Widget> | undefined>();
+  get onDidChangeCurrent(): Event<Title<Widget> | undefined> {
+    return this.onDidChangeCurrentEmitter.event;
+  }
 
   // protected _shell: ApplicationShell = null;
   protected readonly tracker = new FocusTracker<CodeRibbonTheiaRibbonStrip>();
@@ -123,6 +137,56 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel {
     this.node.appendChild(this.overlay.node);
 
     this.autoAdjustRibbonTailLength();
+  }
+
+  /**
+   * Two methods here _onCurrentChanged and _onTabActivateRequested
+   * originally from DockPanel, overridden by TheiaDockPanel in the constructor:
+   * https://github.com/eclipse-theia/theia/blob/05982e8cc568e845f5a08f75a8771328a957e01c/packages/core/src/browser/shell/theia-dock-panel.ts#L62-L69
+   *
+   * Reimplementing both's logic in these implementations
+   */
+  // this['_onCurrentChanged'] = (sender: TabBar<Widget>, args: TabBar.ICurrentChangedArgs<Widget>) => {
+  //     this.markAsCurrent(args.currentTitle || undefined);
+  //     super['_onCurrentChanged'](sender, args);
+  // };
+  _onCurrentChanged(sender: TabBar<Widget>, args: TabBar.ICurrentChangedArgs<Widget>): void {
+    this.markAsCurrent(args.currentTitle || undefined);
+
+    // NOTE: rest of logic from DockPanel
+    // super['_onCurrentChanged'](sender, args);
+
+    // Extract the previous and current title from the args.
+    let { previousTitle, currentTitle } = args;
+
+    // Hide the previous widget.
+    if (previousTitle) {
+      previousTitle.owner.hide();
+    }
+
+    // Show the current widget.
+    if (currentTitle) {
+      currentTitle.owner.show();
+    }
+
+    // Flush the message loop on IE and Edge to prevent flicker.
+    // if (Platform.IS_EDGE || Platform.IS_IE) {
+    //   MessageLoop.flush();
+    // }
+
+    // Schedule an emit of the layout modified signal.
+    MessageLoop.postMessage(this, Private.LayoutModified);
+  }
+  // this['_onTabActivateRequested'] = (sender: TabBar<Widget>, args: TabBar.ITabActivateRequestedArgs<Widget>) => {
+  //     this.markAsCurrent(args.title);
+  //     super['_onTabActivateRequested'](sender, args);
+  // };
+  _onTabActivateRequested(sender: TabBar<Widget>, args: TabBar.ITabActivateRequestedArgs<Widget>): void {
+    this.markAsCurrent(args.title);
+
+    // NOTE: rest of logic from DockPanel
+    // super['_onTabActivateRequested'](sender, args);
+    args.title.owner.activate();
   }
 
   cr_init(options: CodeRibbonTheiaRibbonPanel.IInitOptions) {
@@ -818,4 +882,11 @@ namespace Private {
   ): CodeRibbonTheiaRibbonLayout {
     return options.layout || new CodeRibbonTheiaRibbonLayout(options);
   }
+
+  /**
+   * Copy from phosphor DockPanel:
+   * A singleton `'layout-modified'` conflatable message.
+   */
+  export
+  const LayoutModified = new ConflatableMessage('layout-modified');
 }
