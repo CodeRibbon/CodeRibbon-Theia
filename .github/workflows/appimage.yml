@@ -14,6 +14,8 @@ jobs:
 
       - run: yarn install
 
+      - run: yarn download:plugins
+
       - run: yarn build:electron
 
       - run: yarn electron package
