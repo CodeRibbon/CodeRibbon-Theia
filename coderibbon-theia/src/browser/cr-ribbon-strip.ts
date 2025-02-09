@@ -34,7 +34,7 @@ import { CorePreferences } from "@theia/core/lib/browser/core-preferences";
 
 import { crdebug } from "./cr-logger";
 import { CodeRibbonTheiaPatch } from "./cr-patch";
-// import { RibbonPanel, RibbonStrip } from './cr-interfaces';
+import { RibbonPanel, RibbonStrip } from './cr-interfaces';
 import { ImprovedBoxPanel } from "./improvedboxpanel";
 import { ImprovedBoxLayout } from "./improvedboxlayout";
 
@@ -56,6 +56,9 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
    * Emitted when a widget is removed from the panel.
    */
   readonly widgetRemoved = new Signal<this, Widget>(this);
+
+  // Emitted when a patch is added to this strip
+  readonly patchAdded = new Signal<this, CodeRibbonTheiaPatch>(this);
 
   protected readonly tracker = new FocusTracker<CodeRibbonTheiaPatch>();
   // readonly patchAdded = new Signal<this, CodeRibbonTheiaPatch>(this);
@@ -123,23 +126,77 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     let { index, options, init_options } = args;
     let new_patch = new CodeRibbonTheiaPatch(options);
     super.addWidget(new_patch);
+    if (args.index != undefined) {
+      this.insertWidget(args.index, new_patch);
+    }
     new_patch.cr_init(init_options);
     this.tracker.add(new_patch);
+
+    this.patchAdded.emit(new_patch);
     return new_patch;
   }
 
   override addWidget(
     widget: Widget,
-    options?: CodeRibbonTheiaRibbonStrip.ICreatePatchArgs,
+    options?: RibbonStrip.IAddOptions,
   ): void {
-    // TODO logic based on where to put the widget
     // super.addWidget(widget);
+    crdebug("Strip addWidget", widget, options);
 
+    // defaults first
     let target_patch = this._patches.find((patch) => {
       return patch.contentful_size == 0;
     });
+    let split_from: CodeRibbonTheiaPatch = this.mru_patch || this._patches[0] || this.createPatch();
+    switch (options?.mode) {
+      case "split-top":
+        if (this._patches[0].contentful_size) {
+          target_patch = this.createPatch({
+            index: 0,
+          });
+        } // else use first patch, it is empty
+        break;
+      case "split-bottom":
+        if (this._patches.at(-1)?.contentful_size) {
+          // new one at bottom
+          target_patch = this.createPatch();
+        }
+        else {
+          target_patch = this._patches.at(-1);
+        }
+        break;
+      case "split-up":
+        if (options.ref) split_from = this.whichPatchHasWidget(options.ref) || split_from;
+        target_patch = split_from.contentful_size ? this.createPatch({
+          index: this._patches.indexOf(split_from),
+        }) : split_from;
+        break;
+      case "split-down":
+        if (options.ref) split_from = this.whichPatchHasWidget(options.ref) || split_from;
+        target_patch = split_from.contentful_size ? this.createPatch({
+          index: this._patches.indexOf(split_from) + 1,
+        }) : split_from;
+        break;
+      case "replace-current":
+        if (options.ref) {
+          target_patch = this.whichPatchHasWidget(options.ref) || target_patch;
+        } else {
+          target_patch = this.mru_patch || target_patch;
+        }
+        break;
+      default:
+        // no mode yet given a ref? put it there if possible
+        if (options?.ref) {
+          let other = this.whichPatchHasWidget(options.ref);
+          if (other && other.contentful_size == 0) {
+            target_patch = other;
+          }
+        }
+        break;
+    }
+
     if (!target_patch) {
-      target_patch = this.createPatch(options);
+      target_patch = this.createPatch();
     }
     target_patch.addWidget(widget);
 
@@ -205,6 +262,16 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     }
   }
 
+  whichPatchHasWidget(widget: Widget): CodeRibbonTheiaPatch | null {
+    if (!this.contains(widget)) return null;
+
+    while (!(widget instanceof CodeRibbonTheiaPatch)) {
+      if (widget.parent == null) return null;
+      widget = widget.parent;
+    }
+    return widget;
+  }
+
   has_empty_patch() {
     if (this.contentful_size < this._patches.length) {
       return true;
@@ -229,6 +296,12 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     super.onChildRemoved(msg);
     msg.child.removeClass("cr-RibbonStrip-child");
     this.widgetRemoved.emit(msg.child);
+
+    if (this._patches.length === 0) {
+      // goodbye world! I no longer have a purpose!
+      // - an empty ribbon strip
+      this.dispose();
+    }
   }
 
   // NOTE === phosphor DockPanel API compatibility section === NOTE //

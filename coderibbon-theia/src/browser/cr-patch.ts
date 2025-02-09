@@ -14,8 +14,21 @@ import {
   BoxEngine,
   BoxSizer,
 } from "@phosphor/widgets";
+import {
+  Drag, IDragEvent
+} from '@phosphor/dragdrop';
+import {
+  MimeData
+} from '@phosphor/coreutils';
+import {
+  ElementExt
+} from '@phosphor/domutils';
+import {
+  IDisposable
+} from '@phosphor/disposable';
 
 import { crdebug } from "./cr-logger";
+
 
 export class CodeRibbonTheiaPatch extends TabPanel {
   constructor(options: CodeRibbonTheiaPatch.IOptions = {}) {
@@ -30,6 +43,10 @@ export class CodeRibbonTheiaPatch extends TabPanel {
     if (options?.config) {
       this.restoreLayout(options.config);
     }
+
+    // enable the TabBar to support dragging the tab out of the bar:
+    this.tabBar.tabsMovable = true;
+    this.tabBar.allowDeselect = false;
   }
 
   override activate(): void {
@@ -85,3 +102,5 @@ export namespace CodeRibbonTheiaPatch {
     widget?: Widget; // mode-dependent
   }
 }
+
+// namespace Private {}

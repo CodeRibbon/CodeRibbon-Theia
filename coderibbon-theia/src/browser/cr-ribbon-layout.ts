@@ -55,6 +55,16 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
   }
 
   // /**
+  //  * returns the 'left' offset of a strip relative to the start of the ribbon
+  //  * @param  index of the strip
+  //  * @return pixels
+  //  */
+  // getStripOffset(index: number): number {
+  //   // @ts-expect-error error TS2341: Property '_items' is private
+  //   return this._items[index]._left;
+  // }
+
+  // /**
   //  * Save current layout of the ribbon
   //  * @return new config object for current layout state
   //  *
@@ -81,7 +91,7 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
   }
 
   private override _fit(): void {
-    crdebug("RibbonLayout _fit");
+    // crdebug("RibbonLayout _fit");
 
     // Compute the visible item count.
     let nVisible = 0;
@@ -173,7 +183,7 @@ export class CodeRibbonTheiaRibbonLayout extends BoxLayout {
   }
 
   private override _update(offsetWidth: number, offsetHeight: number): void {
-    crdebug("RibbonLayout _update");
+    // crdebug("RibbonLayout _update");
 
     // Clear the dirty flag to indicate the update occurred.
     // @ts-expect-error TS2341: Property is private
