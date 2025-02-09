@@ -579,7 +579,13 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     }
 
     // Show the overlay with the computed geometry.
-    this.overlay.show({ top, left, right, bottom });
+    this.overlay.show({
+      top,
+      bottom,
+      // TODO is there a cleaner/proper way to do this adjustment?
+      left: left + this.node.scrollLeft,
+      right: right - this.node.scrollLeft,
+    });
 
     // Finally, return the computed drop zone.
     return zone;
