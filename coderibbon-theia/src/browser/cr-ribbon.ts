@@ -465,7 +465,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     });
 
     // Hide the tab node in the original tab.
-    tab.classList.add('p-mod-hidden');
+    // tab.classList.add('p-mod-hidden');
 
     // Create the cleanup callback.
     let cleanup = (() => {
