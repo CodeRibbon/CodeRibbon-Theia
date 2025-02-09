@@ -94,6 +94,7 @@ export class CodeRibbonApplicationShell extends ApplicationShell {
       direction: "left-to-right",
       spacing: 0,
       mode: 'multiple-document',
+      renderer,
     });
 
     // working, only while CRTRP extends TheiaDockPanel

@@ -29,7 +29,8 @@ export class ImprovedBoxPanel extends BoxPanel {
     // @ts-expect-error TODO
     super({ layout: Private.createLayout(options) });
     this.addClass("p-ImprovedBoxPanel");
-    // steal the renderer from OG dockpanel, we won't use createTabBar anyways
+    // should be getting the renderer from Theia here, not from phosphorjs
+    // crdebug("IBP got renderer", options.renderer);
     this._renderer = options.renderer || DockPanel.defaultRenderer;
   }
 

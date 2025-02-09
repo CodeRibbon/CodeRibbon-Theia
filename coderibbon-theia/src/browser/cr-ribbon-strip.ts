@@ -73,7 +73,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     super({
       alignment: "start",
       direction: "top-to-bottom",
-      // spacing:
+      renderer: options?.renderer,
     });
     this.addClass("cr-RibbonStrip");
     crdebug("RibbonStrip constructor:", this, options);
@@ -124,7 +124,10 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
   // TODO options
   createPatch(args: CodeRibbonTheiaRibbonStrip.ICreatePatchArgs = {}) {
     let { index, options, init_options } = args;
-    let new_patch = new CodeRibbonTheiaPatch(options);
+    let new_patch = new CodeRibbonTheiaPatch({
+      ...options,
+      renderer: (this._renderer as DockPanel.IRenderer),
+    });
     super.addWidget(new_patch);
     if (args.index != undefined) {
       this.insertWidget(args.index, new_patch);
@@ -401,6 +404,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
 export namespace CodeRibbonTheiaRibbonStrip {
   export interface IOptions {
     quota?: number;
+    renderer?: DockLayout.IRenderer;
   }
 
   export interface ICreatePatchArgs {

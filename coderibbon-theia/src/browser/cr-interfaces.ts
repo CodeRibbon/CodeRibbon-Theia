@@ -1,4 +1,4 @@
-import { Widget, BoxLayout } from "@phosphor/widgets";
+import { Widget, BoxLayout, DockLayout } from "@phosphor/widgets";
 
 import { CodeRibbonTheiaRibbonLayout } from "./cr-ribbon-layout";
 
@@ -71,6 +71,7 @@ export namespace RibbonPanel {
     spacing?: number;
     layout?: CodeRibbonTheiaRibbonLayout;
     mode: RibbonPanel.Mode;
+    renderer?: DockLayout.IRenderer;
   }
   export interface ILayoutConfig {
     // TODO actual definition of serializable layout config
