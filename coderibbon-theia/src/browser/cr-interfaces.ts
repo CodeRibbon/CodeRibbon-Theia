@@ -49,11 +49,28 @@ export namespace RibbonPanel {
      */
     skipAdjustRibbonTailLength?: boolean;
   }
+  export type Mode = (
+    /**
+     * The single document mode.
+     *
+     * In this mode, only a single widget is visible at a time, and that
+     * widget fills the available layout space. No tab bars are visible.
+     */
+    'single-document' |
+    /**
+     * The multiple document mode.
+     *
+     * In this mode, multiple documents are displayed in separate tab
+     * areas, and those areas can be individually resized by the user.
+     */
+    'multiple-document'
+  );
   export interface IOptions {
     direction?: BoxLayout.Direction; // only horizontal
     alignment?: BoxLayout.Alignment; // only ...
     spacing?: number;
     layout?: CodeRibbonTheiaRibbonLayout;
+    mode: RibbonPanel.Mode;
   }
   export interface ILayoutConfig {
     // TODO actual definition of serializable layout config
@@ -82,7 +99,7 @@ export namespace RibbonStrip {
     /**
      * Options for inserting a Widget onto the RibbonStrip
      */
-    mode?: InsertMode;
+    mode?: RibbonStrip.InsertMode;
     /**
      * If a widget reference is specified here, perform the insert relative
      * to that widget instead of the active one.
