@@ -1,11 +1,11 @@
 ## Getting started
 
-Install [nvm](https://github.com/creationix/nvm#install-script).
+Recommended to use [nvm](https://github.com/creationix/nvm#install-script).
 
 Install npm and node.
 
-    nvm install v18
-    nvm use v18
+    nvm install v20
+    nvm use v20
 
 Install yarn.
 
@@ -16,49 +16,26 @@ Install yarn.
     cd CodeRibbon-Theia
     yarn
 
-## Running the browser example
+You may need additional libraries to build depending on what you are building.
 
-    yarn browser build
-    yarn browser start
+## Developing locally
 
-Open http://localhost:3000 in the browser.
+Start watching either type of build you're working with:
 
-## Running the Electron example
+    yarn watch:browser
+    # or
+    yarn watch:electron
 
-    yarn electron build
-    yarn electron start
+> right now there seems to be a problem with the 'watch' automatic recompilation, for now just use `build:*` instead.
 
-## Developing with the browser example
+To build without watching, use `build:browser` or `build:electron` instead.
 
-Start watching all packages, including `browser-app`, of your application with
+Start one of the apps with the respective `start:*` command.
 
-    yarn watch
+You can change the port the browser app runs on like `yarn start:browser --port 4200`.
 
-*or* watch only specific packages with
+## Including default plugins
 
-    cd coderibbon-theia
-    yarn watch
+    yarn download:plugins
 
-Run the example as [described above](#Running-the-browser-example)
-## Developing with the Electron example
-
-Start watching all packages, including `electron-app`, of your application with
-
-    yarn watch
-
-*or* watch only specific packages with
-
-    cd coderibbon-theia
-    yarn watch
-
-Run the example as [described above](#Running-the-Electron-example)
-
-## Publishing CodeRibbon-Theia
-
-Create a npm user and login to the npm registry, [more on npm publishing](https://docs.npmjs.com/getting-started/publishing-npm-packages).
-
-    npm login
-
-Publish packages with lerna to update versions properly across local packages, [more on publishing with lerna](https://github.com/lerna/lerna#publish).
-
-    npx lerna publish
+Pulls down the Theia & VSCode plugins that are "built-in" in to the application when it's packaged.

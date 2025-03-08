@@ -31,10 +31,45 @@ import { crdebug } from "./cr-logger";
 
 
 export class CodeRibbonTheiaPatch extends TabPanel {
+  private _renderer?: DockLayout.IRenderer;
+  readonly tabBar: TabBar<Widget>;
+
   constructor(options: CodeRibbonTheiaPatch.IOptions = {}) {
     super();
     this.addClass("cr-RibbonPatch");
     crdebug("Patch constructor", this);
+
+    this._renderer = options.renderer;
+
+    if (!this._renderer) {
+      crdebug("WARN: Patch: I didn't get the renderer!", this._renderer);
+      throw "expected to have the renderer!";
+    };
+
+    // crdebug("makin that new tabBar!", this);
+    this.tabBar.dispose();
+    let old_tabBar = this.tabBar;
+
+    // should be using Theia's createTabBar from application-shell
+    this.tabBar = this._renderer.createTabBar();
+    this.tabBar.addClass('p-TabPanel-tabBar');
+    // @ts-expect-error TS2341: Property '_onTabMoved' is private
+    this.tabBar.tabMoved.connect(this._onTabMoved, this);
+    // @ts-expect-error TS2341: Property is private
+    this.tabBar.currentChanged.connect(this._onCurrentChanged, this);
+    // @ts-expect-error TS2341: Property is private
+    this.tabBar.tabCloseRequested.connect(this._onTabCloseRequested, this);
+    // @ts-expect-error TS2341: Property is private
+    this.tabBar.tabActivateRequested.connect(this._onTabActivateRequested, this);
+
+    this.tabBar.orientation = old_tabBar.orientation;
+    BoxLayout.setStretch(this.tabBar, 0);
+    BoxLayout.setStretch(this.stackedPanel, 1);
+
+    (this.layout as BoxLayout).insertWidget(0, this.tabBar);
+    // this.layout.addWidget(this.stackedPanel);
+
+    // crdebug("patch constructor done, made this", this, this.tabBar);
   }
 
   cr_init(options: CodeRibbonTheiaPatch.IInitOptions = {}) {
@@ -89,7 +124,7 @@ export class CodeRibbonTheiaPatch extends TabPanel {
 
 export namespace CodeRibbonTheiaPatch {
   export interface IOptions {
-    // TODO
+    renderer?: DockLayout.IRenderer;
   }
 
   export interface IInitOptions {

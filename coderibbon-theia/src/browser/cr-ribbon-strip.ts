@@ -73,7 +73,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     super({
       alignment: "start",
       direction: "top-to-bottom",
-      // spacing:
+      renderer: options?.renderer,
     });
     this.addClass("cr-RibbonStrip");
     crdebug("RibbonStrip constructor:", this, options);
@@ -124,7 +124,10 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
   // TODO options
   createPatch(args: CodeRibbonTheiaRibbonStrip.ICreatePatchArgs = {}) {
     let { index, options, init_options } = args;
-    let new_patch = new CodeRibbonTheiaPatch(options);
+    let new_patch = new CodeRibbonTheiaPatch({
+      ...options,
+      renderer: (this._renderer as DockPanel.IRenderer),
+    });
     super.addWidget(new_patch);
     if (args.index != undefined) {
       this.insertWidget(args.index, new_patch);
@@ -149,28 +152,32 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     });
     let split_from: CodeRibbonTheiaPatch = this.mru_patch || this._patches[0] || this.createPatch();
     switch (options?.mode) {
+      // case "split-top":
+      //   if (this._patches[0].contentful_size) {
+      //     target_patch = this.createPatch({
+      //       index: 0,
+      //     });
+      //   } // else use first patch, it is empty
+      //   break;
+      // case "split-bottom":
+      //   if (this._patches.at(-1)?.contentful_size) {
+      //     // new one at bottom
+      //     target_patch = this.createPatch();
+      //   }
+      //   else {
+      //     target_patch = this._patches.at(-1);
+      //   }
+      //   break;
+      // NOTE *apparently* Theia has the SPLIT_DOWN command mapped to -bottom ...
+      // https://github.com/eclipse-theia/theia/blob/8b3ea1cbfbfd93e621fc1bff14d24d400656748a/packages/editor/src/browser/editor-contribution.ts#L162-L163
       case "split-top":
-        if (this._patches[0].contentful_size) {
-          target_patch = this.createPatch({
-            index: 0,
-          });
-        } // else use first patch, it is empty
-        break;
-      case "split-bottom":
-        if (this._patches.at(-1)?.contentful_size) {
-          // new one at bottom
-          target_patch = this.createPatch();
-        }
-        else {
-          target_patch = this._patches.at(-1);
-        }
-        break;
       case "split-up":
         if (options.ref) split_from = this.whichPatchHasWidget(options.ref) || split_from;
         target_patch = split_from.contentful_size ? this.createPatch({
           index: this._patches.indexOf(split_from),
         }) : split_from;
         break;
+      case "split-bottom":
       case "split-down":
         if (options.ref) split_from = this.whichPatchHasWidget(options.ref) || split_from;
         target_patch = split_from.contentful_size ? this.createPatch({
@@ -401,6 +408,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
 export namespace CodeRibbonTheiaRibbonStrip {
   export interface IOptions {
     quota?: number;
+    renderer?: DockLayout.IRenderer;
   }
 
   export interface ICreatePatchArgs {

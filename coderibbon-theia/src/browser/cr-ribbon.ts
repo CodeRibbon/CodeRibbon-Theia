@@ -96,6 +96,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
   private _pressData: Private.IPressData | null = null;
   private _edges: CodeRibbonTheiaRibbonPanel.IEdges;
 
+  private _renderer?: DockLayout.IRenderer;
   private _mode: RibbonPanel.Mode;
 
   // robobenklein: copied in as response to error:
@@ -158,9 +159,11 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     this.overlay = new DockPanel.Overlay();
     this.node.appendChild(this.overlay.node);
 
+    this._renderer = options?.renderer;
+    crdebug("Ribbon: renderer", this._renderer);
     this._mode = options?.mode || 'multiple-document';
 
-    this.autoAdjustRibbonTailLength();
+    // this.autoAdjustRibbonTailLength();
   }
 
   /**
@@ -172,6 +175,9 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     this.node.addEventListener('p-dragover', this);
     this.node.addEventListener('p-drop', this);
     this.node.addEventListener('mousedown', this);
+
+    crdebug("Ribbon onBeforeAttach will run autoAdjustRibbonTailLength");
+    this.autoAdjustRibbonTailLength();
   }
   /**
    * A message handler invoked on an `'after-detach'` message.
@@ -459,7 +465,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     });
 
     // Hide the tab node in the original tab.
-    tab.classList.add('p-mod-hidden');
+    // tab.classList.add('p-mod-hidden');
 
     // Create the cleanup callback.
     let cleanup = (() => {
@@ -612,7 +618,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
   }
 
   cr_init(options: CodeRibbonTheiaRibbonPanel.IInitOptions) {
-    crdebug("CRTRP: cr_init", options);
+    crdebug("Ribbon: cr_init", options);
 
     // this._shell = options.shell;
 
@@ -766,7 +772,10 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     }
     let { index, options, add_options, init_options } = args;
     let new_strip;
-    new_strip = new CodeRibbonTheiaRibbonStrip(options);
+    new_strip = new CodeRibbonTheiaRibbonStrip({
+      ...options,
+      renderer: this._renderer,
+    });
     if (index === undefined) {
       // append to ribbon
       super.addWidget(new_strip);
