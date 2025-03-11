@@ -1,0 +1,37 @@
+name: Build on Ubuntu
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-osx:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      - name: Install building dependencies
+        run: brew install python-setuptools libx11 libxkbfile
+
+      - name: Install python deps
+        run: sudo apt update && sudo apt install python3-setuptools
+    
+      - name: Install building dependencies
+        run: sudo apt update &&
+             sudo apt install python3-setuptools libx11-dev libxkbfile-dev
+
+      - name: Install Yarn
+        run: yarn install
+
+      - name: Download default plugins
+        run: yarn download:plugins
+
+      - name: Build Browser version
+        run: yarn build:browser

@@ -4,17 +4,35 @@ Recommended to use [nvm](https://github.com/creationix/nvm#install-script).
 
 Install npm and node.
 
-    nvm install v20
-    nvm use v20
+```bash
+nvm install v20
+nvm use v20
+```
 
 Install yarn.
 
-    npm install -g yarn
+```bash
+npm install -g yarn
+```
 
 ## Gather dependencies / Initialize
 
-    cd CodeRibbon-Theia
-    yarn
+In order to develop or build, ensure that you have [node-gyp](https://github.com/nodejs/node-gyp)'s dependencies installed.
+
+Ubuntu:
+```bash
+sudo apt-get install -y python-setuptools libx11-dev libxkbfile-dev
+```
+
+OSX:
+```bash
+brew install python-setuptools libx11 libxkbfile
+```
+
+```bash
+cd CodeRibbon-Theia
+yarn
+```
 
 You may need additional libraries to build depending on what you are building.
 
@@ -22,9 +40,11 @@ You may need additional libraries to build depending on what you are building.
 
 Start watching either type of build you're working with:
 
-    yarn watch:browser
-    # or
-    yarn watch:electron
+```bash
+yarn watch:browser
+# or
+yarn watch:electron
+```
 
 > right now there seems to be a problem with the 'watch' automatic recompilation, for now just use `build:*` instead.
 
@@ -36,6 +56,8 @@ You can change the port the browser app runs on like `yarn start:browser --port 
 
 ## Including default plugins
 
-    yarn download:plugins
+```bash
+yarn download:plugins
+```
 
 Pulls down the Theia & VSCode plugins that are "built-in" in to the application when it's packaged.
