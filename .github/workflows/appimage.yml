@@ -12,15 +12,24 @@ jobs:
           node-version: 20
           cache: yarn
 
+      - name: Install building dependencies
+        run: sudo apt update &&
+             sudo apt install python3-setuptools libx11-dev libxkbfile-dev  
+
       - run: yarn install
 
       - run: yarn download:plugins
 
       - run: yarn build:electron
 
-      - run: yarn electron package
+      - run: yarn electron package --linux
+
+      - run: yarn electron package --mac
+        env:
+          # Skip code signing
+          CSC_IDENTITY_AUTO_DISCOVERY: false
 
       - uses: actions/upload-artifact@v4
         with:
-          path: electron-app/dist/*.AppImage
-          name: coderibbon-electron-appimage
+          path: electron-app/dist/*.AppImage electron-app/dist/*.dmg
+          name: coderibbon-electron
