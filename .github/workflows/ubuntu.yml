@@ -16,12 +16,6 @@ jobs:
         with:
           node-version: 20
           cache: yarn
-
-      - name: Install building dependencies
-        run: brew install python-setuptools libx11 libxkbfile
-
-      - name: Install python deps
-        run: sudo apt update && sudo apt install python3-setuptools
     
       - name: Install building dependencies
         run: sudo apt update &&
@@ -35,3 +29,6 @@ jobs:
 
       - name: Build Browser version
         run: yarn build:browser
+      
+      - name: Build Electron version
+        run: yarn build:electron
