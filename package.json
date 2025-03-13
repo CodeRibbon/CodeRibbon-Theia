@@ -23,8 +23,7 @@
     "lerna": "2.4.0",
     "ts-node": "^10.0.0",
     "type-fest": "^0.20.2",
-    "yargs": "17.2.1",
-    "dmg-license": "^1.0.11"
+    "yargs": "17.2.1"
   },
   "workspaces": [
     "coderibbon-theia",
@@ -42,5 +41,8 @@
     "vscode.microsoft-authentication",
     "ms-vscode.js-debug-companion",
     "VisualStudioExptTeam.vscodeintellicode"
-  ]
+  ],
+  "optionalDependencies": {
+    "dmg-license": "^1.0.11"
+  }
 }

@@ -4,6 +4,10 @@ on:
   push:
   workflow_dispatch:
 
+concurrency:
+    group: "osx-build"
+    cancel-in-progress: true
+
 jobs:
   build-osx:
     runs-on: macos-latest
