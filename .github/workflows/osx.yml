@@ -1,6 +1,7 @@
-name: Build on OSX
+name: Build OSX .dmg
 
 on:
+  push:
   workflow_dispatch:
 
 jobs:
@@ -31,3 +32,13 @@ jobs:
       
       - name: Build Electron version
         run: yarn build:electron
+
+      - run: yarn electron package --mac
+        env:
+          # Skip code signing
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+
+      - uses: actions/upload-artifact@v4
+        with:
+          path: electron-app/dist/*.dmg
+          name: coderibbon-electron

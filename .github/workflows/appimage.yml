@@ -24,12 +24,7 @@ jobs:
 
       - run: yarn electron package --linux
 
-      - run: yarn electron package --mac
-        env:
-          # Skip code signing
-          CSC_IDENTITY_AUTO_DISCOVERY: false
-
       - uses: actions/upload-artifact@v4
         with:
-          path: electron-app/dist/*.AppImage electron-app/dist/*.dmg
+          path: electron-app/dist/*.AppImage
           name: coderibbon-electron
