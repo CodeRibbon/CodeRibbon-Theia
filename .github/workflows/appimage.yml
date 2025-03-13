@@ -14,7 +14,7 @@ jobs:
 
       - name: Install building dependencies
         run: sudo apt update &&
-             sudo apt install python3-setuptools libx11-dev libxkbfile-dev  
+             sudo apt -y install python3-setuptools libx11-dev libxkbfile-dev  
 
       - run: yarn install
 
