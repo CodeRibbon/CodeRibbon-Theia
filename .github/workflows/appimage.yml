@@ -6,7 +6,7 @@ on:
     workflow_dispatch:
 
 concurrency:
-    group: "osx-build"
+    group: "ubuntu-build"
     cancel-in-progress: true
 
 jobs:
