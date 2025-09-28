@@ -1,4 +1,4 @@
-import { Widget, BoxLayout, DockLayout } from "@phosphor/widgets";
+import { Widget, BoxLayout, DockLayout } from "@lumino/widgets";
 
 import { CodeRibbonTheiaRibbonLayout } from "./cr-ribbon-layout";
 

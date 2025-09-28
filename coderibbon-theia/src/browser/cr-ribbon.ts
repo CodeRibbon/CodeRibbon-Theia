@@ -4,7 +4,7 @@ import {
   postConstruct,
 } from "@theia/core/shared/inversify";
 
-import { Signal } from "@phosphor/signaling";
+import { Signal } from "@lumino/signaling";
 import {
   TabBar,
   Widget,
@@ -15,32 +15,32 @@ import {
   DockLayout,
   BoxLayout,
   FocusTracker,
-} from "@phosphor/widgets";
+} from "@lumino/widgets";
 import {
   empty,
   toArray,
   ArrayExt,
-  IIterator,
+  // IIterator,
   find,
-  iter,
-} from "@phosphor/algorithm";
+  // iter,
+} from "@lumino/algorithm";
 import {
   Message,
   MessageLoop,
   ConflatableMessage
-} from "@phosphor/messaging";
+} from "@lumino/messaging";
 import {
   Drag, IDragEvent
-} from '@phosphor/dragdrop';
+} from '@lumino/dragdrop';
 import {
   MimeData
-} from '@phosphor/coreutils';
+} from '@lumino/coreutils';
 import {
   ElementExt
-} from '@phosphor/domutils';
+} from '@lumino/domutils';
 import {
   IDisposable
-} from '@phosphor/disposable';
+} from '@lumino/disposable';
 
 import {
   MessageService,
@@ -56,10 +56,10 @@ import {
   TheiaDockPanel,
   BOTTOM_AREA_ID,
   MAIN_AREA_ID,
-  MAXIMIZED_CLASS,
+  // MAXIMIZED_CLASS,
 } from "@theia/core/lib/browser/shell/theia-dock-panel";
 import { FrontendApplicationStateService } from "@theia/core/lib/browser/frontend-application-state";
-import { CorePreferences } from "@theia/core/lib/browser/core-preferences";
+import { CorePreferences } from "@theia/core/lib/common/core-preferences";
 
 import { crdebug } from "./cr-logger";
 import { CodeRibbonTheiaPatch } from "./cr-patch";
@@ -1014,13 +1014,13 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
   // features that DockPanel has, and they're expected by Theia
 
   // @ts-expect-error TS2425: Class defines instance member property 'widgets', but extended class defines it as instance member function.
-  override widgets(): IIterator<Widget> {
+  override widgets(): Iterator<Widget> {
     // TODO iterate widgets in order of ribbon layout from within strips
     // return (this.layout as CodeRibbonTheiaRibbonLayout).widgets;
-    return iter(this.contentful_widgets);
+    return this.contentful_widgets.values();
   }
 
-  tabBars(): IIterator<TabBar<Widget>> {
+  tabBars(): IterableIterator<TabBar<Widget>> {
     // TODO removal of tabBars
     // return this._root ? this._root.iterTabBars() : empty<TabBar<Widget>>();
     return empty<TabBar<Widget>>();
@@ -1363,7 +1363,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
       UnsafeWidgetUtilities.detach(this);
     }
     maximizedElement.style.display = "block";
-    this.addClass(MAXIMIZED_CLASS);
+    // this.addClass(MAXIMIZED_CLASS); // TODO is this still needed?
     const preference = this.preferences?.get("window.menuBarVisibility");
     if (!this.isElectron() && preference === "visible") {
       this.addClass(VISIBLE_MENU_MAXIMIZED_CLASS);
@@ -1374,7 +1374,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     this.toDisposeOnToggleMaximized.push(
       Disposable.create(() => {
         maximizedElement.style.display = "none";
-        this.removeClass(MAXIMIZED_CLASS);
+        // this.removeClass(MAXIMIZED_CLASS); // TODO is this still needed?
         this.onDidToggleMaximizedEmitter.fire(this);
         if (!this.isElectron()) {
           this.removeClass(VISIBLE_MENU_MAXIMIZED_CLASS);

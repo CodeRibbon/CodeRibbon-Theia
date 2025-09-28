@@ -7,11 +7,11 @@ import {
   Panel,
   DockLayout,
   BoxLayout,
-} from "@phosphor/widgets";
-import { find } from "@phosphor/algorithm";
-import { IDisposable } from "@phosphor/disposable";
-import { Message, MessageLoop, ConflatableMessage } from "@phosphor/messaging";
-import { Drag, IDragEvent } from "@phosphor/dragdrop";
+} from "@lumino/widgets";
+import { find } from "@lumino/algorithm";
+import { IDisposable } from "@lumino/disposable";
+import { Message, MessageLoop, ConflatableMessage } from "@lumino/messaging";
+import { Drag, IDragEvent } from "@lumino/dragdrop";
 
 import { ImprovedBoxLayout } from "./improvedboxlayout";
 

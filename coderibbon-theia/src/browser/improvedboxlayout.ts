@@ -1,6 +1,6 @@
 // import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
 
-import { Signal } from "@phosphor/signaling";
+import { Signal } from "@lumino/signaling";
 import {
   TabBar,
   Widget,
@@ -12,19 +12,19 @@ import {
   BoxEngine,
   BoxSizer,
   LayoutItem,
-} from "@phosphor/widgets";
-import { ElementExt } from "@phosphor/domutils";
+} from "@lumino/widgets";
+import { ElementExt } from "@lumino/domutils";
 // import {
 //   Message, MessageLoop,
 // } from '@phosphor/messaging';
 import {
   empty,
-  IIterator,
+  // IIterator,
   each,
   chain,
   ArrayExt,
   reduce,
-} from "@phosphor/algorithm";
+} from "@lumino/algorithm";
 // import {
 //   MessageService,
 //   Emitter, environment,
@@ -34,7 +34,7 @@ import {
 //   TheiaDockPanel, BOTTOM_AREA_ID, MAIN_AREA_ID, MAXIMIZED_CLASS,
 // } from '@theia/core/lib/browser/shell/theia-dock-panel';
 import { FrontendApplicationStateService } from "@theia/core/lib/browser/frontend-application-state";
-import { CorePreferences } from "@theia/core/lib/browser/core-preferences";
+import { CorePreferences } from "@theia/core/lib/common/core-preferences";
 
 import { crdebug } from "./cr-logger";
 

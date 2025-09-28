@@ -13,7 +13,7 @@ import {
   // bindViewContribution, WidgetFactory,
   KeybindingContribution,
 } from "@theia/core/lib/browser";
-import { PreferenceContribution } from "@theia/core/lib/browser/preferences";
+import { PreferenceContribution } from "@theia/core/lib/common/preferences";
 import { ApplicationShell } from "@theia/core/lib/browser/shell/application-shell";
 
 // import { CodeRibbonTheiaRibbonViewContribution } from './coderibbon-theia-ribbon';

@@ -13,19 +13,19 @@ import {
   BoxLayout,
   BoxEngine,
   BoxSizer,
-} from "@phosphor/widgets";
+} from "@lumino/widgets";
 import {
   Drag, IDragEvent
-} from '@phosphor/dragdrop';
+} from '@lumino/dragdrop';
 import {
   MimeData
-} from '@phosphor/coreutils';
+} from '@lumino/coreutils';
 import {
   ElementExt
-} from '@phosphor/domutils';
+} from '@lumino/domutils';
 import {
   IDisposable
-} from '@phosphor/disposable';
+} from '@lumino/disposable';
 
 import { crdebug } from "./cr-logger";
 

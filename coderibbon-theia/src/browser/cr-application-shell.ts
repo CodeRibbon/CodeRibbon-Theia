@@ -13,18 +13,18 @@ import {
   DockLayout,
   BoxLayout,
   FocusTracker,
-} from "@phosphor/widgets";
+} from "@lumino/widgets";
 import { MessageService } from "@theia/core/lib/common";
 import { FrontendApplicationStateService } from "@theia/core/lib/browser/frontend-application-state";
 // import {
 //   FrontendApplication, FrontendApplicationContribution,
 // } from '@theia/core/lib/browser/frontend-application';
-import { CorePreferences } from "@theia/core/lib/browser/core-preferences";
+import { CorePreferences } from "@theia/core/lib/common/core-preferences";
 import {
   TheiaDockPanel,
   BOTTOM_AREA_ID,
   MAIN_AREA_ID,
-  MAXIMIZED_CLASS,
+  // MAXIMIZED_CLASS,
 } from "@theia/core/lib/browser/shell/theia-dock-panel";
 import {
   DockPanelRenderer,
