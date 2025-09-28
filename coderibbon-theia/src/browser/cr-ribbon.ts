@@ -30,7 +30,7 @@ import {
   ConflatableMessage
 } from "@lumino/messaging";
 import {
-  Drag, IDragEvent
+  Drag,
 } from '@lumino/dragdrop';
 import {
   MimeData
@@ -202,16 +202,16 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     // crdebug("patch handlin event:", event);
     switch (event.type) {
       case 'lm-dragenter':
-        this._evtDragEnter(event as IDragEvent);
+        this._evtDragEnter(event as Drag.Event);
         break;
       case 'lm-dragleave':
-        this._evtDragLeave(event as IDragEvent);
+        this._evtDragLeave(event as Drag.Event);
         break;
       case 'lm-dragover':
-        this._evtDragOver(event as IDragEvent);
+        this._evtDragOver(event as Drag.Event);
         break;
       case 'lm-drop':
-        this._evtDrop(event as IDragEvent);
+        this._evtDrop(event as Drag.Event);
         break;
       case 'dragenter':
       // case 'dragover':
@@ -226,7 +226,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
   }
 
   // These _evt* functions mostly copied from phosphorjs & theia DockPanel
-  private _evtDragEnter(event: IDragEvent): void {
+  private _evtDragEnter(event: Drag.Event): void {
     crdebug("ribbon seeing something dragged overhead!", event);
     // If the factory mime type is present, mark the event as
     // handled in order to get the rest of the drag events.
@@ -239,7 +239,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     }
   }
 
-  private _evtDragLeave(event: IDragEvent): void {
+  private _evtDragLeave(event: Drag.Event): void {
     // Mark the event as handled.
     event.preventDefault();
     event.stopPropagation();
@@ -250,7 +250,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     this.overlay.hide(1);
   }
 
-  private _evtDragOver(event: IDragEvent): void {
+  private _evtDragOver(event: Drag.Event): void {
     // Mark the event as handled.
     event.preventDefault();
     event.stopPropagation();
@@ -264,7 +264,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     }
   }
 
-  private _evtDrop(event: IDragEvent): void {
+  private _evtDrop(event: Drag.Event): void {
     // Mark the event as handled.
     event.preventDefault();
     event.stopPropagation();
