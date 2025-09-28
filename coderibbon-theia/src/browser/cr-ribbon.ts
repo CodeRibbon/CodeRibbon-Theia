@@ -170,10 +170,10 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
    * A message handler invoked on a `'before-attach'` message.
    */
   protected onBeforeAttach(msg: Message): void {
-    this.node.addEventListener('p-dragenter', this);
-    this.node.addEventListener('p-dragleave', this);
-    this.node.addEventListener('p-dragover', this);
-    this.node.addEventListener('p-drop', this);
+    this.node.addEventListener('lm-dragenter', this);
+    this.node.addEventListener('lm-dragleave', this);
+    this.node.addEventListener('lm-dragover', this);
+    this.node.addEventListener('lm-drop', this);
     this.node.addEventListener('mousedown', this);
 
     crdebug("Ribbon onBeforeAttach will run autoAdjustRibbonTailLength");
@@ -183,34 +183,34 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
    * A message handler invoked on an `'after-detach'` message.
    */
   protected onAfterDetach(msg: Message): void {
-    this.node.removeEventListener('p-dragenter', this);
-    this.node.removeEventListener('p-dragleave', this);
-    this.node.removeEventListener('p-dragover', this);
-    this.node.removeEventListener('p-drop', this);
+    this.node.removeEventListener('lm-dragenter', this);
+    this.node.removeEventListener('lm-dragleave', this);
+    this.node.removeEventListener('lm-dragover', this);
+    this.node.removeEventListener('lm-drop', this);
     this.node.removeEventListener('mousedown', this);
     this._releaseMouse();
   }
 
   /**
-   * handling DOM & phosphor events
+   * handling DOM & phosphor(lumino) events
    * @param event  DOM event
    *
-   * the p-* are the ones used to move patches around, they are from
-   * phosphorjs and have the different type and more data
+   * the lm-* are the ones used to move patches around, they are from
+   * phosphorjs(now lumino) and have the different type and more data
    */
   handleEvent(event: Event): void {
     // crdebug("patch handlin event:", event);
     switch (event.type) {
-      case 'p-dragenter':
+      case 'lm-dragenter':
         this._evtDragEnter(event as IDragEvent);
         break;
-      case 'p-dragleave':
+      case 'lm-dragleave':
         this._evtDragLeave(event as IDragEvent);
         break;
-      case 'p-dragover':
+      case 'lm-dragover':
         this._evtDragOver(event as IDragEvent);
         break;
-      case 'p-drop':
+      case 'lm-drop':
         this._evtDrop(event as IDragEvent);
         break;
       case 'dragenter':
@@ -231,6 +231,9 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     // If the factory mime type is present, mark the event as
     // handled in order to get the rest of the drag events.
     if (event.mimeData.hasData('application/vnd.phosphor.widget-factory')) {
+      console.error("CR: received a phosphor (NOT lumino) factory in event data!", event);
+    }
+    if (event.mimeData.hasData('application/vnd.lumino.widget-factory')) {
       event.preventDefault();
       event.stopPropagation();
     }
@@ -242,8 +245,8 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     event.stopPropagation();
 
     // The new target might be a descendant, so we might still handle the drop.
-    // Hide asynchronously so that if a p-dragover event bubbles up to us, the
-    // hide is cancelled by the p-dragover handler's show overlay logic.
+    // Hide asynchronously so that if a lm-dragover event bubbles up to us, the
+    // hide is cancelled by the lm-dragover handler's show overlay logic.
     this.overlay.hide(1);
   }
 
@@ -292,7 +295,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
 
     // Bail if the factory mime type has invalid data.
     let mimeData = event.mimeData;
-    let factory = mimeData.getData('application/vnd.phosphor.widget-factory');
+    let factory = mimeData.getData('application/vnd.lumino.widget-factory');
     if (typeof factory !== 'function') {
       event.dropAction = 'none';
       return;
@@ -452,7 +455,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     // Setup the mime data for the drag operation.
     let mimeData = new MimeData();
     let factory = () => title.owner;
-    mimeData.setData('application/vnd.phosphor.widget-factory', factory);
+    mimeData.setData('application/vnd.lumino.widget-factory', factory);
 
     // Create the drag image for the drag operation.
     let dragImage = tab.cloneNode(true) as HTMLElement;
@@ -470,7 +473,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     // Create the cleanup callback.
     let cleanup = (() => {
       this._drag = null;
-      tab.classList.remove('p-mod-hidden');
+      tab.classList.remove('lm-mod-hidden');
     });
 
     // Start the drag operation and cleanup when done.
@@ -1008,7 +1011,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     return this.tracker.currentWidget;
   }
 
-  // NOTE === phosphor DockPanel API compatility section === NOTE //
+  // NOTE === phosphor(now lumino) DockPanel API compatility section === NOTE //
   // we might want to split this into a `ImprovedBoxPanel` class instead?
   // this section is because phosphor's BoxPanel has only a tiny fraction of the
   // features that DockPanel has, and they're expected by Theia
@@ -1139,7 +1142,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     return this._layoutModified;
   }
 
-  // overriding BoxPanel's p-BoxPanel-child
+  // overriding BoxPanel's lm-BoxPanel-child
   override onChildAdded(msg: Widget.ChildMessage) {
     msg.child.addClass("cr-RibbonPanel-child");
 

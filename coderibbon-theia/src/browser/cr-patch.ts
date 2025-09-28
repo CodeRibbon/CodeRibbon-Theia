@@ -15,7 +15,7 @@ import {
   BoxSizer,
 } from "@lumino/widgets";
 import {
-  Drag, IDragEvent
+  Drag,
 } from '@lumino/dragdrop';
 import {
   MimeData
