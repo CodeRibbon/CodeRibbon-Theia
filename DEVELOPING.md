@@ -26,7 +26,7 @@ Start watching either type of build you're working with:
     # or
     yarn watch:electron
 
-> right now there seems to be a problem with the 'watch' automatic recompilation, for now just use `build:*` instead.
+> right now there seems to be a problem with the 'watch' automatic recompilation, for now just use `build:*` or `start:*` instead.
 
 To build without watching, use `build:browser` or `build:electron` instead.
 
