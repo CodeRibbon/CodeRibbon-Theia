@@ -22,10 +22,12 @@ import { ElementExt } from "@lumino/domutils";
 import { IDisposable } from "@lumino/disposable";
 
 import { crdebug } from "./cr-logger";
+import { MessageLoop } from "@lumino/messaging";
 
 export class CodeRibbonTheiaPatch extends TabPanel {
   private _renderer?: DockLayout.IRenderer;
   readonly tabBar: TabBar<Widget>;
+  private _tabBarMutationObserver?: MutationObserver;
 
   constructor(options: CodeRibbonTheiaPatch.IOptions = {}) {
     super();
@@ -74,6 +76,14 @@ export class CodeRibbonTheiaPatch extends TabPanel {
     (this.layout as BoxLayout).insertWidget(0, this.tabBar);
     // this.layout.addWidget(this.stackedPanel);
 
+    this._tabBarMutationObserver = new MutationObserver(
+      () => this.onTabBarMutated,
+    );
+    this._tabBarMutationObserver.observe(this.tabBar.node, {
+      childList: true,
+      subtree: true,
+    });
+
     // crdebug("patch constructor done, made this", this, this.tabBar);
   }
 
@@ -87,12 +97,54 @@ export class CodeRibbonTheiaPatch extends TabPanel {
     // enable the TabBar to support dragging the tab out of the bar:
     this.tabBar.tabsMovable = true;
     this.tabBar.allowDeselect = false;
+
+    this.refitBoxLayout();
+  }
+
+  /**
+   * TODO find the best place for this:
+   * I am not sure at which stage or event Theia creates the breadcrumbs, but this should be triggered by that action
+   *
+   * we need to initiate another fit since theia adds breadcrumbs to the TabBar that TabPanel (using BoxLayout) doesn't account for in the constructor
+   * this should be run upon any event which could cause the size of the TabBar to change,
+   * I believe it's idempotent, but it would be an expensive operation to perform on every resize or across all patches
+   *
+   * we do it as a message instead of calling ._fit directly as it's private and could be overriden or caught in some other place
+   */
+  refitBoxLayout(): void {
+    MessageLoop.sendMessage(this, Widget.Msg.FitRequest);
+  }
+
+  override dispose(): void {
+    super.dispose();
+    if (this._tabBarMutationObserver) {
+      this._tabBarMutationObserver.disconnect();
+    }
+  }
+
+  onTabBarMutated(mutationList: MutationRecord[], observer: MutationObserver) {
+    crdebug("patch: onTabBarMutated:", this, mutationList, observer);
+    /**
+     * we only care for direct descendants of the TabBar, because the breadcrumbs are added like:
+     * .lm-TabBar > .theia-tabBar-breadcrumb-row
+     */
+    mutationList.forEach((mut) => {
+      crdebug("patch: FitRequest because the TabBar nodes were changed", this);
+      this.refitBoxLayout();
+    });
   }
 
   override activate(): void {
     super.activate();
     crdebug("Patch activate", this);
-    if (this.contentful_widget) this.contentful_widget.activate();
+    if (this.contentful_widget) {
+      this.contentful_widget.activate();
+    }
+
+    // TODO find a better place to trigger this
+    // temporary HACK until I find a working solution to trigger it elsewhere
+    // (this._tabBarMutationObserver does not seem to be working)
+    this.refitBoxLayout();
   }
 
   get contentful_size(): number {

@@ -346,7 +346,6 @@ export class CodeRibbonTheiaRibbonPanel
       //   this.addWidget(widget, { mode: 'split-bottom' });
       //   break;
       case "widget-all":
-        crdebug("patch swap because widget-all drop zone");
         // TODO swap if from another patch & self not empty
         // this.addWidget(widget, { mode: 'tab-after', ref });
         // this.addWidget(widget, { mode: 'split-down', ref });
