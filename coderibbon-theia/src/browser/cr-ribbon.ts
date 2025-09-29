@@ -346,15 +346,36 @@ export class CodeRibbonTheiaRibbonPanel
       //   this.addWidget(widget, { mode: 'split-bottom' });
       //   break;
       case "widget-all":
+        crdebug("patch swap because widget-all drop zone");
         // TODO swap if from another patch & self not empty
         // this.addWidget(widget, { mode: 'tab-after', ref });
         // this.addWidget(widget, { mode: 'split-down', ref });
         if (target_patch) {
           if (target_patch.contentful_size == 0) {
+            crdebug("target_patch is empty, nothing to swap");
             target_patch.addWidget(widget);
-          } else if (source_patch) {
-            // TODO swap their contents
+          } else {
+            crdebug("Swapping widgets between patches.");
+            let other_widget = target_patch.contentful_widget;
+            if (!other_widget) {
+              console.error(
+                "CR: attempted to swap patch content but target patch is missing a widget when it was contenful.",
+              );
+              break;
+            }
+            if (!source_patch) {
+              crdebug(
+                "patch received a drop from somewhere that wasn't a patch, but we're full right now!",
+              );
+              // TODO what is the desired behavior here?
+              // perhaps split-down or split-right?
+              break;
+            }
+            source_patch.addWidget(other_widget);
+            target_patch.addWidget(widget);
           }
+        } else {
+          crdebug("no target_patch for the drop? where are we going?");
         }
         break;
       case "widget-top":
