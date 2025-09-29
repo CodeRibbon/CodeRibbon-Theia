@@ -1,3 +1,5 @@
+/** @format */
+
 import { ContainerModule } from "@theia/core/shared/inversify";
 
 import {

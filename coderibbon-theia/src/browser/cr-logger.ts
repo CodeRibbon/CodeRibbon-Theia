@@ -1,3 +1,5 @@
+/** @format */
+
 // import { injectable } from '@theia/core/shared/inversify';
 //
 // import { CommonMenus } from '@theia/core/lib/browser';

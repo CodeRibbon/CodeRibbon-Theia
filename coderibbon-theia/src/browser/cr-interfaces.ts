@@ -1,3 +1,5 @@
+/** @format */
+
 import { Widget, BoxLayout, DockLayout } from "@lumino/widgets";
 
 import { CodeRibbonTheiaRibbonLayout } from "./cr-ribbon-layout";
@@ -49,22 +51,21 @@ export namespace RibbonPanel {
      */
     skipAdjustRibbonTailLength?: boolean;
   }
-  export type Mode = (
+  export type Mode =
     /**
      * The single document mode.
      *
      * In this mode, only a single widget is visible at a time, and that
      * widget fills the available layout space. No tab bars are visible.
      */
-    'single-document' |
+    | "single-document"
     /**
      * The multiple document mode.
      *
      * In this mode, multiple documents are displayed in separate tab
      * areas, and those areas can be individually resized by the user.
      */
-    'multiple-document'
-  );
+    | "multiple-document";
   export interface IOptions {
     direction?: BoxLayout.Direction; // only horizontal
     alignment?: BoxLayout.Alignment; // only ...

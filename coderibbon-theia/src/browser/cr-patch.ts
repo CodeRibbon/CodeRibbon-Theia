@@ -1,3 +1,5 @@
+/** @format */
+
 // import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
 
 import {
@@ -14,21 +16,12 @@ import {
   BoxEngine,
   BoxSizer,
 } from "@lumino/widgets";
-import {
-  Drag,
-} from '@lumino/dragdrop';
-import {
-  MimeData
-} from '@lumino/coreutils';
-import {
-  ElementExt
-} from '@lumino/domutils';
-import {
-  IDisposable
-} from '@lumino/disposable';
+import { Drag } from "@lumino/dragdrop";
+import { MimeData } from "@lumino/coreutils";
+import { ElementExt } from "@lumino/domutils";
+import { IDisposable } from "@lumino/disposable";
 
 import { crdebug } from "./cr-logger";
-
 
 export class CodeRibbonTheiaPatch extends TabPanel {
   private _renderer?: DockLayout.IRenderer;
@@ -44,7 +37,7 @@ export class CodeRibbonTheiaPatch extends TabPanel {
     if (!this._renderer) {
       crdebug("WARN: Patch: I didn't get the renderer!", this._renderer);
       throw "expected to have the renderer!";
-    };
+    }
 
     // crdebug("makin that new tabBar!", this);
     this.tabBar.dispose();
@@ -52,15 +45,27 @@ export class CodeRibbonTheiaPatch extends TabPanel {
 
     // should be using Theia's createTabBar from application-shell
     this.tabBar = this._renderer.createTabBar();
-    this.tabBar.addClass('p-TabPanel-tabBar');
-    // @ts-expect-error TS2341: Property '_onTabMoved' is private
-    this.tabBar.tabMoved.connect(this._onTabMoved, this);
-    // @ts-expect-error TS2341: Property is private
-    this.tabBar.currentChanged.connect(this._onCurrentChanged, this);
-    // @ts-expect-error TS2341: Property is private
-    this.tabBar.tabCloseRequested.connect(this._onTabCloseRequested, this);
-    // @ts-expect-error TS2341: Property is private
-    this.tabBar.tabActivateRequested.connect(this._onTabActivateRequested, this);
+    this.tabBar.addClass("p-TabPanel-tabBar");
+    this.tabBar.tabMoved.connect(
+      // @ts-expect-error TS2341: Property is private
+      this._onTabMoved,
+      this,
+    );
+    this.tabBar.currentChanged.connect(
+      // @ts-expect-error TS2341: Property is private
+      this._onCurrentChanged,
+      this,
+    );
+    this.tabBar.tabCloseRequested.connect(
+      // @ts-expect-error TS2341: Property is private
+      this._onTabCloseRequested,
+      this,
+    );
+    this.tabBar.tabActivateRequested.connect(
+      // @ts-expect-error TS2341: Property is private
+      this._onTabActivateRequested,
+      this,
+    );
 
     this.tabBar.orientation = old_tabBar.orientation;
     BoxLayout.setStretch(this.tabBar, 0);

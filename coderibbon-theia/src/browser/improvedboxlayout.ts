@@ -1,3 +1,5 @@
+/** @format */
+
 // import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
 
 import { Signal } from "@lumino/signaling";
