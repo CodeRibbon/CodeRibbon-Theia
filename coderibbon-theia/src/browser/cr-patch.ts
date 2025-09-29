@@ -98,7 +98,9 @@ export class CodeRibbonTheiaPatch extends TabPanel {
     this.tabBar.tabsMovable = true;
     this.tabBar.allowDeselect = false;
 
-    this.refitBoxLayout();
+    // HACK to do this after other updates have been applied
+    setTimeout(() => this.refitBoxLayout());
+    // this.refitBoxLayout();
   }
 
   /**
@@ -142,8 +144,8 @@ export class CodeRibbonTheiaPatch extends TabPanel {
     }
 
     // TODO find a better place to trigger this
-    // temporary HACK until I find a working solution to trigger it elsewhere
-    // (this._tabBarMutationObserver does not seem to be working)
+    // HACK until I find a working solution to trigger it elsewhere
+    // (this._tabBarMutationObserver does not seem to be working and the one in cr_init is too early?)
     this.refitBoxLayout();
   }
 
