@@ -99,7 +99,7 @@ export class CodeRibbonTheiaPatch extends TabPanel {
     this.tabBar.allowDeselect = false;
 
     // HACK to do this after other updates have been applied
-    setTimeout(() => this.refitBoxLayout());
+    setTimeout(() => this.refitBoxLayout(), 2);
     // this.refitBoxLayout();
   }
 
