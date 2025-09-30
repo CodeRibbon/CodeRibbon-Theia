@@ -22,8 +22,8 @@ import { ElementExt } from "@lumino/domutils";
 import {
   empty,
   // IIterator,
-  each,
-  chain,
+  // each,
+  // chain,
   ArrayExt,
   reduce,
 } from "@lumino/algorithm";
@@ -59,7 +59,7 @@ export class ImprovedBoxLayout extends BoxLayout {
     //   this.attachWidget( widget);
     // });
 
-    each(this.handles, (handle) => {
+    this.handles.forEach((handle) => {
       this.parent!.node.appendChild(handle);
     });
 
@@ -129,12 +129,12 @@ export class ImprovedBoxLayout extends BoxLayout {
    * sync visibility and direction of the handles
    */
   syncHandles(): void {
-    each(this.handles, (handle, i) => {
+    this.handles.forEach((handle, i) => {
       handle.setAttribute("data-orientation", this.orientation);
       if (i === this.handles.length - 1) {
-        handle.classList.add("p-mod-hidden");
+        handle.classList.add("lm-mod-hidden");
       } else {
-        handle.classList.remove("p-mod-hidden");
+        handle.classList.remove("lm-mod-hidden");
       }
     });
   }
@@ -168,8 +168,9 @@ export class ImprovedBoxLayout extends BoxLayout {
     // De-normalize the sizes if needed.
     if (this.normalized) {
       crdebug("IBL update(): need to de-normalize sizers");
+
       // @ts-expect-error TS2341: _sizers is private
-      each(this._sizers, (sizer: BoxSizer, i) => {
+      this._sizers.forEach((sizer: BoxSizer, i) => {
         // @ts-ignore debugging statement
         crdebug(
           `sizer ${i} was ${sizer.sizeHint} before, ${
@@ -275,7 +276,7 @@ export class ImprovedBoxLayout extends BoxLayout {
    */
   moveHandle(handle: HTMLDivElement, offsetX: number, offsetY: number): void {
     // crdebug("IBL: moveHandle", handle, offsetX, offsetY);
-    if (handle.classList.contains("p-mod-hidden")) {
+    if (handle.classList.contains("lm-mod-hidden")) {
       crdebug("Trying to move a hidden handle???");
       return;
     }
@@ -332,7 +333,7 @@ export class ImprovedBoxLayout extends BoxLayout {
   holdSizes(): void {
     // crdebug("IBL: holdSizes()");
     // @ts-expect-error TS2341: is private
-    each(this._sizers, (sizer: BoxSizer) => {
+    this._sizers.forEach((sizer: BoxSizer) => {
       sizer.sizeHint = sizer.size;
     });
   }
@@ -352,12 +353,12 @@ export class ImprovedBoxLayout extends BoxLayout {
     // normalize based on sum
     if (sum === 0) {
       // @ts-expect-error TS2341: is private
-      each(this._sizers, (sizer: BoxSizer) => {
+      this._sizers.forEach((sizer: BoxSizer) => {
         sizer.size = sizer.sizeHint = 1 / n;
       });
     } else {
       // @ts-expect-error TS2341: is private
-      each(this._sizers, (sizer: BoxSizer) => {
+      this._sizers.forEach((sizer: BoxSizer) => {
         sizer.size = sizer.sizeHint /= sum;
       });
     }
@@ -396,11 +397,11 @@ export class ImprovedBoxLayout extends BoxLayout {
     let sum = reduce(sizes, (v, size: number) => v + size, 0);
 
     if (sum === 0) {
-      each(sizes, (size, i) => {
+      sizes.forEach((size, i) => {
         sizes[i] = 1 / n;
       });
     } else {
-      each(sizes, (size, i) => {
+      sizes.forEach((size, i) => {
         sizes[i] = size / sum;
       });
     }
@@ -418,11 +419,11 @@ export class ImprovedBoxLayout extends BoxLayout {
     let sum = reduce(sizes, (v, size) => v + size, 0);
 
     if (sum === 0) {
-      each(sizes, (size, i) => {
+      sizes.forEach((size, i) => {
         sizes[i] = 1 / n;
       });
     } else {
-      each(sizes, (size, i) => {
+      sizes.forEach((size, i) => {
         sizes[i] = size / sum;
       });
     }

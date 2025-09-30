@@ -30,7 +30,7 @@ export class ImprovedBoxPanel extends BoxPanel {
   constructor(options: ImprovedBoxPanel.IOptions = {}) {
     // @ts-expect-error TODO
     super({ layout: Private.createLayout(options) });
-    this.addClass("p-ImprovedBoxPanel");
+    this.addClass("cr-ImprovedBoxPanel");
     // should be getting the renderer from Theia here, not from phosphorjs
     // crdebug("IBP got renderer", options.renderer);
     this._renderer = options.renderer || DockPanel.defaultRenderer;
