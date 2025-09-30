@@ -4,6 +4,10 @@
   overflow-x: scroll;
   overflow-y: visible;
 
+  // TODO investigate if this always fixed at 10px or might be dynamic (theme-dependent?)
+  // bump up the bottom edge to avoid the scrollbar overlapping the strips/content
+  padding-bottom: 10px;
+
   .cr-RibbonStrip {
     transition: left 0.2s ease;
 
