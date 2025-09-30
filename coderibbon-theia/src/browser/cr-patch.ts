@@ -141,6 +141,9 @@ export class CodeRibbonTheiaPatch extends TabPanel {
     crdebug("Patch activate", this);
     if (this.contentful_widget) {
       this.contentful_widget.activate();
+    } else {
+      // if we have no content, we should display something that can hold focus
+      // TODO eventually this should be replaced with the FuzzyFinder feature
     }
 
     // TODO find a better place to trigger this

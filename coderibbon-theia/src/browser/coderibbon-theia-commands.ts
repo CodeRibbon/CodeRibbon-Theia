@@ -20,10 +20,10 @@ export const CodeRibbonDebuggingCommands = {
     id: "CodeRibbon.HelloWorld",
     label: "Hello, CodeRibbon.",
   },
-  testFuzzyFinderCommand: {
-    id: "CodeRibbon.dev.test_ff",
-    label: "CodeRibbon Test FuzzyFinder",
-  },
+  // testFuzzyFinderCommand: {
+  //   id: "CodeRibbon.dev.test_ff",
+  //   label: "CodeRibbon Test FuzzyFinder",
+  // },
 };
 
 export const CodeRibbonDevGetPanelCommand = {
@@ -144,7 +144,6 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
   ) {}
 
   registerCommands(registry: CommandRegistry): void {
-
     // === NOTE: Debugging section
     // TODO: only register these in debug mode
 
@@ -155,11 +154,11 @@ export class CodeRibbonTheiaCommandContribution implements CommandContribution {
         // crdebug("CRAS is:", this.cras);
       },
     });
-    registry.registerCommand(CodeRibbonDebuggingCommands.testFuzzyFinderCommand, {
-      execute: () => {
-        crdebug();
-      }
-    });
+    // registry.registerCommand(CodeRibbonDebuggingCommands.testFuzzyFinderCommand, {
+    //   execute: () => {
+    //     crdebug();
+    //   }
+    // });
 
     // === NOTE: Nav section
 

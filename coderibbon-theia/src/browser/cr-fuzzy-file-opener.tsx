@@ -1,11 +1,16 @@
-import * as React from 'react';
-import { injectable, postConstruct, inject } from '@theia/core/shared/inversify';
-import { AlertMessage } from '@theia/core/lib/browser/widgets/alert-message';
-import { ReactWidget } from '@theia/core/lib/browser/widgets/react-widget';
-import { MessageService } from '@theia/core';
-import { Message } from '@theia/core/lib/browser';
-import { AbstractViewContribution } from '@theia/core/lib/browser';
-import { Command, CommandRegistry } from '@theia/core/lib/common/command';
+import * as React from "react";
+import {
+  injectable,
+  postConstruct,
+  inject,
+} from "@theia/core/shared/inversify";
+import { AlertMessage } from "@theia/core/lib/browser/widgets/alert-message";
+import { ReactWidget } from "@theia/core/lib/browser/widgets/react-widget";
+import { MessageService } from "@theia/core";
+import { Message } from "@theia/core/lib/browser";
+import { AbstractViewContribution } from "@theia/core/lib/browser";
+import { Command, CommandRegistry } from "@theia/core/lib/common/command";
+import { crdebug } from "./cr-logger";
 
 @injectable()
 export class CodeRibbonFuzzyFileOpenerWidget extends ReactWidget {
@@ -14,6 +19,7 @@ export class CodeRibbonFuzzyFileOpenerWidget extends ReactWidget {
 
   @postConstruct()
   protected init(): void {
+    crdebug("CRFFO postConstruct");
     this.id = CodeRibbonFuzzyFileOpenerWidget.ID;
     this.title.label = CodeRibbonFuzzyFileOpenerWidget.LABEL;
     this.title.caption = CodeRibbonFuzzyFileOpenerWidget.LABEL;
@@ -48,7 +54,7 @@ export class CodeRibbonFuzzyFileOpenerWidget extends ReactWidget {
   }
 }
 
-export const TestOpenFFOCommand: Command = { id: 'coderibbon:test-ffo' };
+export const TestOpenFFOCommand: Command = { id: "coderibbon:test-ffo" };
 
 @injectable()
 export class CodeRibbonFuzzyFileOpenerContribution extends AbstractViewContribution<CodeRibbonFuzzyFileOpenerWidget> {
@@ -56,14 +62,17 @@ export class CodeRibbonFuzzyFileOpenerContribution extends AbstractViewContribut
     super({
       widgetId: CodeRibbonFuzzyFileOpenerWidget.ID,
       widgetName: CodeRibbonFuzzyFileOpenerWidget.LABEL,
-      defaultWidgetOptions: { area: 'main' },
-      toggleCommandId: TestOpenFFOCommand.id
+      defaultWidgetOptions: { area: "main" },
+      toggleCommandId: TestOpenFFOCommand.id,
     });
   }
 
-  override registerCommands(commands: CommandRegistry): void {
+  registerCommands(commands: CommandRegistry): void {
     commands.registerCommand(TestOpenFFOCommand, {
-      execute: () => super.openView({ activate: false, reveal: true })
+      execute: () => {
+        crdebug("command: TestOpenFFOCommand executes");
+        super.openView({ activate: false, reveal: true });
+      },
     });
   }
 

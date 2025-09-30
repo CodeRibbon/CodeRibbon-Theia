@@ -18,6 +18,8 @@ import {
   CodeRibbonArrangementCommands,
 } from "./coderibbon-theia-commands";
 
+import { TestOpenFFOCommand } from "./cr-fuzzy-file-opener";
+
 export const CodeRibbonTopMenuPath = [...MAIN_MENU_BAR, "7_coderibbon"];
 export const CodeRibbonNavigationMenu = [
   ...CodeRibbonTopMenuPath,
@@ -41,7 +43,8 @@ export class CodeRibbonTheiaMenuContribution implements MenuContribution {
     // General
 
     menus.registerMenuAction(CodeRibbonTopMenuPath, {
-      commandId: CodeRibbonDebuggingCommands.testFuzzyFinderCommand.id,
+      // commandId: CodeRibbonDebuggingCommands.testFuzzyFinderCommand.id,
+      commandId: TestOpenFFOCommand.id,
       label: "Test FuzzyFinder",
     });
 

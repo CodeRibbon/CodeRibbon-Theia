@@ -17,7 +17,11 @@ import {
 } from "@theia/core/lib/browser";
 import { PreferenceContribution } from "@theia/core/lib/common/preferences";
 import { ApplicationShell } from "@theia/core/lib/browser/shell/application-shell";
-import { bindViewContribution, FrontendApplicationContribution, WidgetFactory } from '@theia/core/lib/browser';
+import {
+  bindViewContribution,
+  FrontendApplicationContribution,
+  WidgetFactory,
+} from "@theia/core/lib/browser";
 
 // import { CodeRibbonTheiaRibbonViewContribution } from './coderibbon-theia-ribbon';
 import { CodeRibbonTheiaCommandContribution } from "./coderibbon-theia-commands";
@@ -35,6 +39,7 @@ import {
 import "../../src/browser/style/ribbon.less";
 // temp CSS
 import "../../src/browser/style/debug.less";
+import { crdebug } from "./cr-logger";
 
 export default new ContainerModule((bind, unbind, isBound, rebind) => {
   bind(CodeRibbonApplicationShell).toSelf().inSingletonScope();
@@ -46,15 +51,25 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
   bind(MenuContribution).to(CodeRibbonTheiaMenuContribution);
   bind(KeybindingContribution).to(CodeRibbonTheiaKeybindingContribution);
 
-  bindViewContribution(bind, CodeRibbonFuzzyFileOpenerContribution);
-  bind(FrontendApplicationContribution).toService(CodeRibbonFuzzyFileOpenerContribution);
+  crdebug("now binding the CRFFO widget");
+
+  // CRFFO widget
   bind(CodeRibbonFuzzyFileOpenerWidget).toSelf();
-  bind(WidgetFactory).toDynamicValue(ctx => ({
-    id: CodeRibbonFuzzyFileOpenerWidget.ID,
-    createWidget: () => ctx.container.get<CodeRibbonFuzzyFileOpenerWidget>(
-      CodeRibbonFuzzyFileOpenerWidget
-    ),
-  })).inSingletonScope();
+  bind(WidgetFactory)
+    .toDynamicValue((ctx) => ({
+      id: CodeRibbonFuzzyFileOpenerWidget.ID,
+      createWidget: () =>
+        ctx.container.get<CodeRibbonFuzzyFileOpenerWidget>(
+          CodeRibbonFuzzyFileOpenerWidget,
+        ),
+    }))
+    .inSingletonScope();
+
+  // opener
+  bindViewContribution(bind, CodeRibbonFuzzyFileOpenerContribution);
+  bind(FrontendApplicationContribution).toService(
+    CodeRibbonFuzzyFileOpenerContribution,
+  );
 
   // TODO fix prefs
   // bind(PreferenceContribution).toConstantValue({
