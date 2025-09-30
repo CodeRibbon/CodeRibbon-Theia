@@ -1,3 +1,5 @@
+/** @format */
+
 import { injectable, inject } from "@theia/core/shared/inversify";
 
 // import {

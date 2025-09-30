@@ -1,3 +1,5 @@
+/** @format */
+
 // import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
 
 import {
@@ -13,26 +15,19 @@ import {
   BoxLayout,
   BoxEngine,
   BoxSizer,
-} from "@phosphor/widgets";
-import {
-  Drag, IDragEvent
-} from '@phosphor/dragdrop';
-import {
-  MimeData
-} from '@phosphor/coreutils';
-import {
-  ElementExt
-} from '@phosphor/domutils';
-import {
-  IDisposable
-} from '@phosphor/disposable';
+} from "@lumino/widgets";
+import { Drag } from "@lumino/dragdrop";
+import { MimeData } from "@lumino/coreutils";
+import { ElementExt } from "@lumino/domutils";
+import { IDisposable } from "@lumino/disposable";
 
 import { crdebug } from "./cr-logger";
-
+import { MessageLoop } from "@lumino/messaging";
 
 export class CodeRibbonTheiaPatch extends TabPanel {
   private _renderer?: DockLayout.IRenderer;
   readonly tabBar: TabBar<Widget>;
+  private _tabBarMutationObserver?: MutationObserver;
 
   constructor(options: CodeRibbonTheiaPatch.IOptions = {}) {
     super();
@@ -44,7 +39,7 @@ export class CodeRibbonTheiaPatch extends TabPanel {
     if (!this._renderer) {
       crdebug("WARN: Patch: I didn't get the renderer!", this._renderer);
       throw "expected to have the renderer!";
-    };
+    }
 
     // crdebug("makin that new tabBar!", this);
     this.tabBar.dispose();
@@ -52,15 +47,27 @@ export class CodeRibbonTheiaPatch extends TabPanel {
 
     // should be using Theia's createTabBar from application-shell
     this.tabBar = this._renderer.createTabBar();
-    this.tabBar.addClass('p-TabPanel-tabBar');
-    // @ts-expect-error TS2341: Property '_onTabMoved' is private
-    this.tabBar.tabMoved.connect(this._onTabMoved, this);
-    // @ts-expect-error TS2341: Property is private
-    this.tabBar.currentChanged.connect(this._onCurrentChanged, this);
-    // @ts-expect-error TS2341: Property is private
-    this.tabBar.tabCloseRequested.connect(this._onTabCloseRequested, this);
-    // @ts-expect-error TS2341: Property is private
-    this.tabBar.tabActivateRequested.connect(this._onTabActivateRequested, this);
+    this.tabBar.addClass("p-TabPanel-tabBar");
+    this.tabBar.tabMoved.connect(
+      // @ts-expect-error TS2341: Property is private
+      this._onTabMoved,
+      this,
+    );
+    this.tabBar.currentChanged.connect(
+      // @ts-expect-error TS2341: Property is private
+      this._onCurrentChanged,
+      this,
+    );
+    this.tabBar.tabCloseRequested.connect(
+      // @ts-expect-error TS2341: Property is private
+      this._onTabCloseRequested,
+      this,
+    );
+    this.tabBar.tabActivateRequested.connect(
+      // @ts-expect-error TS2341: Property is private
+      this._onTabActivateRequested,
+      this,
+    );
 
     this.tabBar.orientation = old_tabBar.orientation;
     BoxLayout.setStretch(this.tabBar, 0);
@@ -68,6 +75,14 @@ export class CodeRibbonTheiaPatch extends TabPanel {
 
     (this.layout as BoxLayout).insertWidget(0, this.tabBar);
     // this.layout.addWidget(this.stackedPanel);
+
+    this._tabBarMutationObserver = new MutationObserver(
+      () => this.onTabBarMutated,
+    );
+    this._tabBarMutationObserver.observe(this.tabBar.node, {
+      childList: true,
+      subtree: true,
+    });
 
     // crdebug("patch constructor done, made this", this, this.tabBar);
   }
@@ -82,12 +97,56 @@ export class CodeRibbonTheiaPatch extends TabPanel {
     // enable the TabBar to support dragging the tab out of the bar:
     this.tabBar.tabsMovable = true;
     this.tabBar.allowDeselect = false;
+
+    // HACK to do this after other updates have been applied
+    setTimeout(() => this.refitBoxLayout(), 2);
+    // this.refitBoxLayout();
+  }
+
+  /**
+   * TODO find the best place for this:
+   * I am not sure at which stage or event Theia creates the breadcrumbs, but this should be triggered by that action
+   *
+   * we need to initiate another fit since theia adds breadcrumbs to the TabBar that TabPanel (using BoxLayout) doesn't account for in the constructor
+   * this should be run upon any event which could cause the size of the TabBar to change,
+   * I believe it's idempotent, but it would be an expensive operation to perform on every resize or across all patches
+   *
+   * we do it as a message instead of calling ._fit directly as it's private and could be overriden or caught in some other place
+   */
+  refitBoxLayout(): void {
+    MessageLoop.sendMessage(this, Widget.Msg.FitRequest);
+  }
+
+  override dispose(): void {
+    super.dispose();
+    if (this._tabBarMutationObserver) {
+      this._tabBarMutationObserver.disconnect();
+    }
+  }
+
+  onTabBarMutated(mutationList: MutationRecord[], observer: MutationObserver) {
+    crdebug("patch: onTabBarMutated:", this, mutationList, observer);
+    /**
+     * we only care for direct descendants of the TabBar, because the breadcrumbs are added like:
+     * .lm-TabBar > .theia-tabBar-breadcrumb-row
+     */
+    mutationList.forEach((mut) => {
+      crdebug("patch: FitRequest because the TabBar nodes were changed", this);
+      this.refitBoxLayout();
+    });
   }
 
   override activate(): void {
     super.activate();
     crdebug("Patch activate", this);
-    if (this.contentful_widget) this.contentful_widget.activate();
+    if (this.contentful_widget) {
+      this.contentful_widget.activate();
+    }
+
+    // TODO find a better place to trigger this
+    // HACK until I find a working solution to trigger it elsewhere
+    // (this._tabBarMutationObserver does not seem to be working and the one in cr_init is too early?)
+    this.refitBoxLayout();
   }
 
   get contentful_size(): number {

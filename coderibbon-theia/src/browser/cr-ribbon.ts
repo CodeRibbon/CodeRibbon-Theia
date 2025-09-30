@@ -1,10 +1,12 @@
+/** @format */
+
 import {
   injectable,
   inject,
   postConstruct,
 } from "@theia/core/shared/inversify";
 
-import { Signal } from "@phosphor/signaling";
+import { Signal } from "@lumino/signaling";
 import {
   TabBar,
   Widget,
@@ -15,32 +17,20 @@ import {
   DockLayout,
   BoxLayout,
   FocusTracker,
-} from "@phosphor/widgets";
+} from "@lumino/widgets";
 import {
   empty,
   toArray,
   ArrayExt,
-  IIterator,
+  // IIterator,
   find,
-  iter,
-} from "@phosphor/algorithm";
-import {
-  Message,
-  MessageLoop,
-  ConflatableMessage
-} from "@phosphor/messaging";
-import {
-  Drag, IDragEvent
-} from '@phosphor/dragdrop';
-import {
-  MimeData
-} from '@phosphor/coreutils';
-import {
-  ElementExt
-} from '@phosphor/domutils';
-import {
-  IDisposable
-} from '@phosphor/disposable';
+  // iter,
+} from "@lumino/algorithm";
+import { Message, MessageLoop, ConflatableMessage } from "@lumino/messaging";
+import { Drag } from "@lumino/dragdrop";
+import { MimeData } from "@lumino/coreutils";
+import { ElementExt } from "@lumino/domutils";
+import { IDisposable } from "@lumino/disposable";
 
 import {
   MessageService,
@@ -56,10 +46,10 @@ import {
   TheiaDockPanel,
   BOTTOM_AREA_ID,
   MAIN_AREA_ID,
-  MAXIMIZED_CLASS,
+  // MAXIMIZED_CLASS,
 } from "@theia/core/lib/browser/shell/theia-dock-panel";
 import { FrontendApplicationStateService } from "@theia/core/lib/browser/frontend-application-state";
-import { CorePreferences } from "@theia/core/lib/browser/core-preferences";
+import { CorePreferences } from "@theia/core/lib/common/core-preferences";
 
 import { crdebug } from "./cr-logger";
 import { CodeRibbonTheiaPatch } from "./cr-patch";
@@ -75,7 +65,10 @@ const VISIBLE_MENU_MAXIMIZED_CLASS = "theia-visible-menu-maximized";
 // as such, license here falls to
 // SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
 // @injectable()
-export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListenerObject {
+export class CodeRibbonTheiaRibbonPanel
+  extends BoxPanel
+  implements EventListenerObject
+{
   /**
    * Emitted when a widget is added to the panel.
    */
@@ -104,7 +97,9 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     2025-02-04T10:41:01.310Z root ERROR Could not start contribution TypeError: app.shell.mainPanel.onDidChangeCurrent is not a function
       at WorkspaceWindowTitleUpdater.onStart (file:///home/robo/code/coderibbon/CodeRibbon-Theia/electron-app/lib/frontend/bundle.js:76348:29)
    */
-  protected readonly onDidChangeCurrentEmitter = new Emitter<Title<Widget> | undefined>();
+  protected readonly onDidChangeCurrentEmitter = new Emitter<
+    Title<Widget> | undefined
+  >();
   get onDidChangeCurrent(): TheiaEvent<Title<Widget> | undefined> {
     return this.onDidChangeCurrentEmitter.event;
   }
@@ -161,7 +156,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
 
     this._renderer = options?.renderer;
     crdebug("Ribbon: renderer", this._renderer);
-    this._mode = options?.mode || 'multiple-document';
+    this._mode = options?.mode || "multiple-document";
 
     // this.autoAdjustRibbonTailLength();
   }
@@ -170,11 +165,11 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
    * A message handler invoked on a `'before-attach'` message.
    */
   protected onBeforeAttach(msg: Message): void {
-    this.node.addEventListener('p-dragenter', this);
-    this.node.addEventListener('p-dragleave', this);
-    this.node.addEventListener('p-dragover', this);
-    this.node.addEventListener('p-drop', this);
-    this.node.addEventListener('mousedown', this);
+    this.node.addEventListener("lm-dragenter", this);
+    this.node.addEventListener("lm-dragleave", this);
+    this.node.addEventListener("lm-dragover", this);
+    this.node.addEventListener("lm-drop", this);
+    this.node.addEventListener("mousedown", this);
 
     crdebug("Ribbon onBeforeAttach will run autoAdjustRibbonTailLength");
     this.autoAdjustRibbonTailLength();
@@ -183,40 +178,40 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
    * A message handler invoked on an `'after-detach'` message.
    */
   protected onAfterDetach(msg: Message): void {
-    this.node.removeEventListener('p-dragenter', this);
-    this.node.removeEventListener('p-dragleave', this);
-    this.node.removeEventListener('p-dragover', this);
-    this.node.removeEventListener('p-drop', this);
-    this.node.removeEventListener('mousedown', this);
+    this.node.removeEventListener("lm-dragenter", this);
+    this.node.removeEventListener("lm-dragleave", this);
+    this.node.removeEventListener("lm-dragover", this);
+    this.node.removeEventListener("lm-drop", this);
+    this.node.removeEventListener("mousedown", this);
     this._releaseMouse();
   }
 
   /**
-   * handling DOM & phosphor events
+   * handling DOM & phosphor(lumino) events
    * @param event  DOM event
    *
-   * the p-* are the ones used to move patches around, they are from
-   * phosphorjs and have the different type and more data
+   * the lm-* are the ones used to move patches around, they are from
+   * phosphorjs(now lumino) and have the different type and more data
    */
   handleEvent(event: Event): void {
     // crdebug("patch handlin event:", event);
     switch (event.type) {
-      case 'p-dragenter':
-        this._evtDragEnter(event as IDragEvent);
+      case "lm-dragenter":
+        this._evtDragEnter(event as Drag.Event);
         break;
-      case 'p-dragleave':
-        this._evtDragLeave(event as IDragEvent);
+      case "lm-dragleave":
+        this._evtDragLeave(event as Drag.Event);
         break;
-      case 'p-dragover':
-        this._evtDragOver(event as IDragEvent);
+      case "lm-dragover":
+        this._evtDragOver(event as Drag.Event);
         break;
-      case 'p-drop':
-        this._evtDrop(event as IDragEvent);
+      case "lm-drop":
+        this._evtDrop(event as Drag.Event);
         break;
-      case 'dragenter':
+      case "dragenter":
       // case 'dragover':
-      case 'dragleave':
-      case 'drop':
+      case "dragleave":
+      case "drop":
         crdebug("ribbon: raw HTML event TODO");
         break;
       default:
@@ -226,42 +221,48 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
   }
 
   // These _evt* functions mostly copied from phosphorjs & theia DockPanel
-  private _evtDragEnter(event: IDragEvent): void {
+  private _evtDragEnter(event: Drag.Event): void {
     crdebug("ribbon seeing something dragged overhead!", event);
     // If the factory mime type is present, mark the event as
     // handled in order to get the rest of the drag events.
-    if (event.mimeData.hasData('application/vnd.phosphor.widget-factory')) {
+    if (event.mimeData.hasData("application/vnd.phosphor.widget-factory")) {
+      console.error(
+        "CR: received a phosphor (NOT lumino) factory in event data!",
+        event,
+      );
+    }
+    if (event.mimeData.hasData("application/vnd.lumino.widget-factory")) {
       event.preventDefault();
       event.stopPropagation();
     }
   }
 
-  private _evtDragLeave(event: IDragEvent): void {
+  private _evtDragLeave(event: Drag.Event): void {
     // Mark the event as handled.
     event.preventDefault();
     event.stopPropagation();
 
     // The new target might be a descendant, so we might still handle the drop.
-    // Hide asynchronously so that if a p-dragover event bubbles up to us, the
-    // hide is cancelled by the p-dragover handler's show overlay logic.
+    // Hide asynchronously so that if a lm-dragover event bubbles up to us, the
+    // hide is cancelled by the lm-dragover handler's show overlay logic.
     this.overlay.hide(1);
   }
 
-  private _evtDragOver(event: IDragEvent): void {
+  private _evtDragOver(event: Drag.Event): void {
     // Mark the event as handled.
     event.preventDefault();
     event.stopPropagation();
 
     // Show the drop indicator overlay and update the drop
     // action based on the drop target zone under the mouse.
-    if (this._showOverlay(event.clientX, event.clientY) === 'invalid') {
-      event.dropAction = 'none';
+    if (this._showOverlay(event.clientX, event.clientY) === "invalid") {
+      event.dropAction = "none";
     } else {
       event.dropAction = event.proposedAction;
     }
   }
 
-  private _evtDrop(event: IDragEvent): void {
+  private _evtDrop(event: Drag.Event): void {
     // Mark the event as handled.
     event.preventDefault();
     event.stopPropagation();
@@ -270,8 +271,8 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     this.overlay.hide(0);
 
     // Bail if the proposed action is to do nothing.
-    if (event.proposedAction === 'none') {
-      event.dropAction = 'none';
+    if (event.proposedAction === "none") {
+      event.dropAction = "none";
       return;
     }
 
@@ -281,37 +282,38 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
       this,
       clientX,
       clientY,
-      this._edges
+      this._edges,
     );
 
     // // Bail if the drop zone is invalid.
-    if (zone === 'invalid') {
-      event.dropAction = 'none';
+    if (zone === "invalid") {
+      event.dropAction = "none";
       return;
     }
 
     // Bail if the factory mime type has invalid data.
     let mimeData = event.mimeData;
-    let factory = mimeData.getData('application/vnd.phosphor.widget-factory');
-    if (typeof factory !== 'function') {
-      event.dropAction = 'none';
+    let factory = mimeData.getData("application/vnd.lumino.widget-factory");
+    if (typeof factory !== "function") {
+      event.dropAction = "none";
       return;
     }
 
     // Bail if the factory does not produce a widget.
     let widget = factory();
     if (!(widget instanceof Widget)) {
-      event.dropAction = 'none';
+      event.dropAction = "none";
       return;
     }
 
     // Bail if the widget is an ancestor of the dock panel.
     if (widget.contains(this)) {
-      event.dropAction = 'none';
+      event.dropAction = "none";
       return;
     }
 
-    let source_patch: CodeRibbonTheiaPatch | null = this.whichPatchHasWidget(widget);
+    let source_patch: CodeRibbonTheiaPatch | null =
+      this.whichPatchHasWidget(widget);
 
     // Find the reference widget for the drop target.
     let ref = target ? Private.getDropRef(target.tabBar) : null;
@@ -319,55 +321,81 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     let target_patch = ref ? this.whichPatchHasWidget(ref) : null;
 
     // Add the widget according to the indicated drop zone.
-    crdebug("adding the widget from drop!", zone, ref, target_patch, "from patch", source_patch);
-    switch(zone) {
-    // case 'root-all':
-    //   this.addWidget(widget);
-    //   break;
-    // case 'root-top':
-    //   this.addWidget(widget, { mode: 'split-top' });
-    //   break;
-    // case 'root-left':
-    //   this.addWidget(widget, { mode: 'split-left' });
-    //   break;
-    // case 'root-right':
-    //   this.addWidget(widget, { mode: 'split-right' });
-    //   break;
-    // case 'root-bottom':
-    //   this.addWidget(widget, { mode: 'split-bottom' });
-    //   break;
-    case 'widget-all':
-      // TODO swap if from another patch & self not empty
-      // this.addWidget(widget, { mode: 'tab-after', ref });
-      // this.addWidget(widget, { mode: 'split-down', ref });
-      if (target_patch) {
-        if (target_patch.contentful_size == 0) {
-          target_patch.addWidget(widget);
+    crdebug(
+      "adding the widget from drop!",
+      zone,
+      ref,
+      target_patch,
+      "from patch",
+      source_patch,
+    );
+    switch (zone) {
+      // case 'root-all':
+      //   this.addWidget(widget);
+      //   break;
+      // case 'root-top':
+      //   this.addWidget(widget, { mode: 'split-top' });
+      //   break;
+      // case 'root-left':
+      //   this.addWidget(widget, { mode: 'split-left' });
+      //   break;
+      // case 'root-right':
+      //   this.addWidget(widget, { mode: 'split-right' });
+      //   break;
+      // case 'root-bottom':
+      //   this.addWidget(widget, { mode: 'split-bottom' });
+      //   break;
+      case "widget-all":
+        // TODO swap if from another patch & self not empty
+        // this.addWidget(widget, { mode: 'tab-after', ref });
+        // this.addWidget(widget, { mode: 'split-down', ref });
+        if (target_patch) {
+          if (target_patch.contentful_size == 0) {
+            crdebug("target_patch is empty, nothing to swap");
+            target_patch.addWidget(widget);
+          } else {
+            crdebug("Swapping widgets between patches.");
+            let other_widget = target_patch.contentful_widget;
+            if (!other_widget) {
+              console.error(
+                "CR: attempted to swap patch content but target patch is missing a widget when it was contenful.",
+              );
+              break;
+            }
+            if (!source_patch) {
+              crdebug(
+                "patch received a drop from somewhere that wasn't a patch, but we're full right now!",
+              );
+              // TODO what is the desired behavior here?
+              // perhaps split-down or split-right?
+              break;
+            }
+            source_patch.addWidget(other_widget);
+            target_patch.addWidget(widget);
+          }
+        } else {
+          crdebug("no target_patch for the drop? where are we going?");
         }
-        else if (source_patch) {
-          // TODO swap their contents
-        }
-      }
-      break;
-    case 'widget-top':
-      this.addWidget(widget, { mode: 'split-up', ref });
-      break;
-    case 'widget-left':
-      this.addWidget(widget, { mode: 'split-left', ref });
-      break;
-    case 'widget-right':
-      this.addWidget(widget, { mode: 'split-right', ref });
-      break;
-    case 'widget-bottom':
-      this.addWidget(widget, { mode: 'split-down', ref });
-      break;
-    case 'widget-tab':
-      // CR TODO should it swap or split? (user feedback pls?)
-      // this.addWidget(widget, { mode: 'tab-after', ref });
-      this.addWidget(widget, { mode: 'split-up', ref });
-      break;
-    default:
-      throw 'unreachable';
+        break;
+      case "widget-top":
+        this.addWidget(widget, { mode: "split-up", ref });
+        break;
+      case "widget-left":
+        this.addWidget(widget, { mode: "split-left", ref });
+        break;
+      case "widget-right":
+        this.addWidget(widget, { mode: "split-right", ref });
+        break;
+      case "widget-bottom":
+        this.addWidget(widget, { mode: "split-down", ref });
+        break;
+      case "widget-tab":
+        // CR TODO should it swap or split? (user feedback pls?)
+        // this.addWidget(widget, { mode: 'tab-after', ref });
+        this.addWidget(widget, { mode: "split-up", ref });
+        break;
+      default:
+        throw "unreachable";
     }
 
     // Accept the proposed drop action.
@@ -393,7 +421,10 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
   //     this.markAsCurrent(args.currentTitle || undefined);
   //     super['_onCurrentChanged'](sender, args);
   // };
-  _onCurrentChanged(sender: TabBar<Widget>, args: TabBar.ICurrentChangedArgs<Widget>): void {
+  _onCurrentChanged(
+    sender: TabBar<Widget>,
+    args: TabBar.ICurrentChangedArgs<Widget>,
+  ): void {
     this.markAsCurrent(args.currentTitle || undefined);
 
     // NOTE: rest of logic from DockPanel
@@ -424,7 +455,10 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
   //     this.markAsCurrent(args.title);
   //     super['_onTabActivateRequested'](sender, args);
   // };
-  _onTabActivateRequested(sender: TabBar<Widget>, args: TabBar.ITabActivateRequestedArgs<Widget>): void {
+  _onTabActivateRequested(
+    sender: TabBar<Widget>,
+    args: TabBar.ITabActivateRequestedArgs<Widget>,
+  ): void {
     this.markAsCurrent(args.title);
 
     // NOTE: rest of logic from DockPanel
@@ -435,7 +469,10 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
   /**
    * Handle the `tabDetachRequested` signal from a tab bar.
    */
-  private _onTabDetachRequested(sender: TabBar<Widget>, args: TabBar.ITabDetachRequestedArgs<Widget>): void {
+  private _onTabDetachRequested(
+    sender: TabBar<Widget>,
+    args: TabBar.ITabDetachRequestedArgs<Widget>,
+  ): void {
     crdebug("PATCH DETACH! time to move, potentially,", this, sender, args);
 
     // Do nothing if a drag is already in progress.
@@ -452,26 +489,27 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     // Setup the mime data for the drag operation.
     let mimeData = new MimeData();
     let factory = () => title.owner;
-    mimeData.setData('application/vnd.phosphor.widget-factory', factory);
+    mimeData.setData("application/vnd.lumino.widget-factory", factory);
 
     // Create the drag image for the drag operation.
     let dragImage = tab.cloneNode(true) as HTMLElement;
 
     // Create the drag object to manage the drag-drop operation.
     this._drag = new Drag({
-      mimeData, dragImage,
-      proposedAction: 'move',
-      supportedActions: 'move',
+      mimeData,
+      dragImage,
+      proposedAction: "move",
+      supportedActions: "move",
     });
 
     // Hide the tab node in the original tab.
     // tab.classList.add('p-mod-hidden');
 
     // Create the cleanup callback.
-    let cleanup = (() => {
+    let cleanup = () => {
       this._drag = null;
-      tab.classList.remove('p-mod-hidden');
-    });
+      tab.classList.remove("lm-mod-hidden");
+    };
 
     // Start the drag operation and cleanup when done.
     this._drag.start(clientX, clientY).then(cleanup);
@@ -491,13 +529,13 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
       this,
       clientX,
       clientY,
-      this._edges
+      this._edges,
     );
 
     // crdebug("findin the drop target:", zone, target);
 
     // If the drop zone is invalid, hide the overlay and bail.
-    if (zone === 'invalid') {
+    if (zone === "invalid") {
       this.overlay.hide(100);
       return zone;
     }
@@ -512,76 +550,76 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
 
     // Compute the overlay geometry based on the dock zone.
     switch (zone) {
-    // case 'root-all':
-    //   top = box.paddingTop;
-    //   left = box.paddingLeft;
-    //   right = box.paddingRight;
-    //   bottom = box.paddingBottom;
-    //   break;
-    // case 'root-top':
-    //   top = box.paddingTop;
-    //   left = box.paddingLeft;
-    //   right = box.paddingRight;
-    //   bottom = rect.height * Private.GOLDEN_RATIO;
-    //   break;
-    // case 'root-left':
-    //   top = box.paddingTop;
-    //   left = box.paddingLeft;
-    //   right = rect.width * Private.GOLDEN_RATIO;
-    //   bottom = box.paddingBottom;
-    //   break;
-    // case 'root-right':
-    //   top = box.paddingTop;
-    //   left = rect.width * Private.GOLDEN_RATIO;
-    //   right = box.paddingRight;
-    //   bottom = box.paddingBottom;
-    //   break;
-    // case 'root-bottom':
-    //   top = rect.height * Private.GOLDEN_RATIO;
-    //   left = box.paddingLeft;
-    //   right = box.paddingRight;
-    //   bottom = box.paddingBottom;
-    //   break;
-    case 'widget-all':
-      top = target!.top;
-      left = target!.left;
-      right = target!.right;
-      bottom = target!.bottom;
-      break;
-    case 'widget-tab': // CR TODO: treating tabBar as top for now
-    case 'widget-top':
-      top = target!.top;
-      left = target!.left;
-      right = target!.right;
-      bottom = target!.bottom + target!.height / 2;
-      break;
-    case 'widget-left':
-      top = target!.top;
-      left = target!.left;
-      right = target!.right + target!.width / 2;
-      bottom = target!.bottom;
-      break;
-    case 'widget-right':
-      top = target!.top;
-      left = target!.left + target!.width / 2;
-      right = target!.right;
-      bottom = target!.bottom;
-      break;
-    case 'widget-bottom':
-      top = target!.top + target!.height / 2;
-      left = target!.left;
-      right = target!.right;
-      bottom = target!.bottom;
-      break;
-    // case 'widget-tab':
-    //   const tabHeight = target!.tabBar.node.getBoundingClientRect().height;
-    //   top = target!.top;
-    //   left = target!.left;
-    //   right = target!.right;
-    //   bottom = target!.bottom + target!.height - tabHeight;
-    //   break;
-    default:
-      throw 'unreachable';
+      // case 'root-all':
+      //   top = box.paddingTop;
+      //   left = box.paddingLeft;
+      //   right = box.paddingRight;
+      //   bottom = box.paddingBottom;
+      //   break;
+      // case 'root-top':
+      //   top = box.paddingTop;
+      //   left = box.paddingLeft;
+      //   right = box.paddingRight;
+      //   bottom = rect.height * Private.GOLDEN_RATIO;
+      //   break;
+      // case 'root-left':
+      //   top = box.paddingTop;
+      //   left = box.paddingLeft;
+      //   right = rect.width * Private.GOLDEN_RATIO;
+      //   bottom = box.paddingBottom;
+      //   break;
+      // case 'root-right':
+      //   top = box.paddingTop;
+      //   left = rect.width * Private.GOLDEN_RATIO;
+      //   right = box.paddingRight;
+      //   bottom = box.paddingBottom;
+      //   break;
+      // case 'root-bottom':
+      //   top = rect.height * Private.GOLDEN_RATIO;
+      //   left = box.paddingLeft;
+      //   right = box.paddingRight;
+      //   bottom = box.paddingBottom;
+      //   break;
+      case "widget-all":
+        top = target!.top;
+        left = target!.left;
+        right = target!.right;
+        bottom = target!.bottom;
+        break;
+      case "widget-tab": // CR TODO: treating tabBar as top for now
+      case "widget-top":
+        top = target!.top;
+        left = target!.left;
+        right = target!.right;
+        bottom = target!.bottom + target!.height / 2;
+        break;
+      case "widget-left":
+        top = target!.top;
+        left = target!.left;
+        right = target!.right + target!.width / 2;
+        bottom = target!.bottom;
+        break;
+      case "widget-right":
+        top = target!.top;
+        left = target!.left + target!.width / 2;
+        right = target!.right;
+        bottom = target!.bottom;
+        break;
+      case "widget-bottom":
+        top = target!.top + target!.height / 2;
+        left = target!.left;
+        right = target!.right;
+        bottom = target!.bottom;
+        break;
+      // case 'widget-tab':
+      //   const tabHeight = target!.tabBar.node.getBoundingClientRect().height;
+      //   top = target!.top;
+      //   left = target!.left;
+      //   right = target!.right;
+      //   bottom = target!.bottom + target!.height - tabHeight;
+      //   break;
+      default:
+        throw "unreachable";
     }
 
     // Show the overlay with the computed geometry.
@@ -611,10 +649,10 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     this._pressData = null;
 
     // Remove the extra document listeners.
-    document.removeEventListener('keydown', this, true);
-    document.removeEventListener('mouseup', this, true);
-    document.removeEventListener('mousemove', this, true);
-    document.removeEventListener('contextmenu', this, true);
+    document.removeEventListener("keydown", this, true);
+    document.removeEventListener("mouseup", this, true);
+    document.removeEventListener("mousemove", this, true);
+    document.removeEventListener("contextmenu", this, true);
   }
 
   cr_init(options: CodeRibbonTheiaRibbonPanel.IInitOptions) {
@@ -652,8 +690,10 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
 
     this.autoAdjustRibbonTailLength();
 
-    let relative_patch = options?.ref ? this.whichPatchHasWidget(options?.ref) : this.mru_strip?.mru_patch || this._strips[0];
-    let strip = (relative_patch!.parent as CodeRibbonTheiaRibbonStrip);
+    let relative_patch = options?.ref
+      ? this.whichPatchHasWidget(options?.ref)
+      : this.mru_strip?.mru_patch || this._strips[0];
+    let strip = relative_patch!.parent as CodeRibbonTheiaRibbonStrip;
 
     switch (options?.mode) {
       // operations within the existing/same strip:
@@ -662,14 +702,16 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
       case "split-up":
       case "split-down":
         if (!relative_patch) {
-          this.messageService?.error("CodeRibbon: I don't know where to put that on the Ribbon!");
+          this.messageService?.error(
+            "CodeRibbon: I don't know where to put that on the Ribbon!",
+          );
           throw "no relative patch survived when adding a widget";
         }
-        strip = (relative_patch.parent as CodeRibbonTheiaRibbonStrip);
+        strip = relative_patch.parent as CodeRibbonTheiaRibbonStrip;
         strip.addWidget(widget, {
           ref: relative_patch,
           mode: options.mode,
-        })
+        });
         break;
       // TODO cases for left/right strips
       // TODO cases for on-screen strips only
@@ -1008,19 +1050,19 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     return this.tracker.currentWidget;
   }
 
-  // NOTE === phosphor DockPanel API compatility section === NOTE //
+  // NOTE === phosphor(now lumino) DockPanel API compatility section === NOTE //
   // we might want to split this into a `ImprovedBoxPanel` class instead?
   // this section is because phosphor's BoxPanel has only a tiny fraction of the
   // features that DockPanel has, and they're expected by Theia
 
   // @ts-expect-error TS2425: Class defines instance member property 'widgets', but extended class defines it as instance member function.
-  override widgets(): IIterator<Widget> {
+  override widgets(): Iterator<Widget> {
     // TODO iterate widgets in order of ribbon layout from within strips
     // return (this.layout as CodeRibbonTheiaRibbonLayout).widgets;
-    return iter(this.contentful_widgets);
+    return this.contentful_widgets.values();
   }
 
-  tabBars(): IIterator<TabBar<Widget>> {
+  tabBars(): IterableIterator<TabBar<Widget>> {
     // TODO removal of tabBars
     // return this._root ? this._root.iterTabBars() : empty<TabBar<Widget>>();
     return empty<TabBar<Widget>>();
@@ -1037,7 +1079,10 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
    * @param  clientY               [description]
    * @return DockPanel.ITabAreaGeometry which contains coords and the tabBar
    */
-  locatePatchAtPosition(clientX: number, clientY: number): CodeRibbonTheiaPatch | null {
+  locatePatchAtPosition(
+    clientX: number,
+    clientY: number,
+  ): CodeRibbonTheiaPatch | null {
     // TODO we can get better performance here with a binary or tree search:
     // we know the strips are in sequential order
     // probably not important until people get HUGE ribbons though
@@ -1051,7 +1096,11 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
       return ElementExt.hitTest(patch.node, clientX, clientY);
     });
     if (!patch) {
-      crdebug("WARN: This is weird, we hit a strip but not a patch???", this, strip);
+      crdebug(
+        "WARN: This is weird, we hit a strip but not a patch???",
+        this,
+        strip,
+      );
       return null;
     }
     return patch;
@@ -1067,7 +1116,10 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
    * @returns The geometry of the tab area at the given position, or
    *   `null` if there is no tab area at the given position.
    */
-  hitTestTabAreas(clientX: number, clientY: number): DockLayout.ITabAreaGeometry | null {
+  hitTestTabAreas(
+    clientX: number,
+    clientY: number,
+  ): DockLayout.ITabAreaGeometry | null {
     // Bail early if hit testing cannot produce valid results.
     // if (!this._root || !this.parent || !this.parent.isVisible) {
     if (!this.layout || !this.isVisible) {
@@ -1075,7 +1127,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
       return null;
     }
 
-    const layout = (this.layout as CodeRibbonTheiaRibbonLayout);
+    const layout = this.layout as CodeRibbonTheiaRibbonLayout;
 
     // Ensure the parent box sizing data is computed.
     // @ts-expect-error TS2341: Property '_box' is private
@@ -1109,8 +1161,8 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
       top: patch_rect.top - rect.top,
       left: patch_rect.left - rect.left,
       width: _patch.node.clientWidth,
-      height: _patch.node.clientHeight
-    }
+      height: _patch.node.clientHeight,
+    };
     // CR: end replacement
 
     // Bail if a tab layout node was not found.
@@ -1139,7 +1191,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     return this._layoutModified;
   }
 
-  // overriding BoxPanel's p-BoxPanel-child
+  // overriding BoxPanel's lm-BoxPanel-child
   override onChildAdded(msg: Widget.ChildMessage) {
     msg.child.addClass("cr-RibbonPanel-child");
 
@@ -1150,7 +1202,10 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
   // NOTE redefined later
   // override onChildRemoved(msg) {}
 
-  private _onPatchAdded(sender: CodeRibbonTheiaRibbonStrip, patch: CodeRibbonTheiaPatch) {
+  private _onPatchAdded(
+    sender: CodeRibbonTheiaRibbonStrip,
+    patch: CodeRibbonTheiaPatch,
+  ) {
     crdebug("Ribbon: connecting with new patch", patch);
     patch.tabBar.tabDetachRequested.connect(this._onTabDetachRequested, this);
   }
@@ -1363,7 +1418,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
       UnsafeWidgetUtilities.detach(this);
     }
     maximizedElement.style.display = "block";
-    this.addClass(MAXIMIZED_CLASS);
+    // this.addClass(MAXIMIZED_CLASS); // TODO is this still needed?
     const preference = this.preferences?.get("window.menuBarVisibility");
     if (!this.isElectron() && preference === "visible") {
       this.addClass(VISIBLE_MENU_MAXIMIZED_CLASS);
@@ -1374,7 +1429,7 @@ export class CodeRibbonTheiaRibbonPanel extends BoxPanel implements EventListene
     this.toDisposeOnToggleMaximized.push(
       Disposable.create(() => {
         maximizedElement.style.display = "none";
-        this.removeClass(MAXIMIZED_CLASS);
+        // this.removeClass(MAXIMIZED_CLASS); // TODO is this still needed?
         this.onDidToggleMaximizedEmitter.fire(this);
         if (!this.isElectron()) {
           this.removeClass(VISIBLE_MENU_MAXIMIZED_CLASS);
@@ -1450,18 +1505,18 @@ export namespace CodeRibbonTheiaRibbonPanel {
    * The sizes of the edge drop zones, in pixels.
    */
   export interface IEdges {
-     // * The size of the top edge drop zone.
+    // * The size of the top edge drop zone.
     top: number;
 
-     // * The size of the right edge drop zone.
+    // * The size of the right edge drop zone.
     right: number;
 
-     // * The size of the bottom edge drop zone.
+    // * The size of the bottom edge drop zone.
     bottom: number;
 
-     // * The size of the left edge drop zone.
+    // * The size of the left edge drop zone.
     left: number;
-  };
+  }
 }
 
 namespace Private {
@@ -1475,8 +1530,7 @@ namespace Private {
    * Copy from phosphor DockPanel:
    * A singleton `'layout-modified'` conflatable message.
    */
-  export
-  const LayoutModified = new ConflatableMessage('layout-modified');
+  export const LayoutModified = new ConflatableMessage("layout-modified");
 
   export interface IPressData {
     // * The handle which was pressed.
@@ -1493,10 +1547,9 @@ namespace Private {
   /**
    * A type alias for a drop zone.
    */
-  export
-  type DropZone = (
+  export type DropZone =
     // * An invalid drop zone.
-    'invalid' |
+    | "invalid"
 
     // // * The entirety of the root dock area.
     // 'root-all' |
@@ -1514,23 +1567,22 @@ namespace Private {
     // 'root-bottom' |
 
     // * The entirety of a tabbed widget area.
-    'widget-all' |
+    | "widget-all"
 
     // * The top portion of tabbed widget area.
-    'widget-top' |
+    | "widget-top"
 
     // * The left portion of tabbed widget area.
-    'widget-left' |
+    | "widget-left"
 
     // * The right portion of tabbed widget area.
-    'widget-right' |
+    | "widget-right"
 
     // * The bottom portion of tabbed widget area.
-    'widget-bottom' |
+    | "widget-bottom"
 
     // * The the bar of a tabbed widget area.
-    'widget-tab'
-  );
+    | "widget-tab";
 
   /**
    * An object which holds the drop target zone and widget.
@@ -1545,17 +1597,16 @@ namespace Private {
   /**
    * Find the drop target at the given client position.
    */
-  export
-  function findDropTarget(
+  export function findDropTarget(
     panel: CodeRibbonTheiaRibbonPanel, // panel: DockPanel,
     clientX: number,
     clientY: number,
-    edges: CodeRibbonTheiaRibbonPanel.IEdges
+    edges: CodeRibbonTheiaRibbonPanel.IEdges,
   ): IDropTarget {
     // Bail if the mouse is not over the dock panel.
     if (!ElementExt.hitTest(panel.node, clientX, clientY)) {
       crdebug("findDropTarget", "failed panel hitTest");
-      return { zone: 'invalid', target: null };
+      return { zone: "invalid", target: null };
     }
 
     // Look up the layout for the panel.
@@ -1568,8 +1619,8 @@ namespace Private {
 
     // CR TODO fix this when single-document mode supported
     // Test the edge zones when in multiple document mode.
-    if (panel.mode === 'multiple-document') {
-    // if (true) {
+    if (panel.mode === "multiple-document") {
+      // if (true) {
       // Get the client rect for the dock panel.
       let panelRect = panel.node.getBoundingClientRect();
 
@@ -1585,11 +1636,11 @@ namespace Private {
       // Return a root zone if the mouse is within an edge.
       switch (pd) {
         case pt:
-         /**
-         * CR TODO: what should happen when a user intends to move something above the entire ribbon?
-         * maybe something magical like a "stash" of patches that aren't active?
-         * imagining "put a few patches in your pocket, walk along the ribbon, pull them all out there"
-         */
+          /**
+           * CR TODO: what should happen when a user intends to move something above the entire ribbon?
+           * maybe something magical like a "stash" of patches that aren't active?
+           * imagining "put a few patches in your pocket, walk along the ribbon, pull them all out there"
+           */
           // if (pt < edges.top) {
           //   return { zone: 'root-top', target: null };
           // }
@@ -1613,7 +1664,7 @@ namespace Private {
           // }
           break;
         default:
-          throw 'unreachable';
+          throw "unreachable";
       }
     }
 
@@ -1625,13 +1676,13 @@ namespace Private {
 
     // Bail if no target area was found.
     if (!target) {
-      return { zone: 'invalid', target: null };
+      return { zone: "invalid", target: null };
     }
 
     // CR TODO
     // Return the whole tab area when in single document mode.
-    if (panel.mode === 'single-document') {
-      return { zone: 'widget-all', target };
+    if (panel.mode === "single-document") {
+      return { zone: "widget-all", target };
     }
 
     // Compute the distance to each edge of the tab area.
@@ -1643,7 +1694,7 @@ namespace Private {
     // CR TODO: ignoring/working around the tab bar as a drop zone
     const tabHeight = target.tabBar.node.getBoundingClientRect().height;
     if (at < tabHeight) {
-      return { zone: 'widget-tab', target };
+      return { zone: "widget-tab", target };
     }
 
     // Get the X and Y edge sizes for the area.
@@ -1652,7 +1703,7 @@ namespace Private {
 
     // If the mouse is not within an edge, indicate the entire area.
     if (al > rx && ar > rx && at > ry && ab > ry) {
-      return { zone: 'widget-all', target };
+      return { zone: "widget-all", target };
     }
 
     // Scale the distances by the slenderness ratio.
@@ -1667,20 +1718,20 @@ namespace Private {
     // Find the widget zone for the area edge.
     let zone: DropZone;
     switch (ad) {
-    case al:
-      zone = 'widget-left';
-      break;
-    case at:
-      zone = 'widget-top';
-      break;
-    case ar:
-      zone = 'widget-right';
-      break;
-    case ab:
-      zone = 'widget-bottom';
-      break;
-    default:
-      throw 'unreachable';
+      case al:
+        zone = "widget-left";
+        break;
+      case at:
+        zone = "widget-top";
+        break;
+      case ar:
+        zone = "widget-right";
+        break;
+      case ab:
+        zone = "widget-bottom";
+        break;
+      default:
+        throw "unreachable";
     }
 
     // Return the final drop target.

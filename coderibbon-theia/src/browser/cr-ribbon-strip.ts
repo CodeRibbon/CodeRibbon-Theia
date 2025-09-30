@@ -1,10 +1,12 @@
+/** @format */
+
 import {
   injectable,
   inject,
   postConstruct,
 } from "@theia/core/shared/inversify";
 
-import { Signal } from "@phosphor/signaling";
+import { Signal } from "@lumino/signaling";
 import {
   TabBar,
   Widget,
@@ -15,7 +17,7 @@ import {
   BoxLayout,
   BoxSizer,
   FocusTracker,
-} from "@phosphor/widgets";
+} from "@lumino/widgets";
 // import {
 //   empty, IIterator,
 // } from '@phosphor/algorithm';
@@ -30,11 +32,11 @@ import {
 //   TheiaDockPanel, BOTTOM_AREA_ID, MAIN_AREA_ID, MAXIMIZED_CLASS,
 // } from '@theia/core/lib/browser/shell/theia-dock-panel';
 import { FrontendApplicationStateService } from "@theia/core/lib/browser/frontend-application-state";
-import { CorePreferences } from "@theia/core/lib/browser/core-preferences";
+import { CorePreferences } from "@theia/core/lib/common/core-preferences";
 
 import { crdebug } from "./cr-logger";
 import { CodeRibbonTheiaPatch } from "./cr-patch";
-import { RibbonPanel, RibbonStrip } from './cr-interfaces';
+import { RibbonPanel, RibbonStrip } from "./cr-interfaces";
 import { ImprovedBoxPanel } from "./improvedboxpanel";
 import { ImprovedBoxLayout } from "./improvedboxlayout";
 
@@ -126,7 +128,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     let { index, options, init_options } = args;
     let new_patch = new CodeRibbonTheiaPatch({
       ...options,
-      renderer: (this._renderer as DockPanel.IRenderer),
+      renderer: this._renderer as DockPanel.IRenderer,
     });
     super.addWidget(new_patch);
     if (args.index != undefined) {
@@ -139,10 +141,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     return new_patch;
   }
 
-  override addWidget(
-    widget: Widget,
-    options?: RibbonStrip.IAddOptions,
-  ): void {
+  override addWidget(widget: Widget, options?: RibbonStrip.IAddOptions): void {
     // super.addWidget(widget);
     crdebug("Strip addWidget", widget, options);
 
@@ -150,7 +149,8 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     let target_patch = this._patches.find((patch) => {
       return patch.contentful_size == 0;
     });
-    let split_from: CodeRibbonTheiaPatch = this.mru_patch || this._patches[0] || this.createPatch();
+    let split_from: CodeRibbonTheiaPatch =
+      this.mru_patch || this._patches[0] || this.createPatch();
     switch (options?.mode) {
       // case "split-top":
       //   if (this._patches[0].contentful_size) {
@@ -172,17 +172,23 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
       // https://github.com/eclipse-theia/theia/blob/8b3ea1cbfbfd93e621fc1bff14d24d400656748a/packages/editor/src/browser/editor-contribution.ts#L162-L163
       case "split-top":
       case "split-up":
-        if (options.ref) split_from = this.whichPatchHasWidget(options.ref) || split_from;
-        target_patch = split_from.contentful_size ? this.createPatch({
-          index: this._patches.indexOf(split_from),
-        }) : split_from;
+        if (options.ref)
+          split_from = this.whichPatchHasWidget(options.ref) || split_from;
+        target_patch = split_from.contentful_size
+          ? this.createPatch({
+              index: this._patches.indexOf(split_from),
+            })
+          : split_from;
         break;
       case "split-bottom":
       case "split-down":
-        if (options.ref) split_from = this.whichPatchHasWidget(options.ref) || split_from;
-        target_patch = split_from.contentful_size ? this.createPatch({
-          index: this._patches.indexOf(split_from) + 1,
-        }) : split_from;
+        if (options.ref)
+          split_from = this.whichPatchHasWidget(options.ref) || split_from;
+        target_patch = split_from.contentful_size
+          ? this.createPatch({
+              index: this._patches.indexOf(split_from) + 1,
+            })
+          : split_from;
         break;
       case "replace-current":
         if (options.ref) {

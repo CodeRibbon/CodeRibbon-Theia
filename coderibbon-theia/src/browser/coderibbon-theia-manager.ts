@@ -1,6 +1,8 @@
+/** @format */
+
 import { injectable, inject } from "@theia/core/shared/inversify";
 
-import { Widget } from "@phosphor/widgets";
+import { Widget } from "@lumino/widgets";
 import { MessageService } from "@theia/core/lib/common";
 import {
   AbstractViewContribution,
@@ -10,7 +12,7 @@ import {
 import { FrontendApplication } from "@theia/core/lib/browser/frontend-application";
 import { FrontendApplicationStateService } from "@theia/core/lib/browser/frontend-application-state";
 import { ApplicationShell } from "@theia/core/lib/browser/shell/application-shell";
-import { CorePreferences } from "@theia/core/lib/browser/core-preferences";
+import { CorePreferences } from "@theia/core/lib/common/core-preferences";
 
 // import { CodeRibbonApplicationShell } from './cr-application-shell';
 

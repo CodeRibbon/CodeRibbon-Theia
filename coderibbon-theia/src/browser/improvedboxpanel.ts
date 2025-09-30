@@ -1,3 +1,5 @@
+/** @format */
+
 import {
   TabBar,
   Widget,
@@ -7,11 +9,11 @@ import {
   Panel,
   DockLayout,
   BoxLayout,
-} from "@phosphor/widgets";
-import { find } from "@phosphor/algorithm";
-import { IDisposable } from "@phosphor/disposable";
-import { Message, MessageLoop, ConflatableMessage } from "@phosphor/messaging";
-import { Drag, IDragEvent } from "@phosphor/dragdrop";
+} from "@lumino/widgets";
+import { find } from "@lumino/algorithm";
+import { IDisposable } from "@lumino/disposable";
+import { Message, MessageLoop, ConflatableMessage } from "@lumino/messaging";
+import { Drag, IDragEvent } from "@lumino/dragdrop";
 
 import { ImprovedBoxLayout } from "./improvedboxlayout";
 
@@ -28,7 +30,7 @@ export class ImprovedBoxPanel extends BoxPanel {
   constructor(options: ImprovedBoxPanel.IOptions = {}) {
     // @ts-expect-error TODO
     super({ layout: Private.createLayout(options) });
-    this.addClass("p-ImprovedBoxPanel");
+    this.addClass("cr-ImprovedBoxPanel");
     // should be getting the renderer from Theia here, not from phosphorjs
     // crdebug("IBP got renderer", options.renderer);
     this._renderer = options.renderer || DockPanel.defaultRenderer;
