@@ -12,11 +12,13 @@ import {
 } from "@theia/core/lib/common";
 
 import {
-  CodeRibbonHelloWorldCommand,
+  CodeRibbonDebuggingCommands,
   CodeRibbonNavigationCommands,
   CodeRibbonManipulationCommands,
   CodeRibbonArrangementCommands,
 } from "./coderibbon-theia-commands";
+
+import { TestOpenFFOCommand } from "./cr-fuzzy-file-opener";
 
 export const CodeRibbonTopMenuPath = [...MAIN_MENU_BAR, "7_coderibbon"];
 export const CodeRibbonNavigationMenu = [
@@ -38,9 +40,12 @@ export class CodeRibbonTheiaMenuContribution implements MenuContribution {
   registerMenus(menus: MenuModelRegistry): void {
     menus.registerSubmenu(CodeRibbonTopMenuPath, "CodeRibbon");
 
+    // General
+
     menus.registerMenuAction(CodeRibbonTopMenuPath, {
-      commandId: CodeRibbonHelloWorldCommand.id,
-      label: "Say Hello",
+      // commandId: CodeRibbonDebuggingCommands.testFuzzyFinderCommand.id,
+      commandId: TestOpenFFOCommand.id,
+      label: "Test FuzzyFinder",
     });
 
     // Navigation

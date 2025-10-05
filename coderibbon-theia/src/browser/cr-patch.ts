@@ -1,7 +1,6 @@
 /** @format */
 
-// import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
-
+import { interfaces as InversifyInterfaces } from "@theia/core/shared/inversify";
 import {
   TabBar,
   Widget,
@@ -20,26 +19,26 @@ import { Drag } from "@lumino/dragdrop";
 import { MimeData } from "@lumino/coreutils";
 import { ElementExt } from "@lumino/domutils";
 import { IDisposable } from "@lumino/disposable";
+import { MessageLoop } from "@lumino/messaging";
+import { WidgetManager } from "@theia/core/lib/browser";
 
 import { crdebug } from "./cr-logger";
-import { MessageLoop } from "@lumino/messaging";
+import { CodeRibbonFuzzyFileOpenerWidget } from "./cr-fuzzy-file-opener";
+import { option } from "yargs";
 
 export class CodeRibbonTheiaPatch extends TabPanel {
-  private _renderer?: DockLayout.IRenderer;
+  private _renderer: DockLayout.IRenderer;
   readonly tabBar: TabBar<Widget>;
   private _tabBarMutationObserver?: MutationObserver;
+  private _container: InversifyInterfaces.Container;
 
-  constructor(options: CodeRibbonTheiaPatch.IOptions = {}) {
+  constructor(options: CodeRibbonTheiaPatch.IOptions) {
     super();
     this.addClass("cr-RibbonPatch");
     crdebug("Patch constructor", this);
 
     this._renderer = options.renderer;
-
-    if (!this._renderer) {
-      crdebug("WARN: Patch: I didn't get the renderer!", this._renderer);
-      throw "expected to have the renderer!";
-    }
+    this._container = options.container;
 
     // crdebug("makin that new tabBar!", this);
     this.tabBar.dispose();
@@ -141,6 +140,36 @@ export class CodeRibbonTheiaPatch extends TabPanel {
     crdebug("Patch activate", this);
     if (this.contentful_widget) {
       this.contentful_widget.activate();
+    } else {
+      // if we have no content, we should display something that can hold focus
+      // if (!this._cr_ffo_widget) {
+      //   // make a new CRFFO to use
+      //   this._cr_ffo_widget = ;
+      // }
+      // this.addWidget(this._cr_ffo_widget);
+      // if (!this.widgetManager) {
+      //   console.warn("CR: patch: no widgetmanager got injected!");
+      // } else {
+      //   // this.widgetManager.getOrCreateWidget(CodeRibbonFuzzyFileOpenerWidget.ID).then((w) => {
+      //   //   this.addWidget(w);
+      //   // });
+      // }
+      // TODO getOrCreateWidget for the CRFFO instance from the ribbon
+      this.widgetManager
+        .getOrCreateWidget<CodeRibbonFuzzyFileOpenerWidget>(
+          CodeRibbonFuzzyFileOpenerWidget.ID,
+        )
+        .then((w) => {
+          this.addWidget(w);
+          w.activate();
+        })
+        .catch((reason) => {
+          console.error(
+            "CR: failed to add a CRFFO to this patch!",
+            this,
+            reason,
+          );
+        });
     }
 
     // TODO find a better place to trigger this
@@ -159,6 +188,10 @@ export class CodeRibbonTheiaPatch extends TabPanel {
     } else {
       return undefined;
     }
+  }
+
+  get widgetManager(): WidgetManager {
+    return this._container.get<WidgetManager>(WidgetManager);
   }
 
   saveLayout(): CodeRibbonTheiaPatch.ILayoutConfig {
@@ -183,7 +216,8 @@ export class CodeRibbonTheiaPatch extends TabPanel {
 
 export namespace CodeRibbonTheiaPatch {
   export interface IOptions {
-    renderer?: DockLayout.IRenderer;
+    renderer: DockLayout.IRenderer;
+    container: InversifyInterfaces.Container;
   }
 
   export interface IInitOptions {

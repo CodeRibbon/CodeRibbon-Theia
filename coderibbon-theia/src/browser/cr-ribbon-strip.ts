@@ -4,6 +4,7 @@ import {
   injectable,
   inject,
   postConstruct,
+  interfaces as InversifyInterfaces,
 } from "@theia/core/shared/inversify";
 
 import { Signal } from "@lumino/signaling";
@@ -44,7 +45,6 @@ import { ImprovedBoxLayout } from "./improvedboxlayout";
 // based primarily on TheiaDockPanel implementation, since that's what it replaces
 // as such, license here falls to
 // SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
-@injectable()
 export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
   /**
    * Emitted when a widget is added to the panel.
@@ -65,13 +65,12 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
   protected readonly tracker = new FocusTracker<CodeRibbonTheiaPatch>();
   // readonly patchAdded = new Signal<this, CodeRibbonTheiaPatch>(this);
 
+  protected _container: InversifyInterfaces.Container;
+
   // protected readonly onDidToggleMaximizedEmitter = new Emitter<Widget>();
   // readonly onDidToggleMaximized = this.onDidToggleMaximizedEmitter.event;
 
-  constructor(
-    options?: CodeRibbonTheiaRibbonStrip.IOptions,
-    @inject(CorePreferences) protected readonly preferences?: CorePreferences,
-  ) {
+  constructor(options: CodeRibbonTheiaRibbonStrip.IOptions) {
     super({
       alignment: "start",
       direction: "top-to-bottom",
@@ -79,6 +78,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     });
     this.addClass("cr-RibbonStrip");
     crdebug("RibbonStrip constructor:", this, options);
+    this._container = options.container;
   }
 
   cr_init(options?: CodeRibbonTheiaRibbonStrip.IInitOptions) {
@@ -129,6 +129,7 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     let new_patch = new CodeRibbonTheiaPatch({
       ...options,
       renderer: this._renderer as DockPanel.IRenderer,
+      container: this._container,
     });
     super.addWidget(new_patch);
     if (args.index != undefined) {
@@ -414,7 +415,8 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
 export namespace CodeRibbonTheiaRibbonStrip {
   export interface IOptions {
     quota?: number;
-    renderer?: DockLayout.IRenderer;
+    renderer: DockLayout.IRenderer;
+    container: InversifyInterfaces.Container;
   }
 
   export interface ICreatePatchArgs {

@@ -24,7 +24,7 @@ import { FrontendApplicationStateService } from "@theia/core/lib/browser/fronten
 import { CorePreferences } from "@theia/core/lib/common/core-preferences";
 import {
   TheiaDockPanel,
-  BOTTOM_AREA_ID,
+  // BOTTOM_AREA_ID,
   MAIN_AREA_ID,
   // MAXIMIZED_CLASS,
 } from "@theia/core/lib/browser/shell/theia-dock-panel";
@@ -56,10 +56,25 @@ export class CodeRibbonApplicationShell extends ApplicationShell {
   // @ts-expect-error TS2416: Property in type is not assignable to the same property in base type
   override mainPanel: CodeRibbonTheiaRibbonPanel;
 
+  // ApplicationShell only supplies the DockPanel renderer
+  // other constructor requirements are in the factory itself
+  @inject(CodeRibbonTheiaRibbonPanel.Factory)
+  protected readonly ribbonPanelFactory: ({
+    renderer,
+  }: {
+    renderer: DockPanelRenderer;
+  }) => CodeRibbonTheiaRibbonPanel;
+
   /**
    * Create the dock panel in the main shell area.
    *
    * Override the default from using TheiaDockPanel to CodeRibbonTheiaRibbonPanel
+   * this is a modification of:
+   * https://github.com/eclipse-theia/theia/blob/008c8340465f7e42298839881d814863bef0b039/packages/core/src/browser/shell/application-shell.ts#L579-L591
+   * expect to have to update this if the upstream behavior changes
+   *
+   * Q: Why not just override the dockPanelFactory?
+   * A: because it's also used to create the bottom panel & it's not indicated at construction which it will be
    */
   // @ts-expect-error TS2416: Property in type is not assignable to the same property in base type
   override createMainPanel(): CodeRibbonTheiaRibbonPanel {
@@ -91,11 +106,15 @@ export class CodeRibbonApplicationShell extends ApplicationShell {
     // }, this.corePreferences);
 
     // what I want, based on BoxPanel
-    const ribbonPanel = new CodeRibbonTheiaRibbonPanel({
-      alignment: "start",
-      direction: "left-to-right",
-      spacing: 0,
-      mode: "multiple-document",
+    // const ribbonPanel = new CodeRibbonTheiaRibbonPanel({
+    //   alignment: "start",
+    //   direction: "left-to-right",
+    //   spacing: 0,
+    //   mode: "multiple-document",
+    //   renderer,
+    //   // widgetManager: this.widgetManager,
+    // });
+    const ribbonPanel = this.ribbonPanelFactory({
       renderer,
     });
 

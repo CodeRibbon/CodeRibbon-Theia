@@ -66,14 +66,6 @@ export namespace RibbonPanel {
      * areas, and those areas can be individually resized by the user.
      */
     | "multiple-document";
-  export interface IOptions {
-    direction?: BoxLayout.Direction; // only horizontal
-    alignment?: BoxLayout.Alignment; // only ...
-    spacing?: number;
-    layout?: CodeRibbonTheiaRibbonLayout;
-    mode: RibbonPanel.Mode;
-    renderer?: DockLayout.IRenderer;
-  }
   export interface ILayoutConfig {
     // TODO actual definition of serializable layout config
     // NOTE probably a sequence of RibbonStrip.ILayoutConfig ???
