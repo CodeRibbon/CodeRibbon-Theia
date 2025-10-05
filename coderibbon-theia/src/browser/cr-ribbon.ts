@@ -96,6 +96,8 @@ export class CodeRibbonTheiaRibbonPanel
   private _pressData: Private.IPressData | null = null;
   private _edges: CodeRibbonTheiaRibbonPanel.IEdges;
 
+  // TODO if _renderer is undefined, display some human-readable error state instead of crashing the entire shell
+  // perhaps "Incompatible Theia Modifications Detected: no DockLayout Renderer was available"?
   private _renderer?: DockLayout.IRenderer;
   protected _container: InversifyInterfaces.Container; // theia's inversify container
   private _mode: RibbonPanel.Mode;
@@ -820,7 +822,8 @@ export class CodeRibbonTheiaRibbonPanel
     let new_strip;
     new_strip = new CodeRibbonTheiaRibbonStrip({
       ...options,
-      renderer: this._renderer,
+      renderer: this._renderer!,
+      container: this._container,
     });
     if (index === undefined) {
       // append to ribbon

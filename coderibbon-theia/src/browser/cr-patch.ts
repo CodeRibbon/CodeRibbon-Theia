@@ -1,5 +1,6 @@
 /** @format */
 
+import { interfaces as InversifyInterfaces } from "@theia/core/shared/inversify";
 import {
   TabBar,
   Widget,
@@ -23,23 +24,21 @@ import { WidgetManager } from "@theia/core/lib/browser";
 
 import { crdebug } from "./cr-logger";
 import { CodeRibbonFuzzyFileOpenerWidget } from "./cr-fuzzy-file-opener";
+import { option } from "yargs";
 
 export class CodeRibbonTheiaPatch extends TabPanel {
-  private _renderer?: DockLayout.IRenderer;
+  private _renderer: DockLayout.IRenderer;
   readonly tabBar: TabBar<Widget>;
   private _tabBarMutationObserver?: MutationObserver;
+  private _container: InversifyInterfaces.Container;
 
-  constructor(options: CodeRibbonTheiaPatch.IOptions = {}) {
+  constructor(options: CodeRibbonTheiaPatch.IOptions) {
     super();
     this.addClass("cr-RibbonPatch");
     crdebug("Patch constructor", this);
 
     this._renderer = options.renderer;
-
-    if (!this._renderer) {
-      crdebug("WARN: Patch: I didn't get the renderer!", this._renderer);
-      throw "expected to have the renderer!";
-    }
+    this._container = options.container;
 
     // crdebug("makin that new tabBar!", this);
     this.tabBar.dispose();
@@ -156,6 +155,21 @@ export class CodeRibbonTheiaPatch extends TabPanel {
       //   // });
       // }
       // TODO getOrCreateWidget for the CRFFO instance from the ribbon
+      this.widgetManager
+        .getOrCreateWidget<CodeRibbonFuzzyFileOpenerWidget>(
+          CodeRibbonFuzzyFileOpenerWidget.ID,
+        )
+        .then((w) => {
+          this.addWidget(w);
+          w.activate();
+        })
+        .catch((reason) => {
+          console.error(
+            "CR: failed to add a CRFFO to this patch!",
+            this,
+            reason,
+          );
+        });
     }
 
     // TODO find a better place to trigger this
@@ -174,6 +188,10 @@ export class CodeRibbonTheiaPatch extends TabPanel {
     } else {
       return undefined;
     }
+  }
+
+  get widgetManager(): WidgetManager {
+    return this._container.get<WidgetManager>(WidgetManager);
   }
 
   saveLayout(): CodeRibbonTheiaPatch.ILayoutConfig {
@@ -198,7 +216,8 @@ export class CodeRibbonTheiaPatch extends TabPanel {
 
 export namespace CodeRibbonTheiaPatch {
   export interface IOptions {
-    renderer?: DockLayout.IRenderer;
+    renderer: DockLayout.IRenderer;
+    container: InversifyInterfaces.Container;
   }
 
   export interface IInitOptions {
