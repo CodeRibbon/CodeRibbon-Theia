@@ -1,7 +1,5 @@
 /** @format */
 
-// import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
-
 import {
   TabBar,
   Widget,
@@ -20,9 +18,11 @@ import { Drag } from "@lumino/dragdrop";
 import { MimeData } from "@lumino/coreutils";
 import { ElementExt } from "@lumino/domutils";
 import { IDisposable } from "@lumino/disposable";
+import { MessageLoop } from "@lumino/messaging";
+import { WidgetManager } from "@theia/core/lib/browser";
 
 import { crdebug } from "./cr-logger";
-import { MessageLoop } from "@lumino/messaging";
+import { CodeRibbonFuzzyFileOpenerWidget } from "./cr-fuzzy-file-opener";
 
 export class CodeRibbonTheiaPatch extends TabPanel {
   private _renderer?: DockLayout.IRenderer;
@@ -143,7 +143,19 @@ export class CodeRibbonTheiaPatch extends TabPanel {
       this.contentful_widget.activate();
     } else {
       // if we have no content, we should display something that can hold focus
-      // TODO eventually this should be replaced with the FuzzyFinder feature
+      // if (!this._cr_ffo_widget) {
+      //   // make a new CRFFO to use
+      //   this._cr_ffo_widget = ;
+      // }
+      // this.addWidget(this._cr_ffo_widget);
+      // if (!this.widgetManager) {
+      //   console.warn("CR: patch: no widgetmanager got injected!");
+      // } else {
+      //   // this.widgetManager.getOrCreateWidget(CodeRibbonFuzzyFileOpenerWidget.ID).then((w) => {
+      //   //   this.addWidget(w);
+      //   // });
+      // }
+      // TODO getOrCreateWidget for the CRFFO instance from the ribbon
     }
 
     // TODO find a better place to trigger this

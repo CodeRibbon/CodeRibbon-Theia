@@ -4,6 +4,7 @@ import {
   injectable,
   inject,
   postConstruct,
+  interfaces as InversifyInterfaces,
 } from "@theia/core/shared/inversify";
 
 import { Signal } from "@lumino/signaling";
@@ -64,7 +65,13 @@ const VISIBLE_MENU_MAXIMIZED_CLASS = "theia-visible-menu-maximized";
 // based primarily on TheiaDockPanel implementation, since that's what it replaces
 // as such, license here falls to
 // SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
-// @injectable()
+/**
+ * Why is this *not* injectable? A:
+ * This mimicks the structure and relationship of Theia's `ApplicationShell`(injectable)
+ * and the `DockPanel`, where DockPanel is constructed in the conventional way.
+ *
+ * In order to pick out access to bound services and whatnot, we just keep ._container
+ */
 export class CodeRibbonTheiaRibbonPanel
   extends BoxPanel
   implements EventListenerObject
@@ -90,6 +97,7 @@ export class CodeRibbonTheiaRibbonPanel
   private _edges: CodeRibbonTheiaRibbonPanel.IEdges;
 
   private _renderer?: DockLayout.IRenderer;
+  protected _container: InversifyInterfaces.Container; // theia's inversify container
   private _mode: RibbonPanel.Mode;
 
   // robobenklein: copied in as response to error:
@@ -115,12 +123,7 @@ export class CodeRibbonTheiaRibbonPanel
   // drag-drop overlay:
   readonly overlay: DockPanel.IOverlay;
 
-  constructor(
-    options?: RibbonPanel.IOptions,
-    @inject(CorePreferences) protected readonly preferences?: CorePreferences,
-    // TODO: why isn't this getting injected in?
-    @inject(MessageService) private readonly messageService?: MessageService,
-  ) {
+  constructor(options: CodeRibbonTheiaRibbonPanel.IOptions) {
     // @ts-expect-error TS2322: Type 'CodeRibbonTheiaRibbonLayout' is not assignable to type 'BoxLayout'.
     super({ layout: Private.createLayout(options) });
     // Replaced super call with super.super,
@@ -157,6 +160,7 @@ export class CodeRibbonTheiaRibbonPanel
     this._renderer = options?.renderer;
     crdebug("Ribbon: renderer", this._renderer);
     this._mode = options?.mode || "multiple-document";
+    this._container = options.container;
 
     // this.autoAdjustRibbonTailLength();
   }
@@ -755,7 +759,7 @@ export class CodeRibbonTheiaRibbonPanel
         })
         .catch((e) => {
           crdebug("scrollStripIntoView fail reason:", e);
-          throw Error("Failed to scrollStripIntoView");
+          throw e;
         });
     } else if (widget instanceof CodeRibbonTheiaRibbonStrip) {
       strip = widget;
@@ -766,7 +770,7 @@ export class CodeRibbonTheiaRibbonPanel
         })
         .catch((e) => {
           crdebug("scrollStripIntoView fail reason:", e);
-          throw Error("Failed to scrollStripIntoView");
+          throw e;
         });
     } else {
       let w_parent = widget.parent;
@@ -1276,6 +1280,16 @@ export class CodeRibbonTheiaRibbonPanel
     // }
   }
 
+  // NOTE === Theia's inversify container usage section === NOTE //
+
+  get messageService(): MessageService {
+    return this._container.get<MessageService>(MessageService);
+  }
+
+  get preferences(): CorePreferences {
+    return this._container.get<CorePreferences>(CorePreferences);
+  }
+
   // NOTE === theia DockPanel API compatility section === NOTE //
 
   isElectron(): boolean {
@@ -1476,8 +1490,22 @@ export class CodeRibbonTheiaRibbonPanel
 }
 
 export namespace CodeRibbonTheiaRibbonPanel {
+  export const Factory = Symbol("CodeRibbonTheiaRibbonPanel#Factory");
+  export interface Factory {
+    (options: IOptions): CodeRibbonTheiaRibbonPanel;
+  }
+
   export interface IInitOptions {
     // shell: ApplicationShell ;
+  }
+  export interface IOptions {
+    direction?: BoxLayout.Direction; // only horizontal
+    alignment?: BoxLayout.Alignment; // only ...
+    spacing?: number;
+    layout?: CodeRibbonTheiaRibbonLayout;
+    mode: RibbonPanel.Mode;
+    renderer?: DockLayout.IRenderer;
+    container: InversifyInterfaces.Container; // theia's inversify container
   }
 
   export interface IRibbonLayoutConfig {
@@ -1521,7 +1549,7 @@ export namespace CodeRibbonTheiaRibbonPanel {
 
 namespace Private {
   export function createLayout(
-    options: RibbonPanel.IOptions,
+    options: CodeRibbonTheiaRibbonPanel.IOptions,
   ): CodeRibbonTheiaRibbonLayout {
     return options.layout || new CodeRibbonTheiaRibbonLayout(options);
   }
