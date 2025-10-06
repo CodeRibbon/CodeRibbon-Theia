@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from "react";
 import {
   injectable,
@@ -14,6 +16,7 @@ import { crdebug } from "./cr-logger";
 
 import { QuickFileSelectService } from "@theia/file-search/lib/browser/quick-file-select-service";
 import { MonacoQuickInputService } from "@theia/monaco/lib/browser/monaco-quick-input-service";
+import { EmbeddableMonacoQuickInputService } from "./embeddable-mqis";
 
 /**
  * since this is registered in theia's WidgetManager / WidgetFactory it is part of the inversify container (hence injectable)
@@ -27,6 +30,8 @@ export class CodeRibbonFuzzyFileOpenerWidget extends ReactWidget {
   // TODO this should be the monaco input / quick open equivalent
   // protected inputElement?: HTMLInputElement;
   protected inputElementRef: React.RefObject<HTMLInputElement>;
+  // private inputBox: InputBox;
+  private tmp_input: any;
 
   @inject(QuickInputService)
   protected readonly quickInputService: QuickInputService;
@@ -36,6 +41,9 @@ export class CodeRibbonFuzzyFileOpenerWidget extends ReactWidget {
 
   @inject(MonacoQuickInputService)
   protected readonly monacoQuickInputService: MonacoQuickInputService;
+
+  // @inject(EmbeddableMonacoQuickInputService)
+  // protected readonly embeddableMQIS: EmbeddableMonacoQuickInputService;
 
   @inject(MessageService)
   protected readonly messageService!: MessageService;
@@ -52,6 +60,8 @@ export class CodeRibbonFuzzyFileOpenerWidget extends ReactWidget {
     this.inputElementRef = React.createRef();
     // TODO how?
     // this.inputBox = this.quickInputService.createInputBox();
+    // this.tmp_input = this.embeddableMQIS.createQuickPick();
+    
     this.update();
   }
 
@@ -78,6 +88,7 @@ export class CodeRibbonFuzzyFileOpenerWidget extends ReactWidget {
           placeholder="search project files..."
           autoComplete="off"
         />
+        {/* {this.tmp_input} */}
       </div>
     );
   }
