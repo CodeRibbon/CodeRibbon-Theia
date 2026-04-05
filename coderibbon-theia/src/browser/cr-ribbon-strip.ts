@@ -251,6 +251,40 @@ export class CodeRibbonTheiaRibbonStrip extends ImprovedBoxPanel {
     return this.tracker.currentWidget;
   }
 
+  /**
+   *
+   * @param include_edges Whether to consider the strip "in view" even if the edges might be slightly outside
+   */
+  is_within_ribbon_view(include_edges: boolean = false): boolean {
+    const ribbon_bounds = this.parent!.node.getBoundingClientRect();
+    const strip_bounds = this.node.getBoundingClientRect();
+    if (include_edges) {
+      // check left & right edges
+      if (
+        strip_bounds.right > ribbon_bounds.right ||
+        strip_bounds.left < ribbon_bounds.left
+      ) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      // check centerpoint only
+      const strip_center_xy = {
+        x: (strip_bounds.left + strip_bounds.right) / 2,
+        y: (strip_bounds.top + strip_bounds.bottom) / 2,
+      };
+      if (
+        ribbon_bounds.left <= strip_center_xy.x &&
+        strip_center_xy.x <= ribbon_bounds.right
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
   get_sibling(ref: CodeRibbonTheiaPatch, side: string) {
     const ref_idx = this._patches.indexOf(ref);
     if (ref_idx == -1) {

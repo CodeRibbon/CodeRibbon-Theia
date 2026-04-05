@@ -95,6 +95,7 @@ export class CodeRibbonTheiaRibbonPanel
   private _drag: Drag | null = null;
   private _pressData: Private.IPressData | null = null;
   private _edges: CodeRibbonTheiaRibbonPanel.IEdges;
+  private _currentStripScrollTarget: CodeRibbonTheiaRibbonStrip | null = null;
 
   // TODO if _renderer is undefined, display some human-readable error state instead of crashing the entire shell
   // perhaps "Incompatible Theia Modifications Detected: no DockLayout Renderer was available"?
@@ -176,6 +177,7 @@ export class CodeRibbonTheiaRibbonPanel
     this.node.addEventListener("lm-dragover", this);
     this.node.addEventListener("lm-drop", this);
     this.node.addEventListener("mousedown", this);
+    this.node.addEventListener("wheel", this);
 
     crdebug("Ribbon onBeforeAttach will run autoAdjustRibbonTailLength");
     this.autoAdjustRibbonTailLength();
@@ -189,6 +191,8 @@ export class CodeRibbonTheiaRibbonPanel
     this.node.removeEventListener("lm-dragover", this);
     this.node.removeEventListener("lm-drop", this);
     this.node.removeEventListener("mousedown", this);
+    // NOTE passive:true: we aren't ever going to block/prevent/cancel the event
+    this.node.addEventListener("wheel", this, { passive: true });
     this._releaseMouse();
   }
 
@@ -220,9 +224,105 @@ export class CodeRibbonTheiaRibbonPanel
       case "drop":
         crdebug("ribbon: raw HTML event TODO");
         break;
-      default:
-        // crdebug("event not handled!");
+      case "wheel":
+        this._evtWheel(event as WheelEvent);
         break;
+      default:
+        crdebug("event type not handled!", event.type);
+        break;
+    }
+  }
+
+  private _evtWheel(event: WheelEvent): void {
+    // crdebug("_evtWheel handles", event);
+
+    // Ignore inputs with horizontal component
+    // mostly from touchpads or side wheels
+    if (event.deltaX != 0) return;
+
+    /**
+     * TODO / IDEA: reimplement with different scroll animation curve
+     * while using scrollStripIntoView does always ensure we're aligned,
+     * starting the scroll with "smooth" behavior causes an in-progress scroll
+     * to restart at the initial low speed, making it look jittery
+     *
+     * node.scrollBy has the same jittery problem, but I don't want to switch to that
+     * until we have auto-alignment (at idle) options implemented
+     */
+    // if (!event.shiftKey) {
+    //   this.node.scrollBy({
+    //     left: ((event.deltaY > 0) ? 1 : -1) * this._strips[0].node.clientWidth,
+    //     top: 0,
+    //     behavior: "smooth",
+    //   });
+    // }
+
+    // TODO check that the event path contains a target (only tabbars/titles)
+    if (!event.shiftKey) {
+      const evtTargetPatch = this.locatePatchAtPosition(
+        event.clientX,
+        event.clientY,
+      );
+      if (!evtTargetPatch) {
+        crdebug("what strip got scrolled on???");
+        return;
+      }
+      const evtTargetStrip =
+        evtTargetPatch.parent as CodeRibbonTheiaRibbonStrip;
+      if (this._currentStripScrollTarget?.is_within_ribbon_view(true)) {
+        // edge case check for switching directions rapidly
+        // &/or never getting the scroll done promise callback
+        this._currentStripScrollTarget = null;
+      }
+      if (event.deltaY > 1) {
+        // scroll right action (no focus change)
+        crdebug("scroll ribbon right");
+        let next_strip: CodeRibbonTheiaRibbonStrip | undefined | null =
+          evtTargetStrip;
+        if (this._currentStripScrollTarget) {
+          next_strip = this.get_sibling(
+            this._currentStripScrollTarget,
+            "right",
+          );
+        } else {
+          // find the strip off screen to the right as the target
+          do {
+            next_strip = this.get_sibling(next_strip, "right");
+          } while (next_strip?.is_within_ribbon_view(true));
+        }
+        crdebug("goin to", next_strip);
+        if (!next_strip) {
+          // end of the ribbon, nothing to do but let the current scroll finish
+          return;
+        }
+        this._currentStripScrollTarget = next_strip;
+        this.scrollStripIntoView(next_strip).then(() => {
+          this._currentStripScrollTarget = null;
+        });
+      } else if (event.deltaY < -1) {
+        // scroll left action
+        crdebug("scroll ribbon left");
+        let next_strip: CodeRibbonTheiaRibbonStrip | undefined | null =
+          evtTargetStrip;
+        if (this._currentStripScrollTarget) {
+          next_strip = this.get_sibling(this._currentStripScrollTarget, "left");
+        } else {
+          // to first strip off left screen edge
+          do {
+            next_strip = this.get_sibling(next_strip, "left");
+          } while (next_strip?.is_within_ribbon_view(true));
+        }
+        crdebug("goin to", next_strip);
+        if (!next_strip) {
+          return; // already at start of ribbon
+        }
+        this._currentStripScrollTarget = next_strip;
+        this.scrollStripIntoView(next_strip).then(() => {
+          this._currentStripScrollTarget = null;
+        });
+      } else {
+        crdebug("ignore scrollwheel event too small");
+      }
     }
   }
 
