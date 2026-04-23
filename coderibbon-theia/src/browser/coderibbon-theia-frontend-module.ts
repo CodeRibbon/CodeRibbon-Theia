@@ -10,6 +10,7 @@ import {
   MenuModelRegistry,
   MessageService,
   CorePreferences,
+  quickInputServicePath,
 } from "@theia/core/lib/common";
 import { PreferenceContribution } from "@theia/core/lib/common/preferences";
 import { ApplicationShell } from "@theia/core/lib/browser/shell/application-shell";
@@ -18,6 +19,7 @@ import {
   DockPanel,
   FrontendApplicationContribution,
   KeybindingContribution,
+  WebSocketConnectionProvider,
   WidgetFactory,
   WidgetManager,
 } from "@theia/core/lib/browser";
@@ -35,6 +37,10 @@ import {
   CodeRibbonFuzzyFileOpenerWidget,
   CodeRibbonFuzzyFileOpenerContribution,
 } from "./cr-fuzzy-file-opener";
+import {
+  EmbeddableMonacoQuickInputImplementation,
+  EmbeddableMonacoQuickInputService,
+} from "./embeddable-mqis";
 
 import "../../src/browser/style/ribbon.less";
 // temp CSS
@@ -67,6 +73,22 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
   bind(CommandContribution).to(CodeRibbonTheiaCommandContribution);
   bind(MenuContribution).to(CodeRibbonTheiaMenuContribution);
   bind(KeybindingContribution).to(CodeRibbonTheiaKeybindingContribution);
+
+  // https://github.com/eclipse-theia/theia/blob/008c8340465f7e42298839881d814863bef0b039/packages/monaco/src/browser/monaco-frontend-module.ts#L166-L171
+  // bind(EmbeddableMonacoQuickInputImplementation).toSelf().inSingletonScope();
+  // bind(EmbeddableMonacoQuickInputService)
+  //   .toSelf()
+  //   .inSingletonScope()
+  //   .onActivation(
+  //     ({ container }, quickInputService: EmbeddableMonacoQuickInputService) => {
+  //       WebSocketConnectionProvider.createHandler(
+  //         container,
+  //         quickInputServicePath,
+  //         quickInputService,
+  //       );
+  //       return quickInputService;
+  //     },
+  //   );
 
   // crdebug("now binding the CRFFO widget");
   // CRFFO widget
